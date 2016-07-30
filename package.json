@@ -1,0 +1,31 @@
+{
+  "name": "ticket-system",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "~1.15.1",
+    "bower": "^1.7.9",
+    "connect-flash": "*",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "~2.4.1",
+    "express": "~4.13.4",
+    "express-messages": "*",
+    "express-partials": "^0.3.0",
+    "express-session": "*",
+    "express-validator": "*",
+    "font-awesome": "^4.6.3",
+    "mongodb": "*",
+    "mongoose": "*",
+    "morgan": "~1.7.0",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*",
+    "q": "^1.4.1",
+    "serve-favicon": "~2.3.0"
+  }
+}
