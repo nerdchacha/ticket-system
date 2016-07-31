@@ -4,7 +4,6 @@ var express = require('express');
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    partials = require('express-partials'),
     expressValidator = require('express-validator'),
     flash = require('connect-flash'),
     session = require('express-session'),
@@ -19,8 +18,9 @@ mongoose.connect('mongodb://localhost/ticket-system');
 var db = mongoose.connection;
 
 var routes = require('./routes/index-router');
-var users = require('./routes/users-router');
+var accounts = require('./routes/account-router');
 var tickets = require('./routes/tickets-router');
+var users = require('./routes/users-router');
 
 var app = express();
 
@@ -29,14 +29,18 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
-
     next();
 };
+
+//Middle ware to set authentication to false
+app.use(function(req,res,next){
+    res.header('isAuthenticated', false);
+    next();
+});
 
 // view engine setup)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(partials());
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -72,7 +76,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(flash());
+/*app.use(flash());
 
 //global variables
 app.use(function(req,res,next){
@@ -81,7 +85,7 @@ app.use(function(req,res,next){
     res.locals.error = req.flash('error');
     res.locals.user = req.user || null;
     next();
-});
+});*/
 
 //Hard code force login user for testing
 /*
@@ -97,11 +101,12 @@ app.use(function(req,res,next){
 });
 */
 
+app.use(allowCrossDomain);
 //Do not authenticate calls to user route.
-app.use('/users', users);
+app.use('/accounts', accounts);
 //Authenticate every request before its route is matched
 app.use(authenticate.isAuthenticated);
-app.use(allowCrossDomain);
+app.use('/users',users);
 app.use('/tickets',tickets);
 app.use('/', routes);
 

@@ -12,7 +12,7 @@ angular.module('ticketSystem')
         };
         var renderAssignee = function(assignee){
             if(assignee === null || typeof assignee === 'undefined')
-                return 'Unassigned'
+                return 'Unassigned';
             else
             return assignee;
         };

@@ -6,7 +6,6 @@ angular.module('ticketSystem')
         var factory = {};
         factory.getInitialStaticData = function(){
             return $http.get('tickets/static-data');
-        }
-
+        };
         return factory;
     });

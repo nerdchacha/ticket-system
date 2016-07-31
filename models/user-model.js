@@ -58,4 +58,13 @@ User.getAllUsers = function(callback){
     User.find({},'username',callback);
 };
 
+User.updateUser = function(user,callback){
+    User.findOneAndUpdate(
+        {username: user.username},
+        {$set: {firstname : user.firstname, lastname : user.lastname, email: user.email}},
+        {new:true},
+        callback
+    );
+};
+
 module.exports = User;

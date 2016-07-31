@@ -75,4 +75,21 @@ validator.canUserDeleteComment = function(req,res,commentId){
     return deferred.promise;
 };
 
+validator.validateUsername = function(req,res){
+    req.checkParams('username' ,'Username is require').notEmpty();
+    var errors = req.validationErrors();
+    return errors;
+};
+
+validator.validateUpdateProfile = function(req,res){
+    req.checkParams('username' ,'Username is require').notEmpty();
+    req.checkBody('firstname' ,'First name is require').notEmpty();
+    req.checkBody('lastname' ,'Last name is require').notEmpty();
+    req.checkBody('email' ,'Email is require').notEmpty();
+
+    var errors = req.validationErrors();
+    console.log(errors);
+    return errors;
+};
+
 module.exports = validator;

@@ -2,20 +2,21 @@
  * Created by dell on 7/18/2016.
  */
 angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'])
-    .service('authInterceptor', function($q,$location) {
+    .service('authInterceptor', function($q,Authentication) {
         return {
             response: function(response){
+                var isAuthenticated = response.headers('isAuthenticated') === 'true' ? true : false;
+                Authentication.setIsAuthenticated(isAuthenticated);
                 if (response.status === 401) {
-                    console.log("Response 401");
+                    Authentication.clearUser();
                 }
                 return response || $q.when(response);
             },
             responseError: function(rejection) {
-                console.log(rejection);
                 if (rejection.status === 401) {
-                    console.log("Response Error 401",rejection);
+                    Authentication.clearUser();
                     //Redirect to login page in case user is unauthorized
-                    window.location = 'users/login';
+                    window.location = '#/users/login';
                 }
                 return $q.reject(rejection);
             }
@@ -38,6 +39,18 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'
             .when('/ticket/edit/:id',{
                 controller: 'EditTicketCtrl',
                 templateUrl: 'templates/tickets/edit-ticket.html'
+            })
+            .when('/users/login',{
+                controller: 'LoginCtrl',
+                templateUrl: 'templates/users/login.html'
+            })
+            .when('/users/profile',{
+                controller: 'ProfileCtrl',
+                templateUrl: 'templates/users/profile.html'
+            })
+            .when('/users/register',{
+                controller: 'RegisterCtrl',
+                templateUrl: 'templates/users/register.html'
             })
             .otherwise({redirectTo : '/'});
 

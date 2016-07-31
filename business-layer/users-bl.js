@@ -35,4 +35,23 @@ usersBl.getAllUsers = function(req,res){
     return deferred.promise;
 };
 
+usersBl.getUserByUsername = function(username){
+    var deferred = q.defer();
+    User.getUserbyUsername(username,function(err, user){
+    if(err) deferred.reject(err);
+    else    deferred.resolve(user);
+    });
+    return deferred.promise;
+};
+
+usersBl.updateProfile = function(req,res){
+    var user = {username: req.params.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email};
+    var deferred = q.defer();
+    User.updateUser(user,function(err, user){
+        if(err) deferred.reject(err);
+        else deferred.resolve({firstname: user.firstname,lastname: user.lastname,email: user.email,username: user.username});
+    });
+    return deferred.promise;
+};
+
 module.exports = usersBl;

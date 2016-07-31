@@ -3,6 +3,7 @@
  */
 angular.module('ticketSystem')
     .controller('NewTicketCtrl',function($scope,$location,TicketFactory,Flash,CommonFactory){
+
         CommonFactory.getInitialStaticData()
             .then(function(res){
                 $scope.priorities = res.data.priorities.values;
