@@ -12,15 +12,17 @@ var express = require('express');
     mongo = require('mongodb'),
     mongoose = require('mongoose'),
     authenticate = require('./middleware/check-authenticated.js'),
+    checkRole = require('./middleware/checkRole.js'),
     User = require('./models/user-model.js');
 
 mongoose.connect('mongodb://localhost/ticket-system');
 var db = mongoose.connection;
 
-var routes = require('./routes/index-router');
-var accounts = require('./routes/account-router');
-var tickets = require('./routes/tickets-router');
-var users = require('./routes/users-router');
+var indexRoutes = require('./routes/index-router');
+var accountsRoutes = require('./routes/account-router');
+var ticketsRoutes = require('./routes/tickets-router');
+var usersRoutes = require('./routes/users-router');
+var adminRoutes = require('./routes/admin-routes/admin-users-router');
 
 var app = express();
 
@@ -102,13 +104,16 @@ app.use(function(req,res,next){
 */
 
 app.use(allowCrossDomain);
-//Do not authenticate calls to user route.
-app.use('/accounts', accounts);
+//Do not authenticate calls to accounts route.
+app.use('/accounts', accountsRoutes);
 //Authenticate every request before its route is matched
 app.use(authenticate.isAuthenticated);
-app.use('/users',users);
-app.use('/tickets',tickets);
-app.use('/', routes);
+app.use('/users',usersRoutes);
+app.use('/tickets',ticketsRoutes);
+app.use('/', indexRoutes);
+//Check if user is admin before executing route login
+app.use(checkRole.isAdmin);
+app.use('/admin', adminRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

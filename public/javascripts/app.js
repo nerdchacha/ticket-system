@@ -26,7 +26,7 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'
         $routeProvider
             .when('/', {
                 controller: 'TicketsCtrl',
-                templateUrl: '/templates/tickets/tickets.html'
+                templateUrl: 'templates/tickets/tickets.html'
             })
             .when('/ticket/new',{
                 controller: 'NewTicketCtrl',
@@ -51,6 +51,14 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'
             .when('/users/register',{
                 controller: 'RegisterCtrl',
                 templateUrl: 'templates/users/register.html'
+            })
+            .when('/admin/user-management',{
+                controller: 'ManageUsersCtrl',
+                templateUrl: 'templates/admin/manage-users.html'
+            })
+            .when('/auth/google/:id/:email',{
+                controller: 'SetUserCtrl',
+                templateUrl: 'templates/users/set-username.html'
             })
             .otherwise({redirectTo : '/'});
 

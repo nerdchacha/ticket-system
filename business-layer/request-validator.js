@@ -88,7 +88,14 @@ validator.validateUpdateProfile = function(req,res){
     req.checkBody('email' ,'Email is require').notEmpty();
 
     var errors = req.validationErrors();
-    console.log(errors);
+    return errors;
+};
+
+validator.checkSetUsername = function(req,res){
+    req.checkBody('id' ,'user ID  is require').notEmpty();
+    req.checkBody('username' ,'Username is require').notEmpty();
+
+    var errors = req.validationErrors();
     return errors;
 };
 

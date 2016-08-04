@@ -59,3 +59,7 @@ a {
 #yag tr{
   cursor: pointer;
 }
+
+.login.button-panel button{
+  margin: 5px 0;
+}

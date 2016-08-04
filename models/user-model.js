@@ -6,21 +6,46 @@ var bcrypt = require('bcryptjs');
 
 //Schema
 var UserSchema = mongoose.Schema({
-    firstname:{
-       type:String
-    },
-    lastname:{
-        type: String
-    },
-    email:{
-        type: String
-    },
     username:{
         type: String,
         index:true
     },
-    password:{
+    isActive : {
+        type: Boolean
+    },
+    role:[{
+        type:String
+    }],
+    email: {
         type: String
+    },
+    local:{
+        firstname:{
+           type:String
+        },
+        lastname:{
+            type: String
+        },
+        email:{
+            type: String
+        },
+        password:{
+            type: String
+        }
+    },
+    google:{
+        id: {
+            type:String
+        },
+        token: {
+            type:String
+        },
+        name: {
+            type:String
+        },
+        email: {
+            type:String
+        }
     }
 });
 
@@ -28,8 +53,8 @@ var User = mongoose.model('user',UserSchema);
 
 User.createUser = function(newUser,callback){
     bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(newUser.password, salt, function(err, hash) {
-            newUser.password = hash;
+        bcrypt.hash(newUser.local.password, salt, function(err, hash) {
+            newUser.local.password = hash;
             newUser.save(callback);
         });
     });
@@ -54,17 +79,32 @@ User.findUserById = function(id, callback){
     });
 };
 
-User.getAllUsers = function(callback){
-    User.find({},'username',callback);
+User.getAllActiveUsers = function(callback){
+    User.find({isActive : true},'username',callback);
 };
 
 User.updateUser = function(user,callback){
     User.findOneAndUpdate(
         {username: user.username},
-        {$set: {firstname : user.firstname, lastname : user.lastname, email: user.email}},
+        {$set: {'local.firstname' : user.firstname, 'local.lastname' : user.lastname, 'email': user.email}},
         {new:true},
         callback
     );
+};
+
+User.getAllUserDetails = function(callback){
+    User.find({},{username:1,isActive:1, role:1}, callback);
+};
+
+User.findGoogleUser = function(id,callback){
+    User.findOne({'google.id' : id}, callback);
+};
+
+User.setUsenameAndActive = function(id,username,callback){
+    User.findByIdAndUpdate(id,
+        {username: username,isActive: true},
+        {new:true},
+        callback);
 };
 
 module.exports = User;

@@ -12,7 +12,7 @@ router.get('/profile/:username',function(req,res,next){
     else{
         usersBl.getUserByUsername(req.params.username)
             .then(function(user){
-                res.json({errors: null, user: {username: user.username, firstname: user.firstname, lastname : user.lastname, email: user.email}});
+                res.json({errors: null, user: {username: user.username, firstname: user.local.firstname, lastname : user.local.lastname, email: user.email}});
             })
             .catch(function(err){
                 res.json({errors: [{msg:err}], user: null});

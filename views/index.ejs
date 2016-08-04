@@ -8,7 +8,7 @@
   <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
   <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
 </head>
-<body ng-app="ticketSystem" ng-controller="MainCtrl">
+<body ng-app="ticketSystem" ng-controller="MainCtrl" ng-init="init()">
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -28,7 +28,7 @@
         <li><a href="#/">Tickets</a></li>
         <li><a href="#/ticket/new">New Ticket</a></li>
       </ul>
-      <ul ng-show="isAuthenticated()" class="nav navbar-nav navbar-right" style="margin-right: 5px;">
+      <ul ng-show="isAuthenticated()" class="nav navbar-nav navbar-right" style="">
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
             <i class="fa fa-user"></i>
@@ -36,8 +36,19 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a ng-click="getProfile()">{{getUser().firstname}} {{getUser().lastname}}</a>
+              <a ng-click="getProfile()">{{getUser().username}}</a>
               <a ng-click="logout()">Log Off</a>
+            </li>
+          </ul>
+        </li>
+        <li class="dropdown" ng-if="isAdmin">
+          <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <i class="fa fa-gear"></i>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="#/admin/user-management"><i class="fa fa-users"></i> User management</a>
             </li>
           </ul>
         </li>
@@ -72,5 +83,6 @@
 <script src="/javascripts/controllers/MainCtrl.js" type="application/javascript"></script>
 <script src="/javascripts/controllers/LoginCtrl.js" type="application/javascript"></script>
 <script src="/javascripts/controllers/UserCtrl.js" type="application/javascript"></script>
+<script src="/javascripts/controllers/AdminCtrl.js" type="application/javascript"></script>
 </body>
 </html>

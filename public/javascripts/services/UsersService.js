@@ -19,5 +19,11 @@ angular.module('ticketSystem')
         factory.updateProfile = function(user){
             return $http.post('users/profile/' + user.username ,user);
         };
+        factory.getAllUserDetails = function(){
+            return $http.get('admin/users-details');
+        };
+        factory.setUsername = function(details){
+            return $http.post('accounts/set-username', details);
+        };
         return factory;
     });

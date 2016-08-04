@@ -16,7 +16,7 @@ router.get('/',function(req,res,next){
 router.get('/static-data',function(req,res,next){
     q.all([
         staticBl.getInitialStaticData(),
-        usersBl.getAllUsers()])
+        usersBl.getAllActiveUsers()])
         .then(function(values) {
             var priorities = values[0].values.find(function (value) {
                 return value.name === 'priority'

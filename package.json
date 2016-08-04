@@ -23,6 +23,7 @@
     "mongoose": "*",
     "morgan": "~1.7.0",
     "passport": "*",
+    "passport-google-oauth": "^1.0.0",
     "passport-http": "*",
     "passport-local": "*",
     "q": "^1.4.1",

@@ -40,7 +40,7 @@ angular.module('ticketSystem')
                     }
                     else
                         $location.path('/ticket/view/' + res.data.id);
-            },function(res){
+            },function(err){
                 Flash.create('danger', "An error occurred while trying to create new ticket. Please try again later.", 5000, {}, false);
                 console.log('An error occurred while trying to create new ticket');
                 //set flash message
