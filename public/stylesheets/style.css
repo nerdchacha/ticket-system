@@ -63,3 +63,12 @@ a {
 .login.button-panel button{
   margin: 5px 0;
 }
+
+.login-thumbnail{
+  margin-bottom: 12px;
+}
+
+.login-thumbnail img{
+  margin: 0 auto;
+  border-radius: 50%;
+}
