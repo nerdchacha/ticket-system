@@ -37,7 +37,7 @@ passport.use(new LocalStrategy(
         if(!user){
           return done(null, false, {message: 'No user found with given username.'});
         }
-        if(!user.password){
+        if(!user.local.password){
             return done(null, false, {message: 'The user is registered using google auth. Please log in using google auth.'});
         }
         User.comparePassword(password, user.local.password, function(err, isMatch){
