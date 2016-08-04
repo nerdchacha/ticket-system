@@ -3,6 +3,14 @@
  */
 angular.module('ticketSystem')
     .controller('MainCtrl',function($scope,Authentication,UserFactory,$window,Flash){
+        var checkRole = function(){
+            var user = JSON.parse(localStorage.getItem('user'));
+            if(user.role.indexOf('Admin') > -1){
+                $scope.isAdmin = true;
+            }
+            else
+                $scope.isAdmin = false;
+        };
         $scope.init = function(){
             var user = JSON.parse(localStorage.getItem('user'));
             if(user){
@@ -24,14 +32,9 @@ angular.module('ticketSystem')
                     window.location = "#/users/login";
                 });
         };
-        $scope.$on('successful-login',function(){
-            var user = JSON.parse(localStorage.getItem('user'));
-            if(user.role.indexOf('Admin') > -1){
-                $scope.isAdmin = true;
-            }
-            else
-                $scope.isAdmin = false;
-        });
+
+        $scope.$on('successful-login',checkRole);
+
         $scope.getProfile = function(){
             window.location = '#/users/profile';
         };
@@ -44,6 +47,7 @@ angular.module('ticketSystem')
            }
             else if(user){
                 Authentication.setUser(user);
+                checkRole();
                 window.location.hash = '#/'
            }
         }

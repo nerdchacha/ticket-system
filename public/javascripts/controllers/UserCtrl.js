@@ -110,6 +110,7 @@ angular.module('ticketSystem')
                     }
                     else{
                         Authentication.setUser(res.data.user);
+                        $scope.$emit('successful-login');
                         window.location.hash = '#/'
                         Flash.create('success', 'Username has been set successfully.', 5000, {}, false);
                     }
