@@ -9,10 +9,6 @@ var usersBl = require('../business-layer/users-bl.js');
 var q = require('q');
 var validator = require('../business-layer/request-validator.js');
 
-router.get('/',function(req,res,next){
-    res.render('tickets/index.ejs');
-});
-
 router.get('/static-data',function(req,res,next){
     q.all([
         staticBl.getInitialStaticData(),
@@ -39,80 +35,108 @@ router.get('/get',function(req,res,next){
 
 //POST new ticket
 router.post('/new',function(req,res,next){
-    var errors  = validator.validateNewTicket(req,res);
-    if(errors) {
-        res.json({errors: errors});
-    }
-    else{
-        ticketsBl.createNewTicket(req,res)
-            .then(function(ticket){
-                res.json(ticket);
+    //Check if http request has mandatory parameters
+    validator.validateNewTicket(req,res)
+        .then(function(){
+            //No validation erros
+            return ticketsBl.createNewTicket(req,res)
+        })
+        .then(function(ticket){
+            //Create new ticket and send ticket data to client
+            res.json(ticket);
+        },
+        //Error while creating ticket
+        function(err){
+            res.json({errors: [{msg:err}] });
+        })
+        .catch(function(errors){
+            //validation erros
+            res.json({errors: errors});
         });
-    }
 });
 
 //GET ticket byId
 router.get('/getById/:id',function(req,res,next){
-    var errors = validator.validateGetTicketById(req,res);
-    if(errors){
-        res.json({errors: errors});
-    }
-    else{
-        ticketsBl.getTicketById(req.params.id)
-            .then(function(ticket){
-                if(!ticket) {
-                    res.json({errors: [{msg : 'No ticket exists with given ticket id.'}]});
-                }
-                else {
-                    ticket = ticket.toObject();
-                    ticket.currentUser = req.user.username;
-                    res.json(ticket);
-                }
-            });
-    }
+    //Check if request has mandatory parameters
+    validator.validateGetTicketById(req,res)
+        .then(function(){
+            //No validation errors
+            return ticketsBl.getTicketById(req.params.id)
+        })
+        .then(function(ticket){
+            if(!ticket) {
+                res.json({errors: [{msg : 'No ticket exists with given ticket id.'}]});
+            }
+            else {
+                ticket = ticket.toObject();
+                ticket.currentUser = req.user.username;
+                res.json(ticket);
+            }
+        },
+        //Error getting ticke
+        function(err){
+            res.json({errors: [{msg: err}]});
+        })
+        .catch(function(errors){
+            //Validation errors
+            res.json({errors: errors});
+        });
 });
 
 //POST comment on a ticket
 router.post('/addComment/:id',function(req,res,next){
-    var errors = validator.validateTicketAddComment(req,res);
-    if(errors){
-        res.json({errors: errors});
-    }
-    else{
-        ticketsBl.addComment(req.params.id, {comment: req.body.comment, commentBy: req.user.username})
-            .then(function(ticket){
-                res.json(ticket);
-            })
-            .catch(function(error){
-                res.json({errors: error});
-            });
-    }
+    //Check if http request has mandatory parameters
+    validator.validateTicketAddComment(req,res)
+        .then(function(){
+            //No validation errors
+            //Add comment
+            return ticketsBl.addComment(req.params.id, {comment: req.body.comment, commentBy: req.user.username})
+        })
+        .then(function(ticket){
+            //Comment added successfully
+            res.json(ticket);
+        },
+        function(error){
+            //Error adding comment
+            res.json({errors: error});
+        })
+        .catch(function(errors){
+            //Validation errors
+            res.json({errors: errors});
+        });
 });
 
 //DELETE comment
 router.delete('/deleteComment/:id', function(req,res,next){
-    var ticketId = req.params.id;
-    var commentId = req.query.commentId;
-    var errors = validator.validateTicketDeleteComment(req,res);
-    if(errors){
-        res.json({errors: errors});
-    }
-    else{
-        validator.canUserDeleteComment(req,res,commentId)
-            .then(function(response){
-                //user cannot delete comment
-                if(!response.flag)
-                    throw new Error(response.error);
-                //user can delete comment
-                return ticketsBl.deleteComment(ticketId,commentId)
-            })
-            .then(function(ticket){
-                res.json(ticket);
-            })
-            .catch(function(error){
-                res.json({errors: error});
-            });
-    }
+    //Check if http request has mandatory parameters
+    validator.validateTicketDeleteComment(req,res)
+        .then(function(){
+            //No validation errors
+            //Check if comment was added by same user
+            var commentId = req.query.commentId;
+            return validator.canUserDeleteComment(req,res,commentId)
+        })
+        .then(function(response){
+            //user cannot delete comment
+            if(!response.canDelete)
+                res.json({errors: [{msg : response.error}]});
+            //user can delete comment
+            var ticketId = req.params.id;
+            var commentId = req.query.commentId;
+            return ticketsBl.deleteComment(ticketId,commentId)
+        })
+        .then(function(ticket){
+            //Comment deleted successfully
+            res.json(ticket);
+        },
+            function(error){
+                //Error deleting comment
+            res.json({errors: error});
+        })
+        .catch(function(errors){
+            //Validation error
+            res.json({errors: errors});
+        });
 });
 
 module.exports = router;

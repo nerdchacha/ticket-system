@@ -2,7 +2,7 @@
  * Created by dell on 7/27/2016.
  */
 angular.module('ticketSystem')
-    .controller('EditTicketCtrl',function($scope,$routeParams,$location,TicketFactory,Flash,CommonFactory){
+    .controller('EditTicketCtrl',function($scope,$routeParams,$location,TicketFactory,Flash,CommonFactory,HelperFactory){
         $scope.toolbarConfig = [
             ['h1','p', 'pre', 'quote'],
             ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -49,7 +49,8 @@ angular.module('ticketSystem')
             .then(function(res){
                 if(res.data.errors){
                     $location.path('/');
-                    Flash.create('danger', res.data.errors[0].msg, 4000, {}, false);
+                    var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
+                    Flash.create('danger', errorMessage, 4000, {}, false);
                 }
                 else{
                     $scope.ticket = res.data

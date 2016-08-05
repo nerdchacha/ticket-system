@@ -53,7 +53,7 @@ usersBl.updateProfile = function(req,res){
     var deferred = q.defer();
     User.updateUser(user,function(err, user){
         if(err) deferred.reject(err);
-        else deferred.resolve({firstname: user.local.firstname,lastname: user.local.lastname,email: user.email,username: user.username});
+        else deferred.resolve(user);
     });
     return deferred.promise;
 };

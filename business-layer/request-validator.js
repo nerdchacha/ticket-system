@@ -6,97 +6,156 @@ var Ticket = require('../models/ticket-model.js');
 var q = require('q');
 
 validator.validateNewTicket = function(req,res){
-    req.checkBody('title','Ticket title cannot be blank').notEmpty();
-    req.checkBody('description','Ticket description cannot be blank').notEmpty();
-    req.checkBody('type','Ticket type cannot be blank').notEmpty();
-    req.checkBody('priority','Ticket priority cannot be blank').notEmpty();
-    req.checkBody('assignee','Ticket assignee cannot be blank').notEmpty();
+    var deferred = q.defer();
 
-    var errors = req.validationErrors();
-    return errors;
+    //Making task async
+    process.nextTick(function(){
+        req.checkBody('title','Ticket title cannot be blank').notEmpty();
+        req.checkBody('description','Ticket description cannot be blank').notEmpty();
+        req.checkBody('type','Ticket type cannot be blank').notEmpty();
+        req.checkBody('priority','Ticket priority cannot be blank').notEmpty();
+        req.checkBody('assignee','Ticket assignee cannot be blank').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
 };
 
 validator.validateGetTicketById = function(req,res){
-    req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-    var errors = req.validationErrors();
-    return errors;
+    var deferred = q.defer();
+
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
 };
 
 validator.validateTicketAddComment = function(req,res){
-    req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-    req.checkBody('comment' ,'Comment is required').notEmpty();
-    var errors = req.validationErrors();
-    return errors;
+    var deferred = q.defer();
+
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
+        req.checkBody('comment' ,'Comment is required').notEmpty();
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+    return deferred.promise;
 };
 
 
 validator.validateTicketDeleteComment = function(req,res){
-    req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-    req.checkQuery('commentId', 'No comment with selected id found').isInt();
+    var deferred = q.defer();
+
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
+        req.checkParams('id' ,'Comment ID is required').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+    return deferred.promise;
 };
 
 validator.validateNewUser = function(req,res){
-    var firstname = req.body.firstname;
-    var lastname = req.body.lastname;
-    var email = req.body.email;
-    var username = req.body.username;
-    var password = req.body.password;
-    var password2 = req.body.password2;
+    var deferred = q.defer();
 
-    req.checkBody('firstname' ,'First name is require').notEmpty();
-    req.checkBody('lastname' ,'Last name is require').notEmpty();
-    req.checkBody('email' ,'Email is require').notEmpty();
-    req.checkBody('email' ,'Email is not valid').isEmail();
-    req.checkBody('username' ,'Username is require').notEmpty();
-    req.checkBody('password' ,'Password is require').notEmpty();
-    req.checkBody('password2' ,'Re enter password is require').notEmpty();
-    req.checkBody('password2' ,'Passwords do not match').equals(req.body.password);
+    //Make task async
+    process.nextTick(function(){
+        var firstname = req.body.firstname;
+        var lastname = req.body.lastname;
+        var email = req.body.email;
+        var username = req.body.username;
+        var password = req.body.password;
+        var password2 = req.body.password2;
 
+        req.checkBody('firstname' ,'First name is require').notEmpty();
+        req.checkBody('lastname' ,'Last name is require').notEmpty();
+        req.checkBody('email' ,'Email is require').notEmpty();
+        req.checkBody('email' ,'Email is not valid').isEmail();
+        req.checkBody('username' ,'Username is require').notEmpty();
+        req.checkBody('password' ,'Password is require').notEmpty();
+        req.checkBody('password2' ,'Re enter password is require').notEmpty();
+        req.checkBody('password2' ,'Passwords do not match').equals(req.body.password);
 
-    var errors = req.validationErrors();
-    return errors;
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
 };
 
 validator.canUserDeleteComment = function(req,res,commentId){
     var deferred = q.defer();
     Ticket.getTicketByCommentId(commentId, function(err, ticket){
         if (err){
-            deferred.reject({error: err, flag: false});
+            deferred.reject({error: err, canDelete: false});
         }
         var comment = ticket.comments.find(function (comment) {
             return comment._id.toString() === commentId;
         });
         var commentBy = comment.commentBy;
         if(commentBy !== req.user.username)
-            deferred.reject({error: 'User cannot delete comments of other users', flag: false});
+            deferred.reject({error: 'User cannot delete comments of other users', canDelete: false});
         else
-            deferred.resolve({error: null, flag: true});
+            deferred.resolve({error: null, canDelete: true});
     });
     return deferred.promise;
 };
 
 validator.validateUsername = function(req,res){
-    req.checkParams('username' ,'Username is require').notEmpty();
-    var errors = req.validationErrors();
-    return errors;
+    var deferred = q.defer();
+    process.nextTick(function(){
+        req.checkParams('username' ,'Username is require').notEmpty();
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+    return deferred.promise;
 };
 
 validator.validateUpdateProfile = function(req,res){
-    req.checkParams('username' ,'Username is require').notEmpty();
-    req.checkBody('firstname' ,'First name is require').notEmpty();
-    req.checkBody('lastname' ,'Last name is require').notEmpty();
-    req.checkBody('email' ,'Email is require').notEmpty();
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('username' ,'Username is require').notEmpty();
+        req.checkBody('firstname' ,'First name is require').notEmpty();
+        req.checkBody('lastname' ,'Last name is require').notEmpty();
+        req.checkBody('email' ,'Email is require').notEmpty();
 
-    var errors = req.validationErrors();
-    return errors;
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
 };
 
 validator.checkSetUsername = function(req,res){
-    req.checkBody('id' ,'user ID  is require').notEmpty();
-    req.checkBody('username' ,'Username is require').notEmpty();
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkBody('id' ,'user ID  is require').notEmpty();
+        req.checkBody('username' ,'Username is require').notEmpty();
 
-    var errors = req.validationErrors();
-    return errors;
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
 };
 
 module.exports = validator;

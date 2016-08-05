@@ -3,35 +3,67 @@
  */
 var express = require('express');
 var router = express.Router();
-var usersBl = require('../business-layer/users-bl.js')
-var validator = require('../business-layer/request-validator.js')
+var usersBl = require('../business-layer/users-bl.js');
+var validator = require('../business-layer/request-validator.js');
+var helper = require('../business-layer/helper.js');
 
 router.get('/profile/:username',function(req,res,next){
-    var errors = validator.validateUsername(req,res);
-    if(errors) res.json({errors: errors, user: null});
-    else{
-        usersBl.getUserByUsername(req.params.username)
-            .then(function(user){
-                res.json({errors: null, user: {username: user.username, firstname: user.local.firstname, lastname : user.local.lastname, email: user.email}});
-            })
-            .catch(function(err){
-                res.json({errors: [{msg:err}], user: null});
-            });
-    }
+    //Validate if 'username' is sent in the http request params
+    validator.validateUsername(req,res)
+        .then(function(){
+            //If no errors are found
+            //Fetch user with given username
+            return usersBl.getUserByUsername(req.params.username)
+        })
+        //get user by username
+        .then(function(user){
+            //User found
+           return helper.createResponseUser(user)
+        },
+        //Error in finding user with given username
+        function(err){
+            helper.createResponseError(err)
+                .then(function(errors){
+                    res.json({errors: errors, user: null});
+                });
+        })
+        //After user with username is found
+        //Create response user object with only selective propertoes like firstname, lastname etc
+        .then(function(resUser){
+            res.json({errors: null, user: resUser});
+        })
+        //In case validation fails or any other erros generated
+        .catch(function(errors){
+            //If validation error, send error back to client
+            res.json({errors: errors, user: null});
+        });
 });
 
 router.post('/profile/:username',function(req,res,next){
-    var errors = validator.validateUpdateProfile(req,res);
-    if(errors) res.json({errors: errors, user: null});
-    else{
-        usersBl.updateProfile(req,res)
-            .then(function(user){
-                res.json({errors: null, user: user});
-            })
-            .catch(function(err){
-                res.json({errors: [{msg:err}], user: null});
-            });
-    }
+    validator.validateUpdateProfile(req,res)
+        .then(function(){
+            //Update profile if no validation errors
+            return usersBl.updateProfile(req,res)
+        })
+        .then(function(user){
+            //If profile updated successfully, send updated user to client
+            return helper.createResponseUser(user)
+            },
+            //Failed to update profile
+            function(err){
+                helper.createResponseError(err)
+                    .then(function(errors){
+                        res.json({errors: errors, user: null});
+                    });
+            }
+        )
+        .then(function(resUser){
+            res.json({errors: null, user: resUser});
+        })
+        //Request validation failed as required values were not provided
+        .catch(function(errors){
+            res.json({errors: errors, user: null});
+        });
 });
 
 module.exports = router;

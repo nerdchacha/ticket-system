@@ -7,91 +7,94 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var User = require('../models/user-model.js');
 var validator = require('../business-layer/request-validator.js');
 var auth = require('../config/auth.js');
+var helper = require('../business-layer/helper.js');
 
-//GET the user registration form
-/*router.get('/register',function(req,res,next){
-  res.render('user/register', {errors:null} );
-});*/
-
-//POST the data for the user registration form
-router.post('/register',function(req,res,next){
-  var errors = validator.validateNewUser(req,res);
-  if(errors){
-    res.render({errors: errors});
-  }
-  else{
-    usersBl.createLocalUser(req,res)
-        .then(function(user){
-            res.json({error: null});
-        })
-        .catch(function(error){
-          res.json({error: [{msg : 'There was some issue trying to create user. Please try again after some time'}]});
-        });
-  }
-});
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
-      User.getUserbyUsername(username,function(err,user){
-        if(err) throw err;
-        if(!user){
-          return done(null, false, {message: 'No user found with given username.'});
-        }
-        if(!user.local.password){
-            return done(null, false, {message: 'The user is registered using google auth. Please log in using google auth.'});
-        }
-        User.comparePassword(password, user.local.password, function(err, isMatch){
-          if(err) throw err;
-          if(!isMatch)
-            return done(null, false, {message: 'The username and password do not match'});
-          else
-            return done(null,user);
-        })
-      });
+        User.getUserbyUsername(username,function(err,user){
+            if(err) throw err;
+            if(!user){
+                return done(null, false, {message: 'No user found with given username.'});
+            }
+            if(!user.local.password){
+                return done(null, false, {message: 'The user is registered using google auth. Please log in using google auth.'});
+            }
+            User.comparePassword(password, user.local.password, function(err, isMatch){
+                if(err) throw err;
+                if(!isMatch)
+                    return done(null, false, {message: 'The username and password do not match'});
+                else
+                    return done(null,user);
+            })
+        });
     }));
 
 passport.use(new GoogleStrategy({
-    clientID: auth.google.clientID,
-    clientSecret: auth.google.clientSecret,
-    callbackURL: auth.google.callbackURL
-    },
-    function(token,refreshToken,profile,done){
-        process.nextTick(function(){
-            User.findGoogleUser(profile.id,function(err,user){
-                if(err) { return done(err,null); }
-                if(user){
-                    //if user is found, log them in
-                    return done(null,user);
-                }
-                else{
-                    //else create new user in db
-                    var newUser = new User();
-                    newUser.google.id = profile.id;
-                    newUser.google.token = token;
-                    newUser.google.name = profile.displayName;
-                    newUser.email = profile.emails[0].value;
-                    newUser.role = ['User'];
-                    newUser.isActive = false;
+            clientID: auth.google.clientID,
+            clientSecret: auth.google.clientSecret,
+            callbackURL: auth.google.callbackURL
+        },
+        function(token,refreshToken,profile,done){
+            process.nextTick(function(){
+                User.findGoogleUser(profile.id,function(err,user){
+                    if(err) { return done(err,null); }
+                    if(user){
+                        //if user is found, log them in
+                        return done(null,user);
+                    }
+                    else{
+                        //else create new user in db
+                        var newUser = new User();
+                        newUser.google.id = profile.id;
+                        newUser.google.token = token;
+                        newUser.google.name = profile.displayName;
+                        newUser.email = profile.emails[0].value;
+                        newUser.role = ['User'];
+                        newUser.isActive = false;
 
-                    newUser.save(function(err){
-                        if(err)
-                            throw err;
-                        return done(null,newUser);
-                    })
-                }
-            });
+                        newUser.save(function(err){
+                            if(err)
+                                throw err;
+                            return done(null,newUser);
+                        })
+                    }
+                });
+            })
         })
-    })
 );
 
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.findUserById(id, function(err, user) {
-    done(err, user);
-  });
+    User.findUserById(id, function(err, user) {
+        done(err, user);
+    });
+});
+
+//POST the data for the user registration form
+router.post('/register',function(req,res,next){
+    //validate if request has all required parameters
+    validator.validateNewUser(req,res)
+        .then(function(){
+            //No validation errors
+            //Crete a new local user
+            return usersBl.createLocalUser(req,res)
+        })
+        .then(function(user){
+            //New local user created successfully
+            res.json({errors: null});
+        },
+        //Error in creating local user
+        function(err){
+            res.json({errors: [{msg : 'There was some issue trying to create user. Please try again after some time'}]});
+        })
+        .catch(function(errors){
+          //If validation failed
+          res.render({errors: errors});
+        });
 });
 
 router.post('/login', function(req, res, next) {
@@ -159,33 +162,38 @@ router.get('/auth/google/callback',function(req,res,next){
 });
 
 router.post('/set-username',function(req,res,next){
-    var errors = validator.checkSetUsername(req,res);
-    if(errors){
-        res.render({errors: errors});
-    }
-    else{
-        var id = req.body.id;
-        var username = req.body.username;
-        usersBl.setUsenameAndActive(id,username)
-            .then(function(user){
-                //Login user after updating username
-                req.login(user, function(err) {
-                    if (err) {
-                        res.json({errors : [{msg : err}], user : null});
-                    }
-                    //send user details back after successful login.
-                    var user_response = {
-                        username: user.username,
-                        email: user.email,
-                        role: user.role
-                    };
-                    res.json({errors : null, user : user_response});
-                });
-            })
-            .catch(function(err){
-                res.json({errors : [{msg : err}], user : null});
+    //Check if http request has all mandatory params
+    validator.checkSetUsername(req,res)
+        .then(function(){
+            //If no validation errors
+            var id = req.body.id;
+            var username = req.body.username;
+            //set username and set active flag to true
+            return usersBl.setUsenameAndActive(id,username)
+        })
+        .then(function(user){
+            //Once username and active flag is set
+            //Login user
+            req.login(user, function(err) {
+                if (err) {
+                    res.json({errors : [{msg : err}], user : null});
+                }
+                //create response user object
+                helper.createResponseUser(user)
+                    .then(function(resUser){
+                        //send response user object to client
+                        res.json({errors : null, user : resUser});
+                    });
             });
-    }
+        },
+        function(err){
+            //Error updating username and active flag
+            res.json({errors : [{msg : err}], user : null});
+        })
+        .catch(function(errors){
+            //Validation error
+            res.render({errors: errors});
+        });
 });
 
 module.exports = router;
