@@ -5,6 +5,7 @@ var q = require('q'),
     Ticket = require('../models/ticket-model.js');
 
 var ticket = {};
+
 ticket.fetchTickets = function(req,res){
     var sort = req.query.sort || 'id';
     var order = req.query.order || 'asc';
@@ -12,14 +13,11 @@ ticket.fetchTickets = function(req,res){
     var size = parseInt(req.query.size) || 10;
     if(page === 'undefined') page = 1;
     if(size === 'undefined') size = 10;
-    var ticketString,tickets;
     var ret = {};
     var deferred = q.defer();
 
     Ticket.getAllTickets(function(err,tickets){
         if(err) deferred.reject(err);
-        /*ticketString = data.toString();
-        tickets = JSON.parse(ticketString);*/
         tickets.sort(function(a,b){
             if(order === 'asc'){
                 if(a[sort] < b[sort])

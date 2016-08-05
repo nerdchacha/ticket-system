@@ -7,8 +7,8 @@ angular.module('ticketSystem')
         $scope.config.url = '/admin/users-details';
         $scope.config.columns = [];
         $scope.config.columns.push({key : 'Username', name : 'username', cssClass:"col-md-6"});
-        $scope.config.columns.push({key : 'is Active', name : 'isActive', cssClass: "col-md-3"});
-        $scope.config.columns.push({key : 'is Admin', name : 'firstname', cssClass: "col-md-3"});
+        $scope.config.columns.push({key : 'isActive', name : 'Is Active', cssClass: "col-md-3"});
+        $scope.config.columns.push({key : 'isAdmin', name : 'Is Admin', cssClass: "col-md-3"});
 
         $scope.config.sortQuerystringParam = 'sort';
         $scope.config.orderQuerystringParam = 'order';

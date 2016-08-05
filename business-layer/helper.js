@@ -9,19 +9,25 @@ helper.createResponseUser = function(user){
     var deferred = q.defer();
     //Make process asynchronous
     process.nextTick(function(){
-        console.log('before');
-        console.log(user);
-        var response = {};
-        if(user.local){
-            response.firstname = user.local.firstname || null;
-            response.lastname = user.local.lastname || null;
+        if(user.constructor === Array){
+            //Array of objects
+            /*for(var i=0; i< user, )*/
+
         }
-        response.email = user.email || null;
-        response.role = user.role || null;
-        response.username = user.username || null;
-        console.log('after');
-        console.log(response);
-        deferred.resolve(response);
+        else{
+            //Single object
+            var response = {};
+            if(user.local){
+                response.firstname = user.local.firstname || null;
+                response.lastname = user.local.lastname || null;
+            }
+            response.email = user.email || null;
+            response.role = user.role || null;
+            response.username = user.username || null;
+            response.isActive = user.isActive || null;
+
+            deferred.resolve(response);
+        }
     });
     return deferred.promise;
 };
@@ -32,7 +38,7 @@ helper.createResponseError = function(err){
     process.nextTick(function(){
         var response = [];
         //List of errors
-        if(typeof err === 'Array'){
+        if(err.constructor === Array){
             for(var i= 0; i< err.length; i++)
                 response.push(err[i]);
         }

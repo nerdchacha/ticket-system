@@ -3,15 +3,17 @@
  */
 var express = require('express');
 var router = express.Router();
-var usersBl = require('../../business-layer/users-bl.js');
+var adminBl = require('../../business-layer/admin-bl.js');
+var helper = require('../../business-layer/helper.js');
 
 router.get('/users-details',function(req,res,next){
-    usersBl.getAllUserDetails()
+    adminBl.fetchAllUsers()
         .then(function(users){
-            res.json({users: users, error: null});
+            return helper.createResponseUser(users)
+            res.json({users: users, errors: null});
         })
         .catch(function(err){
-            console.log({users : null, error : err});
+            res.json({users: null, errors: err});
         });
 });
 
