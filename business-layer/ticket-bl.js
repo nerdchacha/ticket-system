@@ -1,45 +1,100 @@
 /**
  * Created by dell on 7/18/2016.
  */
-var q = require('q'),
-    Ticket = require('../models/ticket-model.js');
+var q = require('q');
+var Ticket = require('../models/ticket-model.js');
+var roles = require('../config/role-config.js');
 
 var ticket = {};
 
-ticket.fetchTickets = function(req,res){
+var sortLogic = function(tickets,order,sort,size,page){
+    var ret = {};
+    tickets.sort(function(a,b){
+        if(order === 'asc'){
+            if(a[sort] < b[sort])
+                return -1;
+            else if(a[sort] > b[sort])
+                return 1;
+            return 0;
+        }
+        else{
+            if(a[sort] > b[sort])
+                return -1;
+            else if(a[sort] < b[sort])
+                return 1;
+            return 0;
+        }
+    });
+    ret.tickets = tickets.slice((page - 1) * size, ((page - 1) * size) + size);
+    ret.page = parseInt(page);
+    ret.count = tickets.length;
+    ret.size = size;
+    return ret;
+};
+
+ticket.fetchAllTickets = function(req,res){
+    var deferred = q.defer();
+    //Current user is admin or support user
+    if(req.user.role.indexOf(roles.admin) > -1 || req.user.role.indexOf(roles.support) > -1) {
+        var sort = req.query.sort || 'id';
+        var order = req.query.order || 'asc';
+        var page = req.query.page || 1;
+        var size = parseInt(req.query.size) || 10;
+        if(page === 'undefined') page = 1;
+        if(size === 'undefined') size = 10;
+
+        Ticket.getAllTickets(function(err,tickets){
+            if(err) deferred.reject(err);
+            var ret = sortLogic(tickets,order,sort,size,page);
+            deferred.resolve(ret);
+        });
+    }
+    else{
+        deferred.reject(403);
+    }
+
+    return deferred.promise;
+};
+
+ticket.fetchMyTickets = function(req,res){
     var sort = req.query.sort || 'id';
     var order = req.query.order || 'asc';
     var page = req.query.page || 1;
     var size = parseInt(req.query.size) || 10;
     if(page === 'undefined') page = 1;
     if(size === 'undefined') size = 10;
-    var ret = {};
     var deferred = q.defer();
 
-    Ticket.getAllTickets(function(err,tickets){
+    Ticket.getAllTicketsForUser(req.user.username,function(err,tickets){
         if(err) deferred.reject(err);
-        tickets.sort(function(a,b){
-            if(order === 'asc'){
-                if(a[sort] < b[sort])
-                    return -1;
-                else if(a[sort] > b[sort])
-                    return 1;
-                return 0;
-            }
-            else{
-                if(a[sort] > b[sort])
-                    return -1;
-                else if(a[sort] < b[sort])
-                    return 1;
-                return 0;
-            }
-        });
-        ret.tickets = tickets.slice((page - 1) * size, ((page - 1) * size) + size);
-        ret.page = parseInt(page);
-        ret.count = tickets.length;
-        ret.size = size;
+        var ret = sortLogic(tickets,order,sort,size,page);
         deferred.resolve(ret);
     });
+
+    return deferred.promise;
+};
+
+ticket.fetchToMeTickets = function(req,res){
+    var deferred = q.defer();
+    //Current user is admin or support user
+    if(req.user.role.indexOf(roles.admin) > -1 || req.user.role.indexOf(roles.support) > -1) {
+        var sort = req.query.sort || 'id';
+        var order = req.query.order || 'asc';
+        var page = req.query.page || 1;
+        var size = parseInt(req.query.size) || 10;
+        if (page === 'undefined') page = 1;
+        if (size === 'undefined') size = 10;
+
+        Ticket.getAllAssignedToMeTickets(req.user.username, function (err, tickets) {
+            console.log(tickets);
+            if (err) deferred.reject(err);
+            var ret = sortLogic(tickets, order, sort, size, page);
+            deferred.resolve(ret);
+        });
+    }
+    else{
+        deferred.reject(403);
+    };
 
     return deferred.promise;
 };
@@ -73,11 +128,18 @@ ticket.createNewTicket = function(req,res){
     return deferred.promise;
 };
 
-ticket.getTicketById = function(id){
+ticket.getTicketById = function(id, user){
     var deferred = q.defer();
     Ticket.getTicketById(id,function(err, ticket){
-    if(err) deferred.reject(err);
-    deferred.resolve(ticket);
+        //If normal user is trying to access tickets created by other users
+            if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1 || ticket.createdBy === user.username){
+                //User is either admin or support or logged in user is also creator
+                if(err) deferred.reject(err);
+                deferred.resolve(ticket);
+            }
+        else
+            //reject with 403
+            deferred.reject(403);
     });
     return deferred.promise;
 };

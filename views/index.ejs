@@ -29,6 +29,17 @@
         <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> New Ticket</a></li>
       </ul>
       <ul ng-show="isAuthenticated()" class="nav navbar-nav navbar-right" style="">
+        <li class="dropdown" ng-if="isAdmin">
+          <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+            <i class="fa fa-gear"></i>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="#/admin/user-management"><i class="fa fa-users"></i> User management</a>
+            </li>
+          </ul>
+        </li>
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
             <i class="fa fa-globe"></i>
@@ -38,17 +49,6 @@
             <li>
               <a ng-click="getProfile()"><i class="fa fa-user"></i> {{getUser().username}}</a>
               <a ng-click="logout()"><i class="fa fa-sign-out"></i> Log Off</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown" ng-if="isAdmin">
-          <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-            <i class="fa fa-gear"></i>
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
-              <a href="#/admin/user-management"><i class="fa fa-users"></i> User management</a>
             </li>
           </ul>
         </li>

@@ -72,3 +72,12 @@ a {
   margin: 0 auto;
   border-radius: 50%;
 }
+
+.clearfix:after,.clearfix:before{
+  content: '';
+  display:table;
+}
+
+.clearfix:after{
+  clear:both;
+}

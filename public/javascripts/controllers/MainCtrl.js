@@ -2,7 +2,7 @@
  * Created by dell on 7/30/2016.
  */
 angular.module('ticketSystem')
-    .controller('MainCtrl',function($scope,Authentication,UserFactory,$window,Flash){
+    .controller('MainCtrl',function($scope,$state,Authentication,UserFactory,$window,Flash){
         var checkRole = function(){
             var user = Authentication.getUser();
             if(user.role.indexOf('Admin') > -1){
@@ -42,12 +42,12 @@ angular.module('ticketSystem')
            if(error !== '')
                 Flash.create('danger', error.toString(), 5000, {}, false);
             else if(!user.username || user.username === ''){
-                window.location.hash = '#/auth/google/' + user._id.toString() + '/' + user.email;
+                $state.go('auth-google' + {id: user._id.toString(), email: user.email});
            }
             else if(user){
                 Authentication.setUser(user);
                 checkRole();
-                window.location.hash = '#/'
+               $state.go('ticket.my-tickets')
            }
         }
     });

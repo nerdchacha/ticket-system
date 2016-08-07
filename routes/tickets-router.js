@@ -8,6 +8,7 @@ var staticBl = require('../business-layer/static-bl.js');
 var usersBl = require('../business-layer/users-bl.js');
 var q = require('q');
 var validator = require('../business-layer/request-validator.js');
+var roles = require('../config/role-config');
 
 router.get('/static-data',function(req,res,next){
     q.all([
@@ -29,11 +30,46 @@ router.get('/static-data',function(req,res,next){
 });
 
 //GET all tickets
-router.get('/get',function(req,res,next){
-    ticketsBl.fetchTickets(req,res)
+router.get('/all',function(req,res,next){
+    ticketsBl.fetchAllTickets(req,res)
         .then(function(ticketDetails){
-             res.json(ticketDetails);
-         });
+            res.json(ticketDetails);
+        })
+        .catch(function(err){
+            if(err === 403){
+                res.status(403);
+                res.end();
+            }
+            else{
+                res.json({errors: [{error: msg}]});
+            }
+
+        });
+});
+
+router.get('/my',function(req,res,next){
+    ticketsBl.fetchMyTickets(req,res)
+        .then(function(ticketDetails){
+            res.json(ticketDetails);
+        });
+});
+
+router.get('/to-me',function(req,res,next){
+    //Check if current logged in user has rights to view 'Assigned to me' tickets
+    ticketsBl.fetchToMeTickets(req,res)
+        .then(function(ticketDetails){
+            res.json(ticketDetails);
+        })
+        .catch(function(err){
+            if(err === 403){
+                res.status(403);
+                res.end();
+            }
+            else{
+                res.json({errors: [{error: msg}]});
+            }
+
+        });
 });
 
 //POST new ticket
@@ -64,7 +100,7 @@ router.get('/getById/:id',function(req,res,next){
     validator.validateGetTicketById(req,res)
         .then(function(){
             //No validation errors
-            return ticketsBl.getTicketById(req.params.id)
+            return ticketsBl.getTicketById(req.params.id, req.user)
         })
         .then(function(ticket){
             if(!ticket) {
@@ -78,7 +114,12 @@ router.get('/getById/:id',function(req,res,next){
         },
         //Error getting ticket
         function(err){
-            res.json({errors: [{msg: err}]});
+            if(err === 403){
+                res.status(403);
+                res.end();
+            }
+            else
+                res.json({errors: [{msg: err}]});
         })
         .catch(function(errors){
             //Validation errors
@@ -141,5 +182,12 @@ router.delete('/deleteComment/:id', function(req,res,next){
             res.json({errors: errors});
         });
 });
+
+var isSupportUser = function(req,res){
+    if(req.user.role.indexOf(roles.admin) > -1 || req.user.role.indexOf(roles.support) > -1)
+        return true;
+    else
+        return false;
+};
 
 module.exports = router;

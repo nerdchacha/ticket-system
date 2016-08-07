@@ -34,12 +34,6 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
-//Middle ware to set authentication to false
-app.use(function(req,res,next){
-    res.header('isAuthenticated', false);
-    next();
-});
-
 // view engine setup)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

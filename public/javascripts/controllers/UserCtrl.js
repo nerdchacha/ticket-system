@@ -53,7 +53,7 @@ angular.module('ticketSystem')
                         //Set user details in Common Factory
                         Authentication.setUser(res.data.user);
                         $scope.$emit('successful-login');
-                        $location.path('/');
+                        $location.path('//my-tickets');
                     }
                 }).
                 catch(function(error){

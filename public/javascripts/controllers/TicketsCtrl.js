@@ -3,6 +3,14 @@
  */
 angular.module('ticketSystem')
     .controller('TicketsCtrl',function($scope, $location){
+        $scope.isSupport = false;
+        var user = JSON.parse(localStorage.getItem('ticketSystemUser'));
+        if(user){
+            if(user.role.indexOf('Admin') > -1 || user.role.indexOf('Support') > -1)
+                $scope.isSupport = true;
+        }
+
+
         var renderDate = function(date){
             return new Date(Date.parse(date)).toLocaleDateString();
         };
@@ -14,10 +22,10 @@ angular.module('ticketSystem')
             if(assignee === null || typeof assignee === 'undefined')
                 return 'Unassigned';
             else
-            return assignee;
+                return assignee;
         };
+
         $scope.config = {};
-        $scope.config.url = '/tickets/get';
         $scope.config.columns = [];
         $scope.config.columns.push({key : 'id', name : 'ID', cssClass:"col-md-1"});
         $scope.config.columns.push({key : 'title', name : 'Title', cssClass: "col-md-2"});
@@ -32,9 +40,27 @@ angular.module('ticketSystem')
         $scope.config.pageQuerystringParam = 'page';
         $scope.config.sizeQuerystringParam = 'size';
 
+        $scope.active = '';
+
         $scope.config.onRowClick = function(row){
             $location.path('ticket/view/' + row.id);
         };
 
         $scope.config.objectName = 'tickets';
+
+        $scope.initiateAllTicket = function(){
+            $scope.config.url = '/tickets/all';
+            $scope.$parent.active = 'all';
+        };
+
+        $scope.initiateMyTicket = function(){
+            $scope.config.url = '/tickets/my';
+            $scope.$parent.active = 'my';
+        };
+
+        $scope.initiateToMeTicket = function(){
+            $scope.config.url = '/tickets/to-me';
+            $scope.$parent.active = 'tome';
+        };
+
     });
