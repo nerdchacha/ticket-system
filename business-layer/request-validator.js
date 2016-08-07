@@ -13,8 +13,8 @@ validator.validateNewTicket = function(req,res){
         req.checkBody('title','Ticket title cannot be blank').notEmpty();
         req.checkBody('description','Ticket description cannot be blank').notEmpty();
         req.checkBody('type','Ticket type cannot be blank').notEmpty();
-        req.checkBody('priority','Ticket priority cannot be blank').notEmpty();
-        req.checkBody('assignee','Ticket assignee cannot be blank').notEmpty();
+        /*req.checkBody('priority','Ticket priority cannot be blank').notEmpty();
+        req.checkBody('assignee','Ticket assignee cannot be blank').notEmpty();*/
 
         var errors = req.validationErrors();
         if(errors) deferred.reject(errors);
@@ -51,7 +51,6 @@ validator.validateTicketAddComment = function(req,res){
     });
     return deferred.promise;
 };
-
 
 validator.validateTicketDeleteComment = function(req,res){
     var deferred = q.defer();
@@ -149,6 +148,48 @@ validator.checkSetUsername = function(req,res){
     process.nextTick(function(){
         req.checkBody('id' ,'user ID  is require').notEmpty();
         req.checkBody('username' ,'Username is require').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
+};
+
+validator.vaidateUpdateUser = function(req,res){
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('username' ,'Username is require').notEmpty();
+        req.checkBody('email' ,'Email id is require').notEmpty();
+        req.checkBody('isAdmin' ,'Is Admin field id is require').notEmpty();
+        req.checkBody('isActive' ,'Is Active id is require').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else {
+            var user = {};
+            user.email = req.body.email;
+            user.firstname = req.body.firstname;
+            user.lastname = req.body.lastname;
+            user.isAdmin = req.body.isAdmin;
+            user.isActive = req.body.isActive;
+            deferred.resolve(user);
+        }
+    });
+
+    return deferred.promise;
+};
+
+validator.validateResetPassword = function(req,res){
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'Username id is require').notEmpty();
+        req.checkBody('password' ,'password name is require').notEmpty();
+        req.checkBody('password2' ,'retyped password is require').notEmpty();
+        req.checkBody('password2' ,'Passwords do not match').equals(req.body.password);
 
         var errors = req.validationErrors();
         if(errors) deferred.reject(errors);

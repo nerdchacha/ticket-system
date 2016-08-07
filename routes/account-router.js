@@ -51,7 +51,7 @@ passport.use(new GoogleStrategy({
                         newUser.google.name = profile.displayName;
                         newUser.email = profile.emails[0].value;
                         newUser.role = ['User'];
-                        newUser.isActive = false;
+                        newUser.isActive = true;
 
                         newUser.save(function(err){
                             if(err)
@@ -144,8 +144,10 @@ router.get('/auth/google/callback',function(req,res,next){
         if(err) res.render('oauth-redirect',{user : null, error: err, isActive : false});
         else if(!user) res.render('oauth-redirect',{user : null, error: 'User doesn\'t exist', isActive:false});
         //User is authenticated but since username name is not set, do not login user.
-        else if(!user.isActive) res.render('oauth-redirect',{user: JSON.stringify(user), error: null, isActive: user.isActive});
-        //In case user is authenticated and username is set, login the user.
+        else if(!user.username || user.username === '') res.render('oauth-redirect',{user: JSON.stringify(user), error: null, isActive: user.isActive});
+        //Username is set but user is not active
+        else if(!user.isActive) res.render('oauth-redirect',{user: null, error: 'User is inactive. Please contact the application Admin', isActive: false});
+        //In case user is authenticated and username is set and user is active user, login the user.
         else {
             req.login(user, function(err) {
                 if (err) { return next(err); }

@@ -3,6 +3,7 @@
  */
 var User = require('../models/user-model.js');
 var q = require('q');
+var roles = require('../config/role-config.js');
 
 var usersBl = {};
 
@@ -11,7 +12,7 @@ usersBl.createLocalUser = function(req,res){
     var newUser = new User({
         username: req.body.username,
         isActive : true,
-        role: ['User'],
+        role: [roles.user],
         email: req.body.email,
         local:{
             firstname: req.body.firstname,
@@ -51,7 +52,7 @@ usersBl.getUserByUsername = function(username){
 usersBl.updateProfile = function(req,res){
     var user = {username: req.params.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email};
     var deferred = q.defer();
-    User.updateUser(user,function(err, user){
+    User.updateProfile(user,function(err, user){
         if(err) deferred.reject(err);
         else deferred.resolve(user);
     });

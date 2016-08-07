@@ -8,8 +8,6 @@ module.exports.isAuthenticated = function(req,res,next){
     if(parsed_url.pathname === '/')
         return next();
     if(req.isAuthenticated()){
-        //Set isAuthenticated header if user is authenticated
-        res.header('isAuthenticated', true);
         return next();
     }
     else{

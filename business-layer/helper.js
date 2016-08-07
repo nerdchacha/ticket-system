@@ -9,25 +9,18 @@ helper.createResponseUser = function(user){
     var deferred = q.defer();
     //Make process asynchronous
     process.nextTick(function(){
-        if(user.constructor === Array){
-            //Array of objects
-            /*for(var i=0; i< user, )*/
-
+        var response = {};
+        if(user.local){
+            response.firstname = user.local.firstname || null;
+            response.lastname = user.local.lastname || null;
         }
-        else{
-            //Single object
-            var response = {};
-            if(user.local){
-                response.firstname = user.local.firstname || null;
-                response.lastname = user.local.lastname || null;
-            }
-            response.email = user.email || null;
-            response.role = user.role || null;
-            response.username = user.username || null;
-            response.isActive = user.isActive || null;
+        response.email = user.email || null;
+        response.role = user.role || null;
+        response.username = user.username || null;
+        response.isActive = user.isActive || null;
+        response._id = user._id || null;
 
-            deferred.resolve(response);
-        }
+        deferred.resolve(response);
     });
     return deferred.promise;
 };

@@ -3,6 +3,7 @@
  */
 var userBl = require('../business-layer/users-bl.js');
 var q = require('q');
+var roles = require('../config/role-config.js');
 
 module.exports.isAdmin = function(req,res,next){
     //User is not authenticated
@@ -10,17 +11,13 @@ module.exports.isAdmin = function(req,res,next){
         res.status(403);
         res.end();
     };
-
-    userBl.getUserByUsername(req.user.username)
-        .then(function (user) {
-            //User trying to access the route is not an admin
-            if (user.role.indexOf('Admin') === -1) {
-                res.status(403);
-                res.end();
-            }
-            else{
-                //User is authenticated and is admin
-                next();
-            }
-        });
+    //User trying to access the route is not an admin
+    if (req.user.role.indexOf(roles.admin) === -1) {
+        res.status(403);
+        res.end();
+    }
+    else{
+        //User is authenticated and is admin
+        next();
+    }
 };

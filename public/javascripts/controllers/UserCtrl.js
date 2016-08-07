@@ -91,9 +91,9 @@ angular.module('ticketSystem')
                 });
         };
     })
-    .controller('SetUserCtrl', function($scope,$routeParams,UserFactory,Flash,Authentication){
-        var id = $routeParams.id;
-        var email = $routeParams.email;
+    .controller('SetUserCtrl', function($scope,$stateParams,UserFactory,Flash,Authentication){
+        var id = $stateParams.id;
+        var email = $stateParams.email;
         $scope.setUsername = {};
         $scope.setUsername.email = email;
         $scope.saveUsername = function(){

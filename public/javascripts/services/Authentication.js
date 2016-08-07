@@ -5,21 +5,22 @@ angular.module('ticketSystem')
     .factory('Authentication',function(){
         var factory = {};
 
-        var isAuthenticated;
         factory.getIsAuthenticated = function(){
-            return isAuthenticated;
+            if(localStorage.getItem('ticketSystemUser'))
+                return true;
+            else false;
         };
-        factory.setIsAuthenticated = function(val){
+        /*factory.setIsAuthenticated = function(val){
             isAuthenticated = val;
-        };
+        };*/
         factory.setUser = function(userDetails){
-            localStorage.setItem('user', JSON.stringify(userDetails));
+            localStorage.setItem('ticketSystemUser', JSON.stringify(userDetails));
         };
         factory.clearUser = function(){
-            localStorage.removeItem('user');
+            localStorage.removeItem('ticketSystemUser');
         };
         factory.getUser = function(){
-            return JSON.parse(localStorage.getItem('user'));
+            return JSON.parse(localStorage.getItem('ticketSystemUser'));
         };
         return factory;
     });

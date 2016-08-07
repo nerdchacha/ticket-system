@@ -2,12 +2,13 @@
  * Created by dell on 7/24/2016.
  */
 angular.module('ticketSystem')
-    .controller('ViewTicketCtrl',function($scope, $routeParams,$location,TicketFactory,Flash,CommonFactory){
+    .controller('ViewTicketCtrl',function($scope, $stateParams,$location,TicketFactory,Flash,CommonFactory){
         CommonFactory.getInitialStaticData()
             .then(function(res){
                 $scope.priorities = res.data.priorities.values;
                 $scope.types = res.data.types.values;
                 $scope.users = res.data.users;
+                $scope.statuses = res.data.statuses.values;
             });
         $scope.toolbarConfig = [
             ['h1','p', 'pre', 'quote'],
@@ -50,7 +51,7 @@ angular.module('ticketSystem')
                     Flash.create('danger', "An error occurred while trying to add comment. Please try again later.", 5000, {}, false);
                 });
         };
-        TicketFactory.getTicketById($routeParams.id)
+        TicketFactory.getTicketById($stateParams.id)
             .then(function(res){
                 if(res.data.errors){
                     $location.path('/');

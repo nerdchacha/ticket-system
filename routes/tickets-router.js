@@ -20,8 +20,11 @@ router.get('/static-data',function(req,res,next){
             var types = values[0].values.find(function (value) {
                 return value.name === 'type'
             });
+            var status = values[0].values.find(function (value) {
+                return value.name === 'status'
+            });
             var users = values[1];
-            res.json({priorities: priorities,types: types,users: users});
+            res.json({priorities: priorities,types: types,statuses:status, users: users});
         });
 });
 
@@ -73,7 +76,7 @@ router.get('/getById/:id',function(req,res,next){
                 res.json(ticket);
             }
         },
-        //Error getting ticke
+        //Error getting ticket
         function(err){
             res.json({errors: [{msg: err}]});
         })

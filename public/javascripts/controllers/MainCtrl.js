@@ -4,7 +4,7 @@
 angular.module('ticketSystem')
     .controller('MainCtrl',function($scope,Authentication,UserFactory,$window,Flash){
         var checkRole = function(){
-            var user = JSON.parse(localStorage.getItem('user'));
+            var user = Authentication.getUser();
             if(user.role.indexOf('Admin') > -1){
                 $scope.isAdmin = true;
             }
@@ -12,7 +12,7 @@ angular.module('ticketSystem')
                 $scope.isAdmin = false;
         };
         $scope.init = function(){
-            var user = JSON.parse(localStorage.getItem('user'));
+            var user = Authentication.getUser();
             if(user){
                 if(user.role.indexOf('Admin') > -1){
                     $scope.isAdmin = true;
@@ -26,7 +26,6 @@ angular.module('ticketSystem')
         $scope.logout = function(){
             UserFactory.logout()
                 .then(function(){
-                    Authentication.setIsAuthenticated(false);
                     //Remove user details on logout
                     Authentication.clearUser();
                     window.location = "#/users/login";
@@ -39,10 +38,10 @@ angular.module('ticketSystem')
             window.location = '#/users/profile';
         };
         $window.app = {};
-        $window.app.auth = function(error, user, isActive){
+        $window.app.auth = function(error, user){
            if(error !== '')
                 Flash.create('danger', error.toString(), 5000, {}, false);
-            else if(!isActive){
+            else if(!user.username || user.username === ''){
                 window.location.hash = '#/auth/google/' + user._id.toString() + '/' + user.email;
            }
             else if(user){

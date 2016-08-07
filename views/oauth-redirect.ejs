@@ -18,8 +18,7 @@
         var user = JSON.parse(userString);
         if (window.opener.app &&
                 window.opener.app.auth) {
-
-            window.opener.app.auth(error, user, isActive);
+            window.opener.app.auth(error, user);
         }
     }
     window.close();

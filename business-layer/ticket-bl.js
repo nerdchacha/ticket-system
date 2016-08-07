@@ -48,18 +48,18 @@ ticket.createNewTicket = function(req,res){
     var deferred = q.defer();
     var title = req.body.title;
     var description = req.body.description;
-    var priority = req.body.priority;
+    /*var priority = req.body.priority;*/
     var type = req.body.type;
-    var assignee = req.body.assignee;
+    /*var assignee = req.body.assignee;*/
     var status = 'New';
     var createdBy = req.user.username;
     var createdDate = new Date();
     var newTicket = new Ticket({
         title: title,
         description: description,
-        priority: priority,
+        /*priority: priority,*/
         type: type,
-        assignee: assignee,
+        /*assignee: assignee,*/
         status: status,
         createdBy: createdBy,
         createdDate: createdDate,

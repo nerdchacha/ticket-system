@@ -26,9 +26,9 @@ angular.module('ticketSystem')
             TicketFactory.createNewTicket({
                 title: $scope.newTicket.title,
                 description: $scope.newTicket.description,
-                priority: $scope.newTicket.priority,
-                type: $scope.newTicket.type,
-                assignee : $scope.newTicket.assignee
+/*                priority: $scope.newTicket.priority,*/
+                type: $scope.newTicket.type
+/*                assignee : $scope.newTicket.assignee*/
             })
             .then(function(res){
                     if(res.data.errors){

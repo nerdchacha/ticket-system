@@ -2,7 +2,7 @@
  * Created by dell on 7/27/2016.
  */
 angular.module('ticketSystem')
-    .controller('EditTicketCtrl',function($scope,$routeParams,$location,TicketFactory,Flash,CommonFactory,HelperFactory){
+    .controller('EditTicketCtrl',function($scope,$stateParams,$location,TicketFactory,Flash,CommonFactory,HelperFactory){
         $scope.toolbarConfig = [
             ['h1','p', 'pre', 'quote'],
             ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -44,8 +44,7 @@ angular.module('ticketSystem')
                 });
         };
         $scope.showCommentPanel = false;
-
-        TicketFactory.getTicketById($routeParams.id)
+        TicketFactory.getTicketById($stateParams.id)
             .then(function(res){
                 if(res.data.errors){
                     $location.path('/');
@@ -66,5 +65,6 @@ angular.module('ticketSystem')
                 $scope.priorities = res.data.priorities.values;
                 $scope.types = res.data.types.values;
                 $scope.users = res.data.users;
+                $scope.statuses = res.data.statuses.values;
             });
     });

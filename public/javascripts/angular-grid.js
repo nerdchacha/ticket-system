@@ -34,7 +34,7 @@ app.factory('agSortFactory',function($http){
                                 '</thead>'+
                                 '<tbody>'+
                                     '<tr ng-repeat="row in rows" ng-click="rowClick(row)">'+
-                                        '<td ng-repeat="col in config.columns"><span ng-if="!col.render" data-toggle="tooltip" data-placement="top" title="{{row[col.key]}}">{{row[col.key]}}</span><span ng-if="col.render" data-toggle="tooltip" data-placement="top" title="{{col.render(row[col.key])}}">{{col.render(row[col.key])}}</span></td>'+
+                                        '<td ng-repeat="col in config.columns"><i ng-class="col.renderClass(row[col.key])"></i><span ng-if="!col.render" data-toggle="tooltip" data-placement="top" title="{{row[col.key]}}">{{row[col.key]}}</span><span ng-if="col.render" data-toggle="tooltip" data-placement="top" title="{{col.render(row[col.key])}}">{{col.render(row[col.key])}}</span></td>'+
                                     '</tr>'+
                                 '</tbody>'+
                                 '<tfoot>'+
