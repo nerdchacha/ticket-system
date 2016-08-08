@@ -2,7 +2,7 @@
  * Created by dell on 7/18/2016.
  */
 angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash','ui.router'])
-    .service('authInterceptor', function($q,$location,Authentication) {
+    .service('authInterceptor', function($q,$injector,Authentication) {
         return {
             response: function(response){
                 if (response.status === 401) {
@@ -16,11 +16,11 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'
                     //Clear user data from local storage in case it is set
                     Authentication.clearUser();
                     //Redirect to login page in case user is unauthorized
-                    $location.path('users/login');
+                    $injector.get('$state').go('users-login');
                 }
                 //In case user if forbidden to access part of the web app, redirect to home page
                 if(rejection.status === 403){
-                    $location.path('/');
+                    $injector.get('$state').go('ticket.my-tickets');
                 }
                 return $q.reject(rejection);
             }

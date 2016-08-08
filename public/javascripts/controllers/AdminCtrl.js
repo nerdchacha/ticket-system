@@ -2,7 +2,7 @@
  * Created by dell on 8/2/2016.
  */
 angular.module('ticketSystem')
-    .controller('ManageUsersCtrl',function($scope,$location,$stateParams,Authentication,HelperFactory,UserFactory,Flash){
+    .controller('ManageUsersCtrl',function($scope,$state,$stateParams,Authentication,HelperFactory,UserFactory,Flash){
         var renderIsActive = function(){
             return '';
         };
@@ -45,7 +45,7 @@ angular.module('ticketSystem')
         $scope.config.objectName = 'users';
 
         $scope.config.onRowClick = function(row){
-            $location.path('admin/edit/' + row.username);
+            $state.go('admin-edit', {username: row.username});
         };
 
         //User details
@@ -91,7 +91,7 @@ angular.module('ticketSystem')
                     if(!res.data.errors){
                         //Password reset successfully
                         Flash.create('success', 'Password has been reset successfully', 5000, {}, false);
-                        $location.path('/admin/user-management');
+                        $state.go('admin-user-management');
                     }
                     else{
                         var errorMessage = HelperFactory.createErrorMessage(res.data.errors);

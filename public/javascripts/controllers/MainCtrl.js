@@ -28,14 +28,14 @@ angular.module('ticketSystem')
                 .then(function(){
                     //Remove user details on logout
                     Authentication.clearUser();
-                    window.location = "#/users/login";
+                    $state.go('users-login');
                 });
         };
 
         $scope.$on('successful-login',checkRole);
 
         $scope.getProfile = function(){
-            window.location = '#/users/profile';
+            $state.go('users-profile');
         };
         $window.app = {};
         $window.app.auth = function(error, user){

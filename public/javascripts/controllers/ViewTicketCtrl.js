@@ -2,7 +2,7 @@
  * Created by dell on 7/24/2016.
  */
 angular.module('ticketSystem')
-    .controller('ViewTicketCtrl',function($scope, $stateParams,$location,TicketFactory,Flash,CommonFactory){
+    .controller('ViewTicketCtrl',function($scope, $stateParams,$state,TicketFactory,Flash,CommonFactory){
         CommonFactory.getInitialStaticData()
             .then(function(res){
                 $scope.priorities = res.data.priorities.values;
@@ -29,7 +29,7 @@ angular.module('ticketSystem')
             $scope.showCommentPanel = false;
         };
         $scope.edit = function(){
-            $location.path('/ticket/edit/' + $scope.ticket.id);
+            $state.go('ticket-edit', {id: $scope.ticket.id});
         };
         $scope.deleteComment = function(ticket,comment){
             TicketFactory.deleteComment(ticket,comment)
@@ -54,7 +54,7 @@ angular.module('ticketSystem')
         TicketFactory.getTicketById($stateParams.id)
             .then(function(res){
                 if(res.data.errors){
-                    $location.path('/');
+                    $state.go('ticket.my-tickets');
                     Flash.create('danger', res.data.errors[0].msg, 4000, {}, false);
                 }
                 else{

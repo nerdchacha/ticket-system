@@ -2,7 +2,7 @@
  * Created by dell on 7/31/2016.
  */
 angular.module('ticketSystem')
-    .controller('ProfileCtrl',function($scope,$location,Authentication,UserFactory,HelperFactory,Flash){
+    .controller('ProfileCtrl',function($scope,$state,Authentication,UserFactory,HelperFactory,Flash){
         $scope.user = {};
         $scope.init = function(){
             UserFactory.getUserByUsername(Authentication.getUser().username)
@@ -10,7 +10,7 @@ angular.module('ticketSystem')
                     if(res.data.errors) {
                         //If user details could not be fetched properly
                         var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                        $location.path('/');
+                        $state.go('ticket.my-tickets');
                         Flash.create('danger', errorMessage, 5000, {}, false);
                     }
                     else
@@ -31,14 +31,14 @@ angular.module('ticketSystem')
                     $scope.user.email = res.data.user.email;
                     Authentication.setUser($scope.user);
                     Flash.create('success', 'User details have been updated successfully', 5000, {}, false);
-                    $location.path('/');
+                    $state.go('ticket.my-tickets');
                 })
                 .catch(function(res){
                     Flash.create('danger', 'There was some error trying to update user details. Please try again after some time.', 5000, {}, false);
                 })
         }
     })
-    .controller('LoginCtrl',function($scope,$location,$window,UserFactory,Authentication){
+    .controller('LoginCtrl',function($scope,$state,$window,UserFactory,Authentication){
         $scope.error = false;
         $scope.message = '';
         $scope.login = function(){
@@ -53,7 +53,7 @@ angular.module('ticketSystem')
                         //Set user details in Common Factory
                         Authentication.setUser(res.data.user);
                         $scope.$emit('successful-login');
-                        $location.path('//my-tickets');
+                        $state.go('ticket.my-tickets');
                     }
                 }).
                 catch(function(error){
@@ -72,7 +72,7 @@ angular.module('ticketSystem')
             $window.open(url, 'facebook_login', 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
         }
     })
-    .controller('RegisterCtrl', function($scope,$location,UserFactory,HelperFactory,Flash){
+    .controller('RegisterCtrl', function($scope,$state,UserFactory,HelperFactory,Flash){
         $scope.newUser = {};
         $scope.register = function(){
             UserFactory.registerUser($scope.newUser)
@@ -83,7 +83,7 @@ angular.module('ticketSystem')
                     }
                     else{
                         Flash.create('success', 'User has been created successfully. You can now login.', 5000, {}, false);
-                        $location.path('users/login');
+                        $state.go('users-login');
                     }
                 })
                 .catch(function(res){
@@ -109,7 +109,7 @@ angular.module('ticketSystem')
                     else{
                         Authentication.setUser(res.data.user);
                         $scope.$emit('successful-login');
-                        window.location.hash = '#/'
+                        $state.go('ticket.my-tickets');
                         Flash.create('success', 'Username has been set successfully.', 5000, {}, false);
                     }
                 })

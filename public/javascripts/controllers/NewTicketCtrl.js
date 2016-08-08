@@ -2,7 +2,7 @@
  * Created by dell on 7/22/2016.
  */
 angular.module('ticketSystem')
-    .controller('NewTicketCtrl',function($scope,$location,TicketFactory,Flash,CommonFactory){
+    .controller('NewTicketCtrl',function($scope,$state,TicketFactory,Flash,CommonFactory){
 
         CommonFactory.getInitialStaticData()
             .then(function(res){
@@ -39,7 +39,7 @@ angular.module('ticketSystem')
                         Flash.create('danger', msg, 8000, {}, false);
                     }
                     else
-                        $location.path('/ticket/view/' + res.data.id);
+                        $state.go('ticket-view',{id: res.data.id});
             },function(err){
                 Flash.create('danger', "An error occurred while trying to create new ticket. Please try again later.", 5000, {}, false);
                 console.log('An error occurred while trying to create new ticket');

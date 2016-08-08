@@ -2,7 +2,7 @@
  * Created by dell on 7/27/2016.
  */
 angular.module('ticketSystem')
-    .controller('EditTicketCtrl',function($scope,$stateParams,$location,TicketFactory,Flash,CommonFactory,HelperFactory){
+    .controller('EditTicketCtrl',function($scope,$stateParams,$state,TicketFactory,Flash,CommonFactory,HelperFactory){
         $scope.toolbarConfig = [
             ['h1','p', 'pre', 'quote'],
             ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -11,7 +11,7 @@ angular.module('ticketSystem')
         ];
 
         $scope.cancel = function(){
-            $location.path('/ticket/view/' + $scope.ticket.id);
+            $state.go('ticket-view', {id: $scope.ticket.id});
         };
         $scope.renderDate = function(date){
             return new Date(Date.parse(date)).toLocaleDateString();
@@ -47,7 +47,7 @@ angular.module('ticketSystem')
         TicketFactory.getTicketById($stateParams.id)
             .then(function(res){
                 if(res.data.errors){
-                    $location.path('/');
+                    $state.go('ticket.my-tickets');
                     var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
                     Flash.create('danger', errorMessage, 4000, {}, false);
                 }

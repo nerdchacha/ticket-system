@@ -19,13 +19,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#/">HelpDesk</a>
+      <a class="navbar-brand" ui-sref="ticket.my-tickets">HelpDesk</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul ng-show="isAuthenticated()" class="nav navbar-nav">
-        <li><a href="#/"><i class="fa fa-lg fa-dashboard"></i> Tickets</a></li>
+        <li><a ui-sref="ticket.my-tickets"><i class="fa fa-lg fa-dashboard"></i> Tickets</a></li>
         <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> New Ticket</a></li>
       </ul>
       <ul ng-show="isAuthenticated()" class="nav navbar-nav navbar-right" style="">

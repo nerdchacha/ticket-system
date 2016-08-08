@@ -2,7 +2,7 @@
  * Created by dell on 7/18/2016.
  */
 angular.module('ticketSystem')
-    .controller('TicketsCtrl',function($scope, $location){
+    .controller('TicketsCtrl',function($scope, $state){
         $scope.isSupport = false;
         var user = JSON.parse(localStorage.getItem('ticketSystemUser'));
         if(user){
@@ -43,7 +43,7 @@ angular.module('ticketSystem')
         $scope.active = '';
 
         $scope.config.onRowClick = function(row){
-            $location.path('ticket/view/' + row.id);
+            $state.go('ticket-view', {id: row.id});
         };
 
         $scope.config.objectName = 'tickets';
