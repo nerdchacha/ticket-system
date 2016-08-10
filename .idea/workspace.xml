@@ -113,11 +113,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="edit-ticket.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="edit-ticket.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/templates/tickets/edit-ticket.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7644991" vertical-offset="1554" max-vertical-offset="2193">
+            <state vertical-scroll-proportion="-16.73077" vertical-offset="1554" max-vertical-offset="2193">
               <caret line="117" column="68" selection-start-line="117" selection-start-column="68" selection-end-line="117" selection-end-column="68" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="auth.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/auth.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.33552632" vertical-offset="0" max-vertical-offset="608">
+              <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -133,7 +143,6 @@
         <option value="$PROJECT_DIR$/public/templates/users/profile.html" />
         <option value="$PROJECT_DIR$/middleware/user-details.js" />
         <option value="$PROJECT_DIR$/routes/admin-routes/admin-users-route.js" />
-        <option value="$PROJECT_DIR$/config/auth.js" />
         <option value="$PROJECT_DIR$/views/401.ejs" />
         <option value="$PROJECT_DIR$/public/templates/users/set-username.html" />
         <option value="$PROJECT_DIR$/public/templates/users/login.html" />
@@ -179,6 +188,7 @@
         <option value="$PROJECT_DIR$/public/javascripts/services/CommonService.js" />
         <option value="$PROJECT_DIR$/business-layer/ticket-bl.js" />
         <option value="$PROJECT_DIR$/public/templates/tickets/edit-ticket.html" />
+        <option value="$PROJECT_DIR$/config/auth.js" />
       </list>
     </option>
   </component>
@@ -483,6 +493,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ticket-system" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ticket-system" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="business-layer" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -609,14 +633,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/templates/users/register.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.10996564" vertical-offset="922" max-vertical-offset="1530">
-          <caret line="58" column="40" selection-start-line="0" selection-start-column="0" selection-end-line="84" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bower_components/angular-flash-alert/dist/angular-flash.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3179">
@@ -1108,8 +1124,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/templates/tickets/edit-ticket.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7644991" vertical-offset="1554" max-vertical-offset="2193">
+        <state vertical-scroll-proportion="-16.73077" vertical-offset="1554" max-vertical-offset="2193">
           <caret line="117" column="68" selection-start-line="117" selection-start-column="68" selection-end-line="117" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33552632" vertical-offset="0" max-vertical-offset="608">
+          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
           <folding />
         </state>
       </provider>
