@@ -89,13 +89,33 @@ router.post('/new',function(req,res,next){
             res.json({errors: [{msg:err}] });
         })
         .catch(function(errors){
-            //validation erros
+            //validation errors
             res.json({errors: errors});
         });
 });
 
+router.put('/:id',function(req,res,next){
+    //Check if request has mandatory parameters
+    validator.validateUpdateTicket(req,res)
+        .then(function(){
+            //Request is valid
+            return ticketsBl.updateTicket(req,res);
+        })
+        .then(function(ticket){
+            res.json(ticket)
+        }
+        //Error while creating ticket
+        ,function(err){
+            res.json({errors: [{msg:err}] });
+        })
+        .catch(function(err){
+            //validation errors
+            res.json({errors: err});
+        });
+});
+
 //GET ticket byId
-router.get('/getById/:id',function(req,res,next){
+router.get('/:id',function(req,res,next){
     //Check if request has mandatory parameters
     validator.validateGetTicketById(req,res)
         .then(function(){
@@ -107,8 +127,6 @@ router.get('/getById/:id',function(req,res,next){
                 res.json({errors: [{msg : 'No ticket exists with given ticket id.'}]});
             }
             else {
-                ticket = ticket.toObject();
-                ticket.currentUser = req.user.username;
                 res.json(ticket);
             }
         },
@@ -182,12 +200,5 @@ router.delete('/deleteComment/:id', function(req,res,next){
             res.json({errors: errors});
         });
 });
-
-var isSupportUser = function(req,res){
-    if(req.user.role.indexOf(roles.admin) > -1 || req.user.role.indexOf(roles.support) > -1)
-        return true;
-    else
-        return false;
-};
 
 module.exports = router;

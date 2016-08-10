@@ -8,4 +8,10 @@ angular.module('ticketSystem')
             return $http.get('tickets/static-data');
         };
         return factory;
+    })
+    .filter('reverse',function(){
+        return function(items) {
+            if(items)
+                return items.slice().reverse();
+        }
     });

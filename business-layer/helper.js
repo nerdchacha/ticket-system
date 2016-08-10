@@ -2,6 +2,7 @@
  * Created by dell on 8/5/2016.
  */
 var q = require('q');
+var roles = require('../config/role-config.js');
 
 var helper = {};
 
@@ -40,6 +41,15 @@ helper.createResponseError = function(err){
             response.push(err);
         }
     });
+    return deferred.promise;
+};
+
+helper.isRegularUser = function(user){
+    var deferred = q.defer();
+    if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
+        deferred.resolve(false);
+    else
+        deferred.resolve(true);
     return deferred.promise;
 };
 

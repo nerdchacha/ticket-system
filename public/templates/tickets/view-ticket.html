@@ -4,13 +4,41 @@
         <h4>
             Ticket Id : {{ticket.id}} - {{ticket.title}}
             <div class="pull-right">
-                <a ng-if="ticket.currentUser === ticket.createdBy || ticket.currentUser === ticket.assignee" title="edit()" class="btn btn-primary" ng-click="edit()"><i class="fa fa-pencil"></i></a>
+                <a ng-if="ticket.currentUser === ticket.createdBy || ticket.currentUser === ticket.assignee || isSupport" title="edit()" class="btn btn-primary" ng-click="edit()"><i class="fa fa-pencil"></i></a>
                 <a title="add comment" class="btn btn-primary" ng-click="showCommentPanelFn()"><i class="fa fa-comment"></i></a>
             </div>
         </h4>
     </div>
     <div class="panel-body">
-        <div class="form-group">
+        <table class="table table-bordered">
+            <tr>
+                <td><label>Title :</label></td>
+                <td colspan="3">{{ticket.title}}</td>
+            </tr>
+            <tr>
+                <td><label>Description :</label></td>
+                <td colspan="3"><span ng-bind-html="ticket.description"></span></td>
+            </tr>
+            <tr>
+                <td class="col-md-3"><label>ID :</label></td>
+                <td class="col-md-3">{{ticket.id}}</td>
+                <td class="col-md-3"><label>Status :</label></td>
+                <td class="col-md-3">{{ticket.status}}</td>
+            </tr>
+            <tr>
+                <td><label>Type :</label></td>
+                <td>{{ticket.type}}</td>
+                <td><label>Created By: </label></td>
+                <td>{{ticket.createdBy}}</td>
+            </tr>
+            <tr>
+                <td><label>Assignee :</label></td>
+                <td>{{ticket.assignee}}</td>
+                <td><label>Created Date: </label></td>
+                <td>{{ticket.createdDate}}</td>
+            </tr>
+        </table>
+<!--        <div class="form-group">
             <div class="row">
                 <div class="col-md-3">
                     <label class="pull-right">Title :</label>
@@ -70,7 +98,7 @@
                     <select disabled="disabled" class="form-control" ng-model="ticket.type" ng-options="type.value as type.value for type in types"></select>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
 </div>
 <div ng-show="showCommentPanel" id="comment-panel" class="panel panel-default">
@@ -91,7 +119,7 @@
     <div class="panel-heading">
         <h4>Comments</h4>
     </div>
-    <div class="panel-body" ng-repeat="comment in ticket.comments">
+    <div class="panel-body" ng-repeat="comment in ticket.comments | reverse track by $index ">
         <div class="row">
             <div class="col-sm-2">
                 <div class="thumbnail">
@@ -105,7 +133,8 @@
                         <button ng-if="ticket.currentUser === comment.commentBy" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
                     </div>
                     <div class="panel-body">
-                        {{comment.comment}}
+                        <strong>{{comment.comment.title}}</strong>
+                        <div ng-repeat="text in comment.comment.text track by $index">{{text}} <br /></div>
                     </div><!-- /panel-body -->
                 </div><!-- /panel panel-default -->
             </div><!-- /col-sm-5 -->

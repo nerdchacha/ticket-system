@@ -31,7 +31,7 @@ angular.module('ticketSystem')
                     $scope.user.email = res.data.user.email;
                     Authentication.setUser($scope.user);
                     Flash.create('success', 'User details have been updated successfully', 5000, {}, false);
-                    $state.go('ticket.my-tickets');
+                    $state.go('/');
                 })
                 .catch(function(res){
                     Flash.create('danger', 'There was some error trying to update user details. Please try again after some time.', 5000, {}, false);

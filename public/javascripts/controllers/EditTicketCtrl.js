@@ -2,13 +2,17 @@
  * Created by dell on 7/27/2016.
  */
 angular.module('ticketSystem')
-    .controller('EditTicketCtrl',function($scope,$stateParams,$state,TicketFactory,Flash,CommonFactory,HelperFactory){
+    .controller('EditTicketCtrl',function($scope,$stateParams,$state,TicketFactory,Flash,CommonFactory,HelperFactory,Authentication){
         $scope.toolbarConfig = [
             ['h1','p', 'pre', 'quote'],
             ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
             [],
             ['insertLink']
         ];
+
+        $scope.isRegularUser = true;
+        if(Authentication.getUser().role.indexOf('Support') > -1 || Authentication.getUser().role.indexOf('Admin') > -1)
+            $scope.isRegularUser = false;
 
         $scope.cancel = function(){
             $state.go('ticket-view', {id: $scope.ticket.id});
@@ -52,13 +56,25 @@ angular.module('ticketSystem')
                     Flash.create('danger', errorMessage, 4000, {}, false);
                 }
                 else{
-                    $scope.ticket = res.data
+                    $scope.ticket = res.data;
+                    $scope.ticket.currentUser = Authentication.getUser().username;
                 }
             })
             .catch(function(error){
                 console.log(error);
                 Flash.create('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000, {}, false);
             });
+
+        $scope.update = function(){
+            TicketFactory.updateTicket($scope.ticket._id, $scope.ticket).
+                then(function(res){
+                    $scope.ticket = res.data;
+                })
+                .catch(function(err){
+                    console.log(err);
+                    Flash.create('danger', "An error occurred while trying to update ticket details. Please try again later.", 5000, {}, false);
+                });
+        };
 
         CommonFactory.getInitialStaticData()
             .then(function(res){

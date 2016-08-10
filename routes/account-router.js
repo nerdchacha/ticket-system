@@ -107,9 +107,14 @@ router.post('/login', function(req, res, next) {
                 req.session.cookie.maxAge = 1000 * 60 * 30; //Cookie expired after 30 minutes
             }
             //Error occurred while login
-            if(err) res.json({error : err, isAuthenticated : false, msg: 'There was some error while trying to log you in. Please try again after some time'});
+            if(err) {
+                console.log(err);
+                res.json({error : err, isAuthenticated : false, msg: 'There was some error while trying to log you in. Please try again after some time'});
+            }
             //Wrong info provided by user
-            if(!user) res.json({error : null, isAuthenticated : false, msg: info.message});
+            if(!user) {
+                res.json({error : null, isAuthenticated : false, msg: info.message});
+            }
             //Successful login
             else {
                 //User is not active

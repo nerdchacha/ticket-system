@@ -7,8 +7,11 @@ angular.module('ticketSystem')
         factory.createNewTicket = function(newTicket){
             return $http.post('tickets/new',newTicket);
         };
+        factory.updateTicket = function(ticketId, ticket){
+            return $http.put('tickets/' + ticketId, ticket);
+        };
         factory.getTicketById = function(ticketId){
-            return $http.get('tickets/getById/' + ticketId);
+            return $http.get('tickets/' + ticketId);
         };
         factory.addComment = function(ticketId, comment){
             return $http.post('tickets/addComment/' + ticketId, comment);

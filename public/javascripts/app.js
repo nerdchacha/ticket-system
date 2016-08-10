@@ -30,7 +30,7 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash'
         $urlRouterProvider.otherwise('/');
         $stateProvider
             .state('ticket', {
-                url: '/',
+                url: '/ticket',
                 controller: 'TicketsCtrl',
                 templateUrl: 'templates/tickets/tickets.html'
             })

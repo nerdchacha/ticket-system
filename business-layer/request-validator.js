@@ -13,8 +13,24 @@ validator.validateNewTicket = function(req,res){
         req.checkBody('title','Ticket title cannot be blank').notEmpty();
         req.checkBody('description','Ticket description cannot be blank').notEmpty();
         req.checkBody('type','Ticket type cannot be blank').notEmpty();
-        /*req.checkBody('priority','Ticket priority cannot be blank').notEmpty();
-        req.checkBody('assignee','Ticket assignee cannot be blank').notEmpty();*/
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
+};
+
+validator.validateUpdateTicket = function(req,res){
+    var deferred = q.defer();
+
+    //Making task async
+    process.nextTick(function(){
+        req.checkBody('title','Ticket title cannot be blank').notEmpty();
+        req.checkBody('description','Ticket description cannot be blank').notEmpty();
+        req.checkBody('type','Ticket type cannot be blank').notEmpty();
+        req.checkBody('status','Ticket status cannot be blank').notEmpty();
 
         var errors = req.validationErrors();
         if(errors) deferred.reject(errors);

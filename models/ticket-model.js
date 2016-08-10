@@ -39,12 +39,15 @@ var TicketSchema = mongoose.Schema({
     createdDate:{
         type:Date
     },
+    lastUpdatedDate:{
+        type:Date
+    },
     createdBy:{
         type:String
     },
     comments:{
         type:[{
-            comment:String,
+            comment:Object,
             commentBy:String,
             commentDate:Date
         }]
@@ -81,6 +84,14 @@ Ticket.getAllAssignedToMeTickets = function(username,callback){
 
 Ticket.getTicketById = function(id, callback){
     Ticket.findOne({id : id}, callback);
+};
+
+Ticket.updateTicketBySupport = function(id, ticket, callback){
+    Ticket.findOneAndUpdate(
+        {_id : id},
+        {$set : { title: ticket.title, description : ticket.description,  type: ticket.type, assignee: ticket.assignee, status: ticket.status, priority: ticket.priority}},
+        {new : true},
+        callback);
 };
 
 Ticket.addComment = function(id, comment, callback){
