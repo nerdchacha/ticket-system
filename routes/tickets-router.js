@@ -8,24 +8,29 @@ var staticBl = require('../business-layer/static-bl.js');
 var usersBl = require('../business-layer/users-bl.js');
 var q = require('q');
 var validator = require('../business-layer/request-validator.js');
-var roles = require('../config/role-config');
+var helper = require('../business-layer/helper.js');
+
+var setStaticData = function(values){
+    var priorities = values[0].values.find(function (value) {
+        return value.name === 'priority'
+    });
+    var types = values[0].values.find(function (value) {
+        return value.name === 'type'
+    });
+    var status = values[0].values.find(function (value) {
+        return value.name === 'status'
+    });
+    var users = values[1];
+    return {priorities: priorities,types: types,statuses:status, users: users};
+};
 
 router.get('/static-data',function(req,res,next){
     q.all([
         staticBl.getInitialStaticData(),
         usersBl.getAllActiveUsers()])
         .then(function(values) {
-            var priorities = values[0].values.find(function (value) {
-                return value.name === 'priority'
-            });
-            var types = values[0].values.find(function (value) {
-                return value.name === 'type'
-            });
-            var status = values[0].values.find(function (value) {
-                return value.name === 'status'
-            });
-            var users = values[1];
-            res.json({priorities: priorities,types: types,statuses:status, users: users});
+            var staticValues = setStaticData(values);
+            res.json(staticValues);
         });
 });
 
@@ -40,9 +45,6 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
         .then(function(values) {
             //request is valid
             var currentStatus = req.params.status;
-            var priorities = values[0].values.find(function (value) {
-                return value.name === 'priority'
-            });
             var allowedStatusList = values[0].values.find(function (value) {
                 return value.name === 'allowed state';
             });
@@ -50,16 +52,17 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
                 return value.status === currentStatus;
             });
             allowedStatus.allowed.push(currentStatus);
-            var types = values[0].values.find(function (value) {
-                return value.name === 'type'
-            });
-            var users = values[1];
-            res.json({priorities: priorities,types: types,statuses: allowedStatus.allowed , users: users});
+            var staticValues = setStaticData(values);
+            staticValues.status = allowedStatus.allowed;
+
+            res.json(staticValues);
         })
         .catch(function(err){
-            console.log('send error');
             //invalid request
-            res.json({errors: err});
+            helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
+        })
+        .then(function(error){
+            res.json({errors: error});
         });
 });
 
@@ -75,9 +78,8 @@ router.get('/all',function(req,res,next){
                 res.end();
             }
             else{
-                res.json({errors: [{error: msg}]});
+                res.json({errors: [{error: err}]});
             }
-
         });
 });
 
@@ -100,7 +102,7 @@ router.get('/to-me',function(req,res,next){
                 res.end();
             }
             else{
-                res.json({errors: [{error: msg}]});
+                res.json({errors: [{error: err}]});
             }
 
         });
@@ -111,21 +113,20 @@ router.post('/new',function(req,res,next){
     //Check if http request has mandatory parameters
     validator.validateNewTicket(req,res)
         .then(function(){
-            //No validation erros
+            //No validation errors
             return ticketsBl.createNewTicket(req,res)
         })
         .then(function(ticket){
             //Create new ticket and send ticket data to client
             res.json(ticket);
-        },
-        //Error while creating ticket
-        function(err){
-            res.json({errors: [{msg:err}] });
         })
         .catch(function(errors){
             //validation errors
+            return helper.createResponseError(errors, 'There was some error trying to create a new ticket. Please try again after some time.');
+        })
+        .then(function(errors){
             res.json({errors: errors});
-        });
+        })
 });
 
 router.put('/:id',function(req,res,next){
@@ -137,14 +138,12 @@ router.put('/:id',function(req,res,next){
         })
         .then(function(ticket){
             res.json(ticket)
-        }
-        //Error while creating ticket
-        ,function(err){
-            res.json({errors: [{msg:err}] });
         })
-        .catch(function(err){
-            //validation errors
-            res.json({errors: err});
+        .catch(function(errors){
+            return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
+        })
+        .then(function(errors){
+            res.json({errors: errors});
         });
 });
 
@@ -163,18 +162,15 @@ router.get('/:id',function(req,res,next){
             else {
                 res.json(ticket);
             }
-        },
-        //Error getting ticket
-        function(err){
-            if(err === 403){
+        })
+        .catch(function(errors){
+            if(errors === 403){
                 res.status(403);
                 res.end();
             }
-            else
-                res.json({errors: [{msg: err}]});
+            else return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
         })
-        .catch(function(errors){
-            //Validation errors
+        .then(function(errors){
             res.json({errors: errors});
         });
 });
@@ -191,13 +187,11 @@ router.post('/addComment/:id',function(req,res,next){
         .then(function(ticket){
             //Comment added successfully
             res.json(ticket);
-        },
-        function(error){
-            //Error adding comment
-            res.json({errors: error});
         })
         .catch(function(errors){
-            //Validation errors
+            return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
+        })
+        .then(function(errors){
             res.json({errors: errors});
         });
 });
@@ -215,7 +209,7 @@ router.delete('/deleteComment/:id', function(req,res,next){
         .then(function(response){
             //user cannot delete comment
             if(!response.canDelete)
-                res.json({errors: [{msg : response.error}]});
+                res.json({errors: [{error : response.error}]});
             //user can delete comment
             var ticketId = req.params.id;
             var commentId = req.query.commentId;
@@ -224,13 +218,11 @@ router.delete('/deleteComment/:id', function(req,res,next){
         .then(function(ticket){
             //Comment deleted successfully
             res.json(ticket);
-        },
-            function(error){
-                //Error deleting comment
-            res.json({errors: error});
         })
         .catch(function(errors){
-            //Validation error
+            return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
+        })
+        .then(function(errors){
             res.json({errors: errors});
         });
 });

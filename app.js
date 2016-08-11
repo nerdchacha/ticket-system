@@ -72,30 +72,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-/*app.use(flash());
-
-//global variables
-app.use(function(req,res,next){
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    res.locals.user = req.user || null;
-    next();
-});*/
-
-//Hard code force login user for testing
-/*
-app.use(function(req,res,next){
-    User.getUserbyUsername('ygera',function(err, user){
-        if(err) console.log(err);
-            req.user = user;
-            req.login(user,function(err,data){
-            if(err)console.log(err);
-            next();
-        });
-    });
-});
-*/
 
 app.use(allowCrossDomain);
 //Do not authenticate calls to accounts route.

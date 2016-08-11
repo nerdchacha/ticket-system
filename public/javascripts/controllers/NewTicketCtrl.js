@@ -2,7 +2,7 @@
  * Created by dell on 7/22/2016.
  */
 angular.module('ticketSystem')
-    .controller('NewTicketCtrl',function($scope,$state,TicketFactory,Flash,CommonFactory){
+    .controller('NewTicketCtrl',function($scope,$state,TicketFactory,Flash,CommonFactory,HelperFactory){
 
         CommonFactory.getInitialStaticData()
             .then(function(res){
@@ -26,23 +26,18 @@ angular.module('ticketSystem')
             TicketFactory.createNewTicket({
                 title: $scope.newTicket.title,
                 description: $scope.newTicket.description,
-/*                priority: $scope.newTicket.priority,*/
                 type: $scope.newTicket.type
-/*                assignee : $scope.newTicket.assignee*/
             })
             .then(function(res){
                     if(res.data.errors){
-                        var msg ='<ul>';
-                        for(var i in res.data.errors)
-                            msg += "<li>" + res.data.errors[i].msg + "</li>";
-                        msg += '</ul>'
-                        Flash.create('danger', msg, 8000, {}, false);
+                        var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
+                        Flash.create('danger', errorMessage, 5000, {}, false);
                     }
                     else
                         $state.go('ticket-view',{id: res.data.id});
             },function(err){
                 Flash.create('danger', "An error occurred while trying to create new ticket. Please try again later.", 5000, {}, false);
-                console.log('An error occurred while trying to create new ticket');
+                console.log(err);
                 //set flash message
             });
         }

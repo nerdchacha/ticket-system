@@ -10,8 +10,8 @@ angular.module('ticketSystem')
                     if(res.data.errors) {
                         //If user details could not be fetched properly
                         var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                        $state.go('ticket.my-tickets');
                         Flash.create('danger', errorMessage, 5000, {}, false);
+                        $state.go('ticket.my-tickets');
                     }
                     else
                         //Set user details to scope variable
