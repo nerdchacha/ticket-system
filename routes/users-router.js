@@ -19,13 +19,6 @@ router.get('/profile/:username',function(req,res,next){
         .then(function(user){
             //User found
            return helper.createResponseUser(user)
-        },
-        //Error in finding user with given username
-        function(err){
-            helper.createResponseError(err)
-                .then(function(errors){
-                    res.json({errors: errors, user: null});
-                });
         })
         //After user with username is found
         //Create response user object with only selective propertoes like firstname, lastname etc
@@ -34,7 +27,10 @@ router.get('/profile/:username',function(req,res,next){
         })
         //In case validation fails or any other erros generated
         .catch(function(errors){
-            //If validation error, send error back to client
+            return helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
+        })
+        .then(function(errors){
+            //Send error back to client
             res.json({errors: errors, user: null});
         });
 });
@@ -48,20 +44,15 @@ router.post('/profile/:username',function(req,res,next){
         .then(function(user){
             //If profile updated successfully, send updated user to client
             return helper.createResponseUser(user)
-            },
-            //Failed to update profile
-            function(err){
-                helper.createResponseError(err)
-                    .then(function(errors){
-                        res.json({errors: errors, user: null});
-                    });
-            }
-        )
+        })
         .then(function(resUser){
             res.json({errors: null, user: resUser});
         })
         //Request validation failed as required values were not provided
         .catch(function(errors){
+            return helper.createResponseError(errors, 'There was some error update user details. Please try again later');
+        })
+        .then(function(errors){
             res.json({errors: errors, user: null});
         });
 });
