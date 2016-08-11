@@ -10,6 +10,11 @@ angular.module('ticketSystem')
             }
             else
                 $scope.isAdmin = false;
+
+            $scope.isRegularUser = true;
+            if(Authentication.getUser().role.indexOf('Support') > -1 || Authentication.getUser().role.indexOf('Admin') > -1){
+                $scope.isRegularUser = false;
+            }
         };
         $scope.init = function(){
             var user = Authentication.getUser();
@@ -42,7 +47,7 @@ angular.module('ticketSystem')
            if(error !== '')
                 Flash.create('danger', error.toString(), 5000, {}, false);
             else if(!user.username || user.username === ''){
-                $state.go('auth-google' + {id: user._id.toString(), email: user.email});
+                $state.go('auth-google', {id: user._id.toString(), email: user.email});
            }
             else if(user){
                 Authentication.setUser(user);
@@ -50,4 +55,5 @@ angular.module('ticketSystem')
                $state.go('ticket.my-tickets')
            }
         }
+
     });

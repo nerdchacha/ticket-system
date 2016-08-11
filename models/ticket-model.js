@@ -75,7 +75,7 @@ Ticket.getAllTickets = function(callback){
 };
 
 Ticket.getAllTicketsForUser = function(username,callback){
-    Ticket.find({username: username}, callback);
+    Ticket.find({createdBy: username}, callback);
 };
 
 Ticket.getAllAssignedToMeTickets = function(username,callback){

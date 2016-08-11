@@ -44,7 +44,7 @@ usersBl.getUserByUsername = function(username){
     var deferred = q.defer();
     User.getUserbyUsername(username,function(err, user){
     if(err) deferred.reject(err);
-    else    deferred.resolve(user);
+    else deferred.resolve(user);
     });
     return deferred.promise;
 };
@@ -83,6 +83,17 @@ usersBl.setUsenameAndActive = function(id,username){
             });
         }
     });
+    return deferred.promise;
+};
+
+//Just wrapping compare password inside a promise
+usersBl.comparePassword = function(password, hash){
+    var deferred = q.defer();
+    User.comparePassword(password,hash,function(err, isMatch){
+        if(err) deferred.reject(err);
+        deferred.resolve(isMatch);
+    });
+
     return deferred.promise;
 };
 

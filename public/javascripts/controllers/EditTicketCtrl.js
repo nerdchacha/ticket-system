@@ -10,10 +10,6 @@ angular.module('ticketSystem')
             ['insertLink']
         ];
 
-        $scope.isRegularUser = true;
-        if(Authentication.getUser().role.indexOf('Support') > -1 || Authentication.getUser().role.indexOf('Admin') > -1)
-            $scope.isRegularUser = false;
-
         $scope.cancel = function(){
             $state.go('ticket-view', {id: $scope.ticket.id});
         };
@@ -58,6 +54,17 @@ angular.module('ticketSystem')
                 else{
                     $scope.ticket = res.data;
                     $scope.ticket.currentUser = Authentication.getUser().username;
+                    TicketFactory.getInitialTicketData($scope.ticket.status)
+                        .then(function(res){
+                            $scope.priorities = res.data.priorities.values;
+                            $scope.types = res.data.types.values;
+                            $scope.users = res.data.users;
+                            $scope.statuses = res.data.statuses;
+                        })
+                        .catch(function(err){
+                            console.log(err);
+                            Flash.create('danger', "An error occurred while trying to detch the static data.", 5000, {}, false);
+                        });
                 }
             })
             .catch(function(error){
@@ -69,6 +76,8 @@ angular.module('ticketSystem')
             TicketFactory.updateTicket($scope.ticket._id, $scope.ticket).
                 then(function(res){
                     $scope.ticket = res.data;
+                    Flash.create('success', "Ticket updated successfully.", 5000, {}, false);
+                    $state.go('ticket-view', {id : res.data.id});
                 })
                 .catch(function(err){
                     console.log(err);
@@ -76,11 +85,11 @@ angular.module('ticketSystem')
                 });
         };
 
-        CommonFactory.getInitialStaticData()
+/*        CommonFactory.getInitialStaticData()
             .then(function(res){
                 $scope.priorities = res.data.priorities.values;
                 $scope.types = res.data.types.values;
                 $scope.users = res.data.users;
                 $scope.statuses = res.data.statuses.values;
-            });
+            });*/
     });

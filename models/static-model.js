@@ -9,7 +9,9 @@ var StaticSchema = mongoose.Schema({
         name:String,
         values:[{
             id:Number,
-            value:String
+            value:String,
+            status:String,
+            allowed:[String]
             }
         ]}
     ]

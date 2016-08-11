@@ -91,7 +91,7 @@ angular.module('ticketSystem')
                 });
         };
     })
-    .controller('SetUserCtrl', function($scope,$stateParams,UserFactory,Flash,Authentication){
+    .controller('SetUserCtrl', function($scope,$stateParams,$state,UserFactory,Flash,Authentication){
         var id = $stateParams.id;
         var email = $stateParams.email;
         $scope.setUsername = {};
@@ -100,11 +100,9 @@ angular.module('ticketSystem')
             UserFactory.setUsername({id: id,username :$scope.setUsername.username})
                 .then(function(res){
                     if(res.data.errors){
-                        var error_message;
-                        for(var i=0; i> res.data.erros; i++){
-                            error_message = res.data.erros[i].msg + '</br>';
-                        }
-                        Flash.create('danger', error_message, 5000, {}, false);
+                        //SOme error on the server side
+                        var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
+                        Flash.create('danger', errorMessage, 5000, {}, false);
                     }
                     else{
                         Authentication.setUser(res.data.user);
@@ -114,6 +112,7 @@ angular.module('ticketSystem')
                     }
                 })
                 .catch(function(err){
+                    //SOme error on client side
                     Flash.create('danger', 'There was some error trying to set the username. Please try again after some time.', 5000, {}, false);
                 });
         }

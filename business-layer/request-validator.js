@@ -54,6 +54,20 @@ validator.validateGetTicketById = function(req,res){
     return deferred.promise;
 };
 
+validator.validateGetTicketData = function(req,res){
+    var deferred = q.defer();
+
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('status' ,'ticket status is required').notEmpty();
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
+};
+
 validator.validateTicketAddComment = function(req,res){
     var deferred = q.defer();
 

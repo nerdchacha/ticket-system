@@ -4,7 +4,7 @@
         <h4>
             Ticket Id : {{ticket.id}} - {{ticket.title}}
             <div class="pull-right">
-                <a ng-if="ticket.currentUser === ticket.createdBy || ticket.currentUser === ticket.assignee || isSupport" title="edit()" class="btn btn-primary" ng-click="edit()"><i class="fa fa-pencil"></i></a>
+                <a ng-if="ticket.currentUser === ticket.createdBy || ticket.currentUser === ticket.assignee || !isRegularUser" title="edit()" class="btn btn-primary" ng-click="edit()"><i class="fa fa-pencil"></i></a>
                 <a title="add comment" class="btn btn-primary" ng-click="showCommentPanelFn()"><i class="fa fa-comment"></i></a>
             </div>
         </h4>

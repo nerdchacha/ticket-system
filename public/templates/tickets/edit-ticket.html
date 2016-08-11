@@ -36,7 +36,7 @@
                     <label class="pull-right">Status :</label>
                 </div>
                 <div class="col-md-9">
-                    <select class="form-control" ng-model="ticket.status" ng-options="status.value as status.value for status in statuses"></select>
+                    <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.status" ng-options="status as status for status in statuses"></select>
                 </div>
             </div>
         </div>

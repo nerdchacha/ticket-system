@@ -16,15 +16,15 @@ angular.module('ticketSystem')
             [],
             ['insertLink']
         ];*/
-        $scope.isSupport = false;
-        var user = JSON.parse(localStorage.getItem('ticketSystemUser'));
-        if(user){
+        /*$scope.isSupport = false;
+        var user = JSON.parse(localStorage.getItem('ticketSystemUser'));*/
+/*        if(user){
             if(user.role.indexOf('Admin') > -1 || user.role.indexOf('Support') > -1)
                 $scope.isSupport = true;
-        }
+        }*/
         $scope.showCommentPanel = false;
         $scope.ticket = {};
-        var renderDate = function(date){
+        $scope.renderDate = function(date){
             return new Date(Date.parse(date)).toLocaleDateString();
         };
         $scope.showCommentPanelFn = function(){
@@ -66,7 +66,7 @@ angular.module('ticketSystem')
                 else{
                     $scope.ticket = res.data;
                     $scope.ticket.assignee = !$scope.ticket.assignee ? 'Unassigned' : $scope.ticket.assignee;
-                    $scope.ticket.createdDate = renderDate($scope.ticket.createdDate);
+                    $scope.ticket.createdDate = $scope.renderDate($scope.ticket.createdDate);
                     $scope.ticket.currentUser = Authentication.getUser().username;
                 }
             })

@@ -208,14 +208,17 @@ ticket.getTicketById = function(id, user){
     var deferred = q.defer();
     Ticket.getTicketById(id,function(err, ticket){
         //If normal user is trying to access tickets created by other users
-            if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1 || ticket.createdBy === user.username){
-                //User is either admin or support or logged in user is also creator
-                if(err) deferred.reject(err);
-                deferred.resolve(ticket);
-            }
-        else
-            //reject with 403
-            deferred.reject(403);
+        helper.isRegularUser(user)
+            .then(function(isRegularUser){
+              if(!isRegularUser || ticket.createdBy === user.username){
+                  if(err) deferred.reject(err);
+                  deferred.resolve(ticket);
+              }
+                else{
+                  //reject with 403
+                  deferred.reject(403);
+              }
+            });
     });
     return deferred.promise;
 };

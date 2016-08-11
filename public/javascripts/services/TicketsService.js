@@ -19,5 +19,8 @@ angular.module('ticketSystem')
         factory.deleteComment = function(ticket,comment){
             return $http.delete('tickets/deleteComment/' + ticket._id + '?commentId=' + comment._id);
         };
+        factory.getInitialTicketData = function(status){
+            return $http.get('tickets/edit-ticket/initial-load/' + status);
+        };
         return factory;
     });
