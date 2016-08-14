@@ -156,7 +156,7 @@ Ticket.addComment = function(id, comment, callback){
  -------------------------------------------------------*/
 Ticket.deleteComment = function(id,commentId, callback){
     Ticket.findOneAndUpdate(
-        {_id : id, isDeletable: true},
+        {_id : id, 'comments.isDeletable': true},
         {$pull : {comments :{_id : commentId }}},
         {new: true},
         callback

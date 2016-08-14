@@ -1,7 +1,7 @@
 /**
  * Created by dell on 7/18/2016.
  */
-angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','ngFlash','ui.router'])
+angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal','ngFlash','ui.router'])
     .service('authInterceptor', function($q,$injector,Authentication) {
         return {
             response: function(response){

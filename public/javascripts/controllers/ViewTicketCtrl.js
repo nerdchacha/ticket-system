@@ -2,26 +2,7 @@
  * Created by dell on 7/24/2016.
  */
 angular.module('ticketSystem')
-    .controller('ViewTicketCtrl',function($scope, $stateParams,$state,TicketFactory,Flash,CommonFactory,Authentication){
-        /*CommonFactory.getInitialStaticData()
-            .then(function(res){
-                $scope.priorities = res.data.priorities.values;
-                $scope.types = res.data.types.values;
-                $scope.users = res.data.users;
-                $scope.statuses = res.data.statuses.values;
-            });*/
-        /*$scope.toolbarConfig = [
-            ['h1','p', 'pre', 'quote'],
-            ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
-            [],
-            ['insertLink']
-        ];*/
-        /*$scope.isSupport = false;
-        var user = JSON.parse(localStorage.getItem('ticketSystemUser'));*/
-/*        if(user){
-            if(user.role.indexOf('Admin') > -1 || user.role.indexOf('Support') > -1)
-                $scope.isSupport = true;
-        }*/
+    .controller('ViewTicketCtrl',function($scope, $stateParams,$state,TicketFactory,Flash,CommonFactory,Authentication,YgModal){
         $scope.showCommentPanel = false;
         $scope.ticket = {};
         $scope.renderDate = function(date){
@@ -37,15 +18,24 @@ angular.module('ticketSystem')
         $scope.edit = function(){
             $state.go('ticket-edit', {id: $scope.ticket.id});
         };
-        $scope.deleteComment = function(ticket,comment){
-            TicketFactory.deleteComment(ticket,comment)
-                .then(function(res){
-                    $scope.ticket.comments = res.data.comments;
-                    Flash.create('success', "The comment was deleted successfully", 5000, {}, false);
-                })
-                .catch(function(error){
-                    Flash.create('danger', "An error occurred while trying to delete comment. Please try again later.", 5000, {}, false);
-                });
+        $scope.deleteComment = function(ticket, comment){
+            YgModal.confirm(deleteCallback(ticket, comment));
+            YgModal.open('Are you sure you want to do this?', 'This will delete the comment permanently');
+        };
+
+        //Create closure
+        var deleteCallback = function(ticket, comment){
+            return function(){
+                TicketFactory.deleteComment(ticket,comment)
+                    .then(function(res){
+                        console.log(res);
+                        $scope.ticket.comments = res.data.comments;
+                        Flash.create('success', "The comment was deleted successfully", 5000, {}, false);
+                    })
+                    .catch(function(error){
+                        Flash.create('danger', "An error occurred while trying to delete comment. Please try again later.", 5000, {}, false);
+                    });
+            }
         };
         $scope.addComment = function(){
             TicketFactory.addComment($scope.ticket.id,{comment: $scope.ticket.newComment})

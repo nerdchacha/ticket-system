@@ -213,6 +213,8 @@ router.delete('/deleteComment/:id', function(req,res,next){
         })
         .then(function(response){
             //user cannot delete comment
+            console.log('can delete');
+            console.log(response);
             if(!response.canDelete)
                 res.json({errors: [{error : response.error}]});
             //user can delete comment
@@ -221,6 +223,9 @@ router.delete('/deleteComment/:id', function(req,res,next){
             return ticketsBl.deleteComment(ticketId,commentId)
         })
         .then(function(ticket){
+            console.log('deleted');
+            console.log(ticket);
+
             //Comment deleted successfully
             res.json(ticket);
         })
