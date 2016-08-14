@@ -1,5 +1,23 @@
 <div class="container">
-    <!--<h2 class="page-header">Login </h2>-->
+    <div class="login">
+        <div class="heading">Login</div>
+        <div ng-show="error" class="error-alert">{{message}}</div>
+        <input name="username" placeholder="Username" ng-model="username" type="text"/>
+        <input name="password" placeholder="Password" ng-model="password" type="password"/>
+        <div class="remember-me">
+            <input type="checkbox" ng-model="remember">Remember me
+        </div>
+        <button class="success" ng-click="login()">Login</button>
+        <button class="danger" ng-click="googleLogin()">Login using Google+</button>
+        <a href="#">Forgot password</a>
+        <a href="#users/register">Register</a>
+    </div>
+</div>
+
+
+<!--
+<div class="container">
+    &lt;!&ndash;<h2 class="page-header">Login </h2>&ndash;&gt;
     <div class="login">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -56,4 +74,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->

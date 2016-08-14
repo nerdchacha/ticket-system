@@ -6,6 +6,11 @@ var roles = require('../config/role-config.js');
 
 var helper = {};
 
+/*-------------------------------------------------------
+ A HELPER METHOD TO CREATE STANDARD USER OBJECT TO BE SENT TO THE CLIENT
+ PARAMS:
+ [user - User object that contains all the details for the user]
+ -------------------------------------------------------*/
 helper.createResponseUser = function(user){
     var deferred = q.defer();
     //Make process asynchronous
@@ -26,6 +31,12 @@ helper.createResponseUser = function(user){
     return deferred.promise;
 };
 
+/*-------------------------------------------------------
+ A HELPER METHOD TO CREATE STANDARD ERROR OBJECT TO BE SENT TO THE CLIENT
+ PARAMS:
+ [err - err array that contains all the details for the errors]
+ [message - a general message if err is not an array]
+ -------------------------------------------------------*/
 helper.createResponseError = function(err, message){
     var deferred = q.defer();
     //Make process asynchronous
@@ -45,6 +56,11 @@ helper.createResponseError = function(err, message){
     return deferred.promise;
 };
 
+/*-------------------------------------------------------
+ A HELPER METHOD TO CHECK IF THE USER IS A REGULAR USER OF NOT
+ PARAMS:
+ [user - User object that contains all the details for the user]
+ -------------------------------------------------------*/
 helper.isRegularUser = function(user){
     var deferred = q.defer();
     process.nextTick(function(){

@@ -5,6 +5,10 @@ var validator = {};
 var Ticket = require('../models/ticket-model.js');
 var q = require('q');
 
+/*-------------------------------------------------------
+ A MODULE TO CHECK HTTP BODY AND PARAMS TO VALiDATE IF ALL MANDATORY PARAMETERS ARE A PART OF IT
+ -------------------------------------------------------*/
+
 validator.validateNewTicket = function(req,res){
     var deferred = q.defer();
 

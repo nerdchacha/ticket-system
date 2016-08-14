@@ -14,8 +14,10 @@ var q = require('q');
 passport.use(new LocalStrategy(
     function(username, password, done) {
         //Get the user by username
+        var user;
         usersBl.getUserByUsername(username)
             .then(function(user){
+                this.user = user;
                 //If no user exists, send appropriate message to client
                 if(!user){
                     return done(null, false, {message: 'No user found with given username.'});
@@ -32,10 +34,12 @@ passport.use(new LocalStrategy(
                 if(!isMatch)
                     return done(null, false, {message: 'The username and password do not match'});
                 //password matches
-                else
-                    return done(null,user);
+                else {
+                    return done(null,this.user);
+                }
             })
             .catch(function(err){
+                console.log(err);
                 //In case of any errors, throw error
                 if(err) throw err;
             });
@@ -110,8 +114,10 @@ router.post('/register',function(req,res,next){
         });
 });
 
+//POST the login form
 router.post('/login', function(req, res, next) {
         passport.authenticate('local', function(err, user, info){
+            console.log('auth');
             //Set cookie age
             if (req.body.remember) {
                 req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // Cookie expires after 30 days
@@ -125,6 +131,7 @@ router.post('/login', function(req, res, next) {
             if(!user) res.json({error : null, isAuthenticated : false, msg: info.message});
             //Successful login
             else {
+                console.log(user);
                 //User is not active
                 if(!user.isActive)
                 res.json({error : err, isAuthenticated : false, msg: 'The user is inactive.'});
@@ -145,13 +152,16 @@ router.post('/login', function(req, res, next) {
         })(req, res, next);
     });
 
+//GET logout
 router.get('/logout',function(req,res,next){
   req.logout();
   res.end();
 });
 
+//GET request fro google auth
 router.get('/auth/google',passport.authenticate('google', { scope : ['profile', 'email'] }));
 
+//GET request google makes after successful authentication
 router.get('/auth/google/callback',function(req,res,next){
     passport.authenticate('google',function(err,user,info){
         if(err) res.render('oauth-redirect',{user : null, error: err, isActive : false});
@@ -176,6 +186,7 @@ router.get('/auth/google/callback',function(req,res,next){
     })(req,res,next);
 });
 
+//POST to set username for the first time when user logs in using OAuth2 provider.
 router.post('/set-username',function(req,res,next){
     //Check if http request has all mandatory params
     validator.checkSetUsername(req,res)

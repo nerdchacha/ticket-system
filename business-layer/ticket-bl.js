@@ -3,7 +3,6 @@
  */
 var q = require('q');
 var Ticket = require('../models/ticket-model.js');
-var roles = require('../config/role-config.js');
 var helper = require('../business-layer/helper.js');
 
 var ticket = {};
@@ -163,8 +162,6 @@ ticket.updateTicket = function(req,res){
     Ticket.getTicketById(ticketId,function(err, oldTicket){
         if(err) deferred.reject(err);
         else{
-            console.log('old ticket found');
-            console.log(oldTicket);
             Ticket.updateTicketBySupport(id, newTicket, function(err, updatedTicket){
                 if(err) deferred.reject(err);
                 var propertyNames = ['Title', 'Description', 'Priority', 'Type', 'Assignee' , 'Status']
@@ -185,12 +182,16 @@ ticket.updateTicket = function(req,res){
                 var comment = {};
                 comment.commentDate = Date.now();
                 comment.commentBy = req.user.username;
-                comment.comment = {};
-                comment.comment.title = "Changes";
-                comment.comment.text = [];
+                comment.commentMessage = {};
+                comment.commentMessage.title = "Changes";
+                comment.commentMessage.message = [];
+                comment.isDeletable = false;
                 for(var i= 0; i<oldDetails.length; i++){
-                    if(oldDetails[i] !== newDetails[i])
-                        comment.comment.text.push(propertyNames[i] + ': "' + oldDetails[i] + '" changed to "' + newDetails[i] + '"');
+                    if(oldDetails[i] !== newDetails[i]){
+                        var oldPropVal = !oldDetails[i] || typeof oldDetails[i] === 'undefined'|| oldDetails[i] === '' ? 'none' : oldDetails[i];
+                        var newPropVal = newDetails[i];
+                        comment.commentMessage.message.push(propertyNames[i] + ': changed from "' + oldPropVal + '" to "' + newPropVal + '"');
+                    }
                 }
 
                 Ticket.addComment(ticketId, comment, function(err, ticket){
@@ -225,7 +226,8 @@ ticket.getTicketById = function(id, user){
 
 ticket.addComment = function(id, comment){
     var deferred = q.defer();
-    comment.comment = {title: '', text: [comment.comment]};
+    comment.isDeletable = true;
+    comment.commentMessage = {title: 'Comment', message: [comment.comment]};
     Ticket.addComment(id,comment, function(err, ticket){
         if(err) deferred.reject(err);
         deferred.resolve(ticket);

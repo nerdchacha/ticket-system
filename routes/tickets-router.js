@@ -24,6 +24,7 @@ var setStaticData = function(values){
     return {priorities: priorities,types: types,statuses:status, users: users};
 };
 
+//GET static data on page load
 router.get('/static-data',function(req,res,next){
     q.all([
         staticBl.getInitialStaticData(),
@@ -34,6 +35,7 @@ router.get('/static-data',function(req,res,next){
         });
 });
 
+//GET static data with only possible ticket status on edit ticket page load
 router.get('/edit-ticket/initial-load/:status',function(req,res,next){
     //Check if request is valid
     validator.validateGetTicketData(req,res)
@@ -53,7 +55,7 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
             });
             allowedStatus.allowed.push(currentStatus);
             var staticValues = setStaticData(values);
-            staticValues.status = allowedStatus.allowed;
+            staticValues.statuses = allowedStatus.allowed;
 
             res.json(staticValues);
         })
@@ -83,6 +85,7 @@ router.get('/all',function(req,res,next){
         });
 });
 
+//GET all tickets created by me
 router.get('/my',function(req,res,next){
     ticketsBl.fetchMyTickets(req,res)
         .then(function(ticketDetails){
@@ -90,6 +93,7 @@ router.get('/my',function(req,res,next){
         });
 });
 
+//GET all tickets assigned to me
 router.get('/to-me',function(req,res,next){
     //Check if current logged in user has rights to view 'Assigned to me' tickets
     ticketsBl.fetchToMeTickets(req,res)
@@ -129,6 +133,7 @@ router.post('/new',function(req,res,next){
         })
 });
 
+//Update ticket after edit
 router.put('/:id',function(req,res,next){
     //Check if request has mandatory parameters
     validator.validateUpdateTicket(req,res)
@@ -147,7 +152,7 @@ router.put('/:id',function(req,res,next){
         });
 });
 
-//GET ticket byId
+//GET ticket by Id
 router.get('/:id',function(req,res,next){
     //Check if request has mandatory parameters
     validator.validateGetTicketById(req,res)
@@ -196,7 +201,7 @@ router.post('/addComment/:id',function(req,res,next){
         });
 });
 
-//DELETE comment
+//DELETE comment from a ticket
 router.delete('/deleteComment/:id', function(req,res,next){
     //Check if http request has mandatory parameters
     validator.validateTicketDeleteComment(req,res)

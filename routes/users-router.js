@@ -7,6 +7,7 @@ var usersBl = require('../business-layer/users-bl.js');
 var validator = require('../business-layer/request-validator.js');
 var helper = require('../business-layer/helper.js');
 
+//GET user profile
 router.get('/profile/:username',function(req,res,next){
     //Validate if 'username' is sent in the http request params
     validator.validateUsername(req,res)
@@ -35,6 +36,7 @@ router.get('/profile/:username',function(req,res,next){
         });
 });
 
+//POST data to update user profile
 router.post('/profile/:username',function(req,res,next){
     validator.validateUpdateProfile(req,res)
         .then(function(){

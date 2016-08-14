@@ -47,13 +47,15 @@ var TicketSchema = mongoose.Schema({
     },
     comments:{
         type:[{
-            comment:Object,
+            commentMessage:Object,
             commentBy:String,
-            commentDate:Date
+            commentDate:Date,
+            isDeletable: Boolean
         }]
     }
 });
 
+//HOOK to set ticketId as auto incrementing identity
 TicketSchema.pre('save',function(next){
     var doc = this;
     Counter.findByIdAndUpdate({_id: 'ticketId'}, {$inc: { seq: 1} }, function(error, counter)   {
@@ -66,26 +68,61 @@ TicketSchema.pre('save',function(next){
 
 var Ticket = mongoose.model('ticket',TicketSchema);
 
+/*-------------------------------------------------------
+ CREATE A NEW TICKET
+ PARAMS:
+ [newTicket - new ticket details]
+ [callback - callback function to be executed on successfully creation of ticket]
+ -------------------------------------------------------*/
 Ticket.createTicket = function(newTicket,callback){
     newTicket.save(callback);
 };
 
+/*-------------------------------------------------------
+ GET ALL TICKETS IN THE SYSTEM
+ PARAMS:
+ [callback - callback function to be executed on successfully fetching all tickets in the system]
+ -------------------------------------------------------*/
 Ticket.getAllTickets = function(callback){
     Ticket.find({},callback);
 };
 
+/*-------------------------------------------------------
+ GET ALL TICKETS FOR A PARTICULAR USER
+ PARAMS:
+ [username - username of the user for which tickets needs to be searched]
+ [callback - callback function to be executed on successfully fetching all tickets for user]
+ -------------------------------------------------------*/
 Ticket.getAllTicketsForUser = function(username,callback){
     Ticket.find({createdBy: username}, callback);
 };
 
+/*-------------------------------------------------------
+ GET ALL TICKETS ASSIGNED TO USER
+ PARAMS:
+ [username - username of the user for which all tickets needs to be fetched that are assigned to him]
+ [callback - callback function to be executed on successfully fetching tickets]
+ -------------------------------------------------------*/
 Ticket.getAllAssignedToMeTickets = function(username,callback){
     Ticket.find({assignee: username}, callback);
 };
 
+/*-------------------------------------------------------
+ GET TICKET BY ID
+ PARAMS:
+ [id - id of the ticket that needs to be searched]
+ [callback - callback function to be executed on successfully searching ticket]
+ -------------------------------------------------------*/
 Ticket.getTicketById = function(id, callback){
     Ticket.findOne({id : id}, callback);
 };
 
+/*-------------------------------------------------------
+ UPDATE TICKET
+ PARAMS:
+ [id- id of the ticket that needs to be updated]
+ [callback - callback function to be executed on successfully updating ticket]
+ -------------------------------------------------------*/
 Ticket.updateTicketBySupport = function(id, ticket, callback){
     Ticket.findOneAndUpdate(
         {_id : id},
@@ -94,24 +131,44 @@ Ticket.updateTicketBySupport = function(id, ticket, callback){
         callback);
 };
 
+/*-------------------------------------------------------
+ ADD COMMENT TO A TICKET
+ PARAMS:
+ [id - i d of the ticket for which comment needs to be added]
+ [comment - comment that needs to be added]
+ [callback - callback function to be executed on successfully adding comment]
+ -------------------------------------------------------*/
 Ticket.addComment = function(id, comment, callback){
     Ticket.findOneAndUpdate(
         {id: id},
-        {$push: {'comments' : {comment: comment.comment, commentBy: comment.commentBy, commentDate: Date.now()}}},
+        {$push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}},
         {new: true},
         callback
     );
 };
 
+/*-------------------------------------------------------
+ DELETING A PARTICULAR COMMENT
+ PARAMS:
+ [id - id of ticket that has the comment]
+ [commentId - id of the comment]
+ [callback - callback function to be executed on successfully deleting comment]
+ -------------------------------------------------------*/
 Ticket.deleteComment = function(id,commentId, callback){
     Ticket.findOneAndUpdate(
-        {_id : id},
+        {_id : id, isDeletable: true},
         {$pull : {comments :{_id : commentId }}},
         {new: true},
         callback
     );
 };
 
+/*-------------------------------------------------------
+ GET TICKET DETAILS BY COMMENT ID
+ PARAMS:
+ [commentId - id of the comment]
+ [callback - callback function to be executed on successfully fetching fetching ticket by commentId]
+ -------------------------------------------------------*/
 Ticket.getTicketByCommentId = function(commentId, callback){
         Ticket.findOne({'comments._id' : commentId},
         callback

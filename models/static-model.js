@@ -19,6 +19,11 @@ var StaticSchema = mongoose.Schema({
 
 var Static = mongoose.model('static',StaticSchema);
 
+/*-------------------------------------------------------
+ GET ALL STATIC VALUES
+ PARAMS:
+ [callback - callback function to be executed on successfully fetching static values]
+ -------------------------------------------------------*/
 Static.getStaticValues = function(callback){
     Static.findOne({'name':'static'},callback);
 };

@@ -42,9 +42,9 @@ usersBl.getAllActiveUsers = function(req,res){
 
 usersBl.getUserByUsername = function(username){
     var deferred = q.defer();
-    User.getUserbyUsername(username,function(err, user){
-    if(err) deferred.reject(err);
-    else deferred.resolve(user);
+    User.getUserByUsername(username,function(err, user){
+        if(err) deferred.reject(err);
+        else deferred.resolve(user);
     });
     return deferred.promise;
 };

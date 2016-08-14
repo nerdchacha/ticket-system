@@ -111,11 +111,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <strong>{{comment.commentBy}}</strong> <span class="text-muted">commented on {{renderDate(comment.commentDate)}}</span>
-                        <button ng-if="ticket.currentUser === comment.commentBy" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
+                        <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
                     </div>
                     <div class="panel-body">
-                        <strong>{{comment.comment.title}}</strong>
-                        <div ng-repeat="text in comment.comment.text track by $index">{{text}}</div>
+                        <strong>{{comment.commentMessage.title}}</strong>
+                        <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}}</div>
                     </div><!-- /panel-body -->
                 </div><!-- /panel panel-default -->
             </div><!-- /col-sm-5 -->

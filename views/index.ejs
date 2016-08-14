@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>HelpDesk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link type="text/css" rel="stylesheet" href="/bower/bootstrap/dist/css/bootstrap.min.css" />
   <link type="text/css" rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css" />
   <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
-  <link type="text/css" rel="stylesheet" href="/stylesheets/style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
 </head>
 <body ng-app="ticketSystem" ng-controller="MainCtrl" ng-init="init()">
 <nav class="navbar navbar-default">
@@ -58,8 +59,6 @@
 </nav>
 <div class="container">
   <flash-message></flash-message>
-</div>
-<div class="container">
   <div ui-view=""></div>
 </div>
 <script src="/bower/jquery/dist/jquery.js"></script>
