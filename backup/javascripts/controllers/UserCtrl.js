@@ -83,7 +83,7 @@ angular.module('ticketSystem')
                     }
                     else{
                         Flash.create('success', 'User has been created successfully. You can now login.', 5000, {}, false);
-                        $state.go('users-login');
+                        $state.go('users-login.login');
                     }
                 })
                 .catch(function(res){
@@ -116,4 +116,11 @@ angular.module('ticketSystem')
                     Flash.create('danger', 'There was some error trying to set the username. Please try again after some time.', 5000, {}, false);
                 });
         }
+    })
+    .controller('MainLoginCtrl',function($rootScope, $scope, $state){
+        $scope.statename = $state.current.name;
+        $rootScope.$on('$stateChangeStart', 
+        function(event, toState, toParams, fromState, fromParams){ 
+            $scope.statename = toState.name;
+        })
     });

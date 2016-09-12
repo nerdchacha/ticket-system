@@ -1,4 +1,36 @@
-<div class="container">
+        <form>
+            <div class="register-row">
+                    <label>*First Name:</label>
+                    <input ng-model="newUser.firstname" class="form-control" placeholder="Enter first name" type="text"/>
+            </div>
+            <div class="register-row">
+                    <label>*Last Name:</label>
+                    <input ng-model="newUser.lastname" class="form-control" placeholder="Enter last name" type="text"/>
+            </div>
+            <div class="register-row">
+                    <label>*Emaid ID:</label>
+                    <input ng-model="newUser.email" class="form-control" placeholder="Enter email id" type="email"/>
+            </div>
+            <div class="register-row">
+                    <label>*Username:</label>
+                    <input ng-model="newUser.username" class="form-control" placeholder="Enter username" type="text"/>
+            </div>
+            <div class="register-row">
+                    <label>*Password:</label>
+                    <input ng-model="newUser.password" class="form-control" placeholder="Enter password" type="password"/>
+            </div>
+            <div class="register-row">
+                    <label>*Re-enter password:</label>
+                    <input ng-model="newUser.password2" class="form-control" placeholder="Re-enter password" type="password"/>
+            </div>
+            <div class="register-buttons">
+               <button class="success" ng-click="register()">Register</button>
+                <a class="danger" ui-sref="users-login.login">Cancel</a>
+            </div>
+        </form>
+
+
+<!-- <div class="container">
     <h2 class="page-header">Register User </h2>
     <form>
         <div class="row">
@@ -82,4 +114,4 @@
             </div>
         </div>
     </form>
-</div>
+</div> -->

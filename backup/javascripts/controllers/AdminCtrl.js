@@ -48,6 +48,9 @@ angular.module('ticketSystem')
             $state.go('admin-edit', {username: row.username});
         };
 
+        $scope.isActive = {};
+        $scope.isAdmin = {};
+
         //User details
         $scope.userDetails = {};
         $scope.userDetails.getUserDetails = function(){
@@ -66,12 +69,18 @@ angular.module('ticketSystem')
                         $scope.userDetails.isAdmin = false;
                     $scope.userDetails.isActive = res.data.user.isActive;
                     $scope.userDetails.email = res.data.user.email;
+                    $scope.isActive.key = "isActive";
+                    $scope.isActive.value = $scope.userDetails.isActive;
+                    $scope.isAdmin.key = "isAdmin";
+                    $scope.isAdmin.value = $scope.userDetails.isAdmin;
                 })
                 .catch(function(err){
                     Flash.create('danger', 'There was some error trying to fetch user details. Please try again after some time.', 5000, {}, false);
                 });
         };
         $scope.userDetails.update = function(){
+            $scope.userDetails.isAdmin = $scope.isAdmin.value;
+            $scope.userDetails.isActive = $scope.isActive.value;
             UserFactory.updateUserDetails($scope.userDetails.username,$scope.userDetails)
                 .then(function(res){
                     Flash.create('success', 'User details updated successfully', 5000, {}, false);
@@ -87,7 +96,6 @@ angular.module('ticketSystem')
             var id = $stateParams.id;
             UserFactory.resetPassword(id, $scope.resetPassword)
                 .then(function(res){
-                    console.log(res);
                     if(!res.data.errors){
                         //Password reset successfully
                         Flash.create('success', 'Password has been reset successfully', 5000, {}, false);

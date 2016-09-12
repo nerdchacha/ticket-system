@@ -1,143 +1,86 @@
-<h2 class="page-header"> Ticket Details</h2>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>
-            Ticket Id : {{ticket.id}} - {{ticket.title}}
-            <div class="pull-right">
-                <a ng-if="ticket.currentUser === ticket.createdBy || ticket.currentUser === ticket.assignee || !isRegularUser" title="edit()" class="btn btn-primary" ng-click="edit()"><i class="fa fa-pencil"></i></a>
-                <a title="add comment" class="btn btn-primary" ng-click="showCommentPanelFn()"><i class="fa fa-comment"></i></a>
-            </div>
-        </h4>
-    </div>
-    <div class="panel-body">
-        <table class="table table-bordered">
-            <tr>
-                <td><label>Title :</label></td>
-                <td colspan="3">{{ticket.title}}</td>
-            </tr>
-            <tr>
-                <td><label>Description :</label></td>
-                <td colspan="3"><span ng-bind-html="ticket.description"></span></td>
-            </tr>
-            <tr>
-                <td class="col-md-3"><label>ID :</label></td>
-                <td class="col-md-3">{{ticket.id}}</td>
-                <td class="col-md-3"><label>Status :</label></td>
-                <td class="col-md-3">{{ticket.status}}</td>
-            </tr>
-            <tr>
-                <td><label>Type :</label></td>
-                <td>{{ticket.type}}</td>
-                <td><label>Created By: </label></td>
-                <td>{{ticket.createdBy}}</td>
-            </tr>
-            <tr>
-                <td><label>Assignee :</label></td>
-                <td>{{ticket.assignee}}</td>
-                <td><label>Created Date: </label></td>
-                <td>{{ticket.createdDate}}</td>
-            </tr>
-        </table>
-<!--        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Title :</label>
-                </div>
-                <div class="col-md-9">
-                    <input disabled="disabled" placeholder="Title for the ticket" class="form-control" type="text" ng-model="ticket.title"/>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Description :</label>
-                </div>
-                <div class="col-md-9">
-                    <div ta-disabled="true" text-angular ta-toolbar="toolbarConfig" ta-placeholder="Enter a short description for the ticket" ng-model="ticket.description"  ta-text-editor-class="form-control texteditor-height"
-                         ta-html-editor-class="form-control texteditor-height"></div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Status :</label>
-                </div>
-                <div class="col-md-9">
-                    <select disabled="disabled" class="form-control" ng-model="ticket.status" ng-options="status.value as status.value for status in statuses"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Priority :</label>
-                </div>
-                <div class="col-md-9">
-                    <select disabled="disabled" class="form-control" ng-model="ticket.priority" ng-options="priority.value as priority.value for priority in priorities"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Assignee :</label>
-                </div>
-                <div class="col-md-9">
-                    <select disabled="disabled" class="form-control" ng-model="ticket.assignee" ng-options="user.username as user.username for user in users"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Type :</label>
-                </div>
-                <div class="col-md-9">
-                    <select disabled="disabled" class="form-control" ng-model="ticket.type" ng-options="type.value as type.value for type in types"></select>
-                </div>
-            </div>
-        </div>-->
-    </div>
-</div>
-<div ng-show="showCommentPanel" id="comment-panel" class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Add new comment</h4>
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <textarea class="form-control" ng-model="ticket.newComment" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" ng-click="addComment()">Add</button>
-            <button class="btn btn-danger" ng-click="hideCommentPanelFn()">Cancel</button>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Comments</h4>
-    </div>
-    <div class="panel-body" ng-repeat="comment in ticket.comments | reverse track by $index ">
-        <div class="row">
-            <div class="col-sm-2">
-                <div class="thumbnail">
-                    <img class="img-responsive user-photo" src="/images/avatar.png">
-                </div><!-- /thumbnail -->
-            </div><!-- /col-sm-1 -->
-            <div class="col-sm-10">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <strong>{{comment.commentBy}}</strong> <span class="text-muted">commented on {{renderDate(comment.commentDate)}}</span>
-                        <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
+<div class="container">   
+    <div ng-controller="CommentCtrl">
+        <h2 class="page-header"> Ticket Details</h2>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>
+                    Ticket Id : {{ticket.id}} - {{ticket.title}}
+                    <div class="pull-right">
+                        <div ng-include="'templates/partials/button-group-partial.html'"></div>
                     </div>
-                    <div class="panel-body">
-                        <strong>{{comment.commentMessage.title}}</strong>
-                        <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}} <br /></div>
-                    </div><!-- /panel-body -->
-                </div><!-- /panel panel-default -->
-            </div><!-- /col-sm-5 -->
+                </h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <td><label>Title :</label></td>
+                        <td colspan="3">{{ticket.title}}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Description :</label></td>
+                        <td colspan="3"><span ng-bind-html="ticket.description"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3"><label>ID :</label></td>
+                        <td class="col-md-3">{{ticket.id}}</td>
+                        <td class="col-md-3"><label>Status :</label></td>
+                        <td class="col-md-3">{{ticket.status}}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Type :</label></td>
+                        <td>{{ticket.type}}</td>
+                        <td><label>Created By: </label></td>
+                        <td>{{ticket.createdBy}}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Assignee :</label></td>
+                        <td>{{ticket.assignee}}</td>
+                        <td><label>Created Date: </label></td>
+                        <td>{{ticket.createdDate}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div ng-show="showCommentPanel" id="comment-panel" class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Add new comment</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <textarea class="form-control" ng-model="ticket.newComment" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" ng-click="addComment()">Add</button>
+                    <button class="btn btn-danger" ng-click="hideCommentPanelFn()">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div ng-include="'templates/partials/action/task-partial.html'"></div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Comments</h4>
+            </div>
+            <div class="panel-body" ng-repeat="comment in ticket.comments | reverse track by $index ">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="thumbnail">
+                            <img class="img-responsive user-photo" src="/images/avatar.png">
+                        </div><!-- /thumbnail -->
+                    </div><!-- /col-sm-1 -->
+                    <div class="col-sm-10">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>{{comment.commentBy}}</strong> <span class="text-muted">commented on {{renderDate(comment.commentDate)}}</span>
+                                <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
+                            </div>
+                            <div class="panel-body">
+                                <strong>{{comment.commentMessage.title}}</strong>
+                                <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}} <br /></div>
+                            </div><!-- /panel-body -->
+                        </div><!-- /panel panel-default -->
+                    </div><!-- /col-sm-5 -->
+                </div>
+            </div>
         </div>
     </div>
 </div>

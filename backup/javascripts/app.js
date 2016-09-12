@@ -16,7 +16,7 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                     //Clear user data from local storage in case it is set
                     Authentication.clearUser();
                     //Redirect to login page in case user is unauthorized
-                    $injector.get('$state').go('users-login');
+                    $injector.get('$state').go('users-login.login');
                 }
                 //In case user if forbidden to access part of the web app, redirect to home page
                 if(rejection.status === 403){
@@ -27,7 +27,7 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
         }
     })
     .config(function($httpProvider,$stateProvider,$urlRouterProvider){
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('/ticket/my-tickets');
         $stateProvider
             .state('ticket', {
                 url: '/ticket',
@@ -65,10 +65,20 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                 templateUrl: 'templates/tickets/edit-ticket.html'
             })
             .state('users-login',{
-                url : '/users/login',
-                controller: 'LoginCtrl',
-                templateUrl: 'templates/users/login.html'
+                url : '/users',
+                controller: 'MainLoginCtrl',
+                templateUrl: 'templates/users/user-login.html'
             })
+                .state('users-login.login',{
+                    url : '/login',
+                    controller: 'LoginCtrl',
+                    templateUrl: 'templates/users/login.html'
+                })
+                .state('users-login.register',{
+                    url : '/register',
+                    controller: 'RegisterCtrl',
+                    templateUrl: 'templates/users/register.html'
+                })
             .state('users-profile',{
                 url : '/users/profile',
                 controller: 'ProfileCtrl',
@@ -99,53 +109,6 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                 controller: 'ManageUsersCtrl',
                 templateUrl: 'templates/admin/reset-password.html'
             });
-
-        /*$routeProvider
-            .when('/', {
-                controller: 'TicketsCtrl',
-                templateUrl: 'templates/tickets/tickets.html'
-            })
-            .when('/ticket/new',{
-                controller: 'NewTicketCtrl',
-                templateUrl: 'templates/tickets/new-ticket.html'
-            })
-            .when('/ticket/view/:id',{
-                controller: 'ViewTicketCtrl',
-                templateUrl: 'templates/tickets/view-ticket.html'
-            })
-            .when('/ticket/edit/:id',{
-                controller: 'EditTicketCtrl',
-                templateUrl: 'templates/tickets/edit-ticket.html'
-            })
-            .when('/users/login',{
-                controller: 'LoginCtrl',
-                templateUrl: 'templates/users/login.html'
-            })
-            .when('/users/profile',{
-                controller: 'ProfileCtrl',
-                templateUrl: 'templates/users/profile.html'
-            })
-            .when('/users/register',{
-                controller: 'RegisterCtrl',
-                templateUrl: 'templates/users/register.html'
-            })
-            .when('/admin/user-management',{
-                controller: 'ManageUsersCtrl',
-                templateUrl: 'templates/admin/manage-users.html'
-            })
-            .when('/auth/google/:id/:email',{
-                controller: 'SetUserCtrl',
-                templateUrl: 'templates/users/set-username.html'
-            })
-            .when('/admin/edit/:username',{
-                controller: 'ManageUsersCtrl',
-                templateUrl: 'templates/admin/edit-user.html'
-            })
-            .when('/admin/reset-password/:id',{
-                controller: 'ManageUsersCtrl',
-                templateUrl: 'templates/admin/reset-password.html'
-            })
-            .otherwise({redirectTo : '/'});*/
 
         $httpProvider.interceptors.push('authInterceptor');
     });

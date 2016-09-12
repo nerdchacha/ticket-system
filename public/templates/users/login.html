@@ -1,77 +1,11 @@
-<div class="container">
-    <div class="login">
-        <div class="heading">Login</div>
-        <div ng-show="error" class="error-alert">{{message}}</div>
-        <input name="username" placeholder="Username" ng-model="username" type="text"/>
-        <input name="password" placeholder="Password" ng-model="password" type="password"/>
-        <div class="remember-me">
-            <input type="checkbox" ng-model="remember">Remember me
-        </div>
-        <button class="success" ng-click="login()">Login</button>
-        <button class="danger" ng-click="googleLogin()">Login using Google+</button>
-        <a href="#">Forgot password</a>
-        <a href="#users/register">Register</a>
-    </div>
+<div ng-show="error" class="error-alert">{{message}}</div>
+<input name="username" placeholder="Username" ng-model="username" type="text"/>
+<input name="password" placeholder="Password" ng-model="password" type="password"/>
+<div class="remember-me">
+    <input type="checkbox" ng-model="remember">Remember me
 </div>
-
-
-<!--
-<div class="container">
-    &lt;!&ndash;<h2 class="page-header">Login </h2>&ndash;&gt;
-    <div class="login">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Please sign in</h4>
-            </div>
-            <div class="panel-body">
-                <div ng-show="error" class="alert alert-danger">{{message}}</div>
-                <form>
-                    <div class="login-thumbnail">
-                        <img class="img-responsive user-photo" src="/images/avatar.png">
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <input name="username" class="form-control" placeholder="Enter username" ng-model="username" type="text"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <input name="password" class="form-control" placeholder="Enter password" ng-model="password" type="password"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="checkbox-inline">
-                                <input type="checkbox" ng-model="remember">Remember me
-                            </div>
-                        </div>
-                    </div>
-                    <div class="button-panel login">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <button class="btn btn-lg btn-success" ng-click="login()">Login</button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <button class="btn btn-lg btn-danger" ng-click="googleLogin()">Login using Google+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a href="#">Forgot password</a>
-                        </div>
-                        <div class="col-sm-12">
-                            <a href="#users/register">Register</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>-->
+<button class="success" ng-click="login()">Login</button>
+<button class="danger" ng-click="googleLogin()">Login using Google+</button>
+<div class="links">
+    <a href="#">Forgot password</a>
+</div>

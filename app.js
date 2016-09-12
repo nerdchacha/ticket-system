@@ -1,28 +1,29 @@
-var express = require('express');
-    path = require('path'),
-    favicon = require('serve-favicon'),
-    logger = require('morgan'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser'),
-    expressValidator = require('express-validator'),
-    flash = require('connect-flash'),
-    session = require('express-session'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
-    mongo = require('mongodb'),
-    mongoose = require('mongoose'),
-    authenticate = require('./middleware/check-authenticated.js'),
-    checkRole = require('./middleware/checkRole.js'),
-    User = require('./models/user-model.js');
+var express             = require('express');
+    path                = require('path'),
+    favicon             = require('serve-favicon'),
+    logger              = require('morgan'),
+    cookieParser        = require('cookie-parser'),
+    bodyParser          = require('body-parser'),
+    expressValidator    = require('express-validator'),
+    flash               = require('connect-flash'),
+    session             = require('express-session'),
+    passport            = require('passport'),
+    LocalStrategy       = require('passport-local').Strategy;
+    mongo               = require('mongodb'),
+    mongoose            = require('mongoose'),
+    authenticate        = require('./middleware/check-authenticated.js'),
+    checkRole           = require('./middleware/checkRole.js'),
+    User                = require('./models/user-model.js');
 
 mongoose.connect('mongodb://localhost/ticket-system');
 var db = mongoose.connection;
 
-var indexRoutes = require('./routes/index-router');
-var accountsRoutes = require('./routes/account-router');
-var ticketsRoutes = require('./routes/tickets-router');
-var usersRoutes = require('./routes/users-router');
-var adminRoutes = require('./routes/admin-routes/admin-users-router');
+var indexRoutes     = require('./routes/index-router'),
+    accountsRoutes  = require('./routes/account-router'),
+    ticketsRoutes   = require('./routes/tickets-router'),
+    usersRoutes     = require('./routes/users-router'),
+    staticRouter    = require('./routes/static-data-router'),
+    adminRoutes     = require('./routes/admin-routes/admin-users-router');
 
 var app = express();
 
@@ -81,6 +82,7 @@ app.use(authenticate.isAuthenticated);
 app.use('/users',usersRoutes);
 app.use('/tickets',ticketsRoutes);
 app.use('/', indexRoutes);
+app.use('/static', staticRouter);
 //Check if user is admin before executing route login
 app.use(checkRole.isAdmin);
 app.use('/admin', adminRoutes);

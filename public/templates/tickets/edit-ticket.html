@@ -1,124 +1,115 @@
-<h2 class="page-header"> Ticket Details</h2>
-<div class="panel panel-default">
-    <div class="panel-heading clearfix">
-        <h4>
-            Ticket Id : {{ticket.id}} - {{ticket.title}}
-            <div class="pull-right">
-                <a title="add comment" class="btn btn-primary" ng-click="showCommentPanelFn()"><i class="fa fa-comment"></i></a>
-            </div>
-        </h4>
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Title :</label>
-                </div>
-                <div class="col-md-9">
-                    <input placeholder="Title for the ticket" class="form-control" type="text" ng-model="ticket.title"/>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Description :</label>
-                </div>
-                <div class="col-md-9">
-                    <div text-angular ta-toolbar="toolbarConfig" ta-placeholder="Enter a short description for the ticket" ng-model="ticket.description"  ta-text-editor-class="form-control texteditor-height"
-                         ta-html-editor-class="form-control texteditor-height"></div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Status :</label>
-                </div>
-                <div class="col-md-9">
-                    <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.status" ng-options="status as status for status in statuses"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Priority :</label>
-                </div>
-                <div class="col-md-9">
-                    <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.priority" ng-options="priority.value as priority.value for priority in priorities"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Assignee :</label>
-                </div>
-                <div class="col-md-9">
-                    <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.assignee" ng-options="user.username as user.username for user in users"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="pull-right">Type :</label>
-                </div>
-                <div class="col-md-9">
-                    <select class="form-control" ng-model="ticket.type" ng-options="type.value as type.value for type in types"></select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-9">
-                    <button class="btn btn-success" ng-click="update()">Update</button>
-                    <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div ng-show="showCommentPanel" id="comment-panel" class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Add new comment</h4>
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <textarea class="form-control" ng-model="ticket.newComment" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" ng-click="addComment()">Add</button>
-            <button class="btn btn-danger" ng-click="hideCommentPanelFn()">Cancel</button>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Comments</h4>
-    </div>
-    <div class="panel-body" ng-repeat="comment in ticket.comments | reverse track by $index">
-        <div class="row">
-            <div class="col-sm-2">
-                <div class="thumbnail">
-                    <img class="img-responsive user-photo" src="/images/avatar.png">
-                </div><!-- /thumbnail -->
-            </div><!-- /col-sm-1 -->
-            <div class="col-sm-10">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <strong>{{comment.commentBy}}</strong> <span class="text-muted">commented on {{renderDate(comment.commentDate)}}</span>
-                        <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
+<div class="container">
+    <div>
+        <h2 class="page-header"> Ticket Details</h2>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h4>
+                    Ticket Id : {{ticket.id}} - {{ticket.title}}
+                    <div class="pull-right">
+                        <a title="add comment" class="btn btn-primary" ng-click="comment()"><i class="fa fa-comment"></i></a>
                     </div>
-                    <div class="panel-body">
-                        <strong>{{comment.commentMessage.title}}</strong>
-                        <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}}</div>
-                    </div><!-- /panel-body -->
-                </div><!-- /panel panel-default -->
-            </div><!-- /col-sm-5 -->
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Title :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <input placeholder="Title for the ticket" class="form-control" type="text" ng-model="ticket.title"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Description :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div text-angular ta-toolbar="toolbarConfig" ta-placeholder="Enter a short description for the ticket" ng-model="ticket.description"  ta-text-editor-class="form-control texteditor-height"
+                                 ta-html-editor-class="form-control texteditor-height"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Status :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.status" ng-options="status as status for status in statuses"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Priority :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.priority" ng-options="priority.value as priority.value for priority in priorities"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Assignee :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select ng-disabled="isRegularUser" class="form-control" ng-model="ticket.assignee" ng-options="user.username as user.username for user in users"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="pull-right">Type :</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select class="form-control" ng-model="ticket.type" ng-options="type.value as type.value for type in types"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-9">
+                            <button class="btn btn-success" ng-click="update()">Update</button>
+                            <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-include="taskpartial"></div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Comments</h4>
+            </div>
+            <div class="panel-body" ng-repeat="comment in ticket.comments | reverse track by $index">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="thumbnail">
+                            <img class="img-responsive user-photo" src="/images/avatar.png">
+                        </div><!-- /thumbnail -->
+                    </div><!-- /col-sm-1 -->
+                    <div class="col-sm-10">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>{{comment.commentBy}}</strong> <span class="text-muted">commented on {{renderDate(comment.commentDate)}}</span>
+                                <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close" title="delete comment" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span></button>
+                            </div>
+                            <div class="panel-body">
+                                <strong>{{comment.commentMessage.title}}</strong>
+                                <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}}</div>
+                            </div><!-- /panel-body -->
+                        </div><!-- /panel panel-default -->
+                    </div><!-- /col-sm-5 -->
+                </div>
+            </div>
         </div>
     </div>
 </div>

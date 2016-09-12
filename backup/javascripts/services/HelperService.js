@@ -4,6 +4,8 @@
 angular.module('ticketSystem')
     .factory('HelperFactory',function(){
         var fact = {};
+        var users;
+                
         fact.createErrorMessage = function(errors){
             var errorMessage = '';
             for(var i = 0; i < errors.length; i++){
@@ -11,5 +13,14 @@ angular.module('ticketSystem')
             }
             return errorMessage;
         };
+
+        fact.setAllUsers = function(users){
+            this.users = users;
+        };
+
+        fact.getAllUsers = function(){
+            return this.users;
+        };
+
         return fact;
     });

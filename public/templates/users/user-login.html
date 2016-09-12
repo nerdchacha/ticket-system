@@ -1,0 +1,11 @@
+<div class="login-container">
+    <div class="login">
+        <div class="heading">
+            <ul>
+                <li ng-class="{ 'is-active' : statename === 'users-login.login' }"><a ui-sref="users-login.login">Login</a></li>
+                <li ng-class="{ 'is-active' : statename === 'users-login.register' }" ><a ui-sref="users-login.register">Register</a></li>
+            </ul>
+        </div>
+        <div ui-view=""></div>
+    </div>
+</div>

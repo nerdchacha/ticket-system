@@ -1,0 +1,14 @@
+<div ng-controller="TaskCtrl" ng-show="task.showTaskPanel" id="task-panel" class="panel panel-default">
+    <div class="panel-heading">
+        <h4>{{task.title}}</h4>
+    </div>
+    <div class="panel-body">
+        <div ng-show="task.showMainPanel">
+            <div ng-include="task.name"></div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" ng-click="saveTask()">Save</button>
+            <button class="btn btn-danger" ng-click="cancelTask()">Cancel</button>
+        </div>
+    </div>
+</div>

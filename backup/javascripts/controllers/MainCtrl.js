@@ -33,7 +33,7 @@ angular.module('ticketSystem')
                 .then(function(){
                     //Remove user details on logout
                     Authentication.clearUser();
-                    $state.go('users-login');
+                    $state.go('users-login.login');
                 });
         };
 

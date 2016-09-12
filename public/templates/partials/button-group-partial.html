@@ -1,0 +1,26 @@
+<div class="btn-group" role="group" ng-controller="ButtonGroupCtrl">
+	<button ng-if="buttongroup.showAssign" ng-click="buttongroup.assign()" title="change assignee" type="button" class="btn btn-primary">
+		<i class="fa fa-user-plus"></i>
+	</button>
+	<button ng-if="buttongroup.showComment" ng-click="buttongroup.comment()" title="comment" type="button" class="btn btn-primary">
+		<i class="fa fa-comment"></i>
+	</button>
+	<button ng-if="buttongroup.showClose" ng-click="buttongroup.close()" title="close ticket" type="button" class="btn btn-primary">
+		<i class="fa fa-esclamation-circle"></i>
+	</button>
+	<button ng-if="buttongroup.showReopen" ng-click="buttongroup.reopen()" title="reopen ticket" type="button" class="btn btn-primary">
+		<i class="fa fa-repeat"></i>
+	</button>
+	<button ng-if="buttongroup.showUserResponse" ng-click="buttongroup.userResponse()" title="change status to awaiting user response" type="button" class="btn btn-primary">
+		<i class="fa fa-hourglass-end"></i>
+	</button>
+	<button ng-if="buttongroup.showAcknowledge" ng-click="buttongroup.acknowledge()" title="change status to acknowledged" type="button" class="btn btn-primary">
+		<i class="fa fa-tag"></i>
+	</button>
+	<button ng-if="buttongroup.showchangeStatus" ng-click="buttongroup.changeStatus()" title="change status" type="button" class="btn btn-primary">
+		<i class="fa fa-exchange"></i>
+	</button>
+  <!-- <button ng-if="buttongroup.showEdit" type="button" class="btn btn-primary">
+  	<i class="fa fa-pencil"></i>
+  </button> -->
+</div>

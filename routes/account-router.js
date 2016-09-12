@@ -117,12 +117,10 @@ router.post('/register',function(req,res,next){
 //POST the login form
 router.post('/login', function(req, res, next) {
         passport.authenticate('local', function(err, user, info){
-            console.log('auth');
             //Set cookie age
             if (req.body.remember) {
                 req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // Cookie expires after 30 days
             } else {
-                req.session.cookie.expires = false;
                 req.session.cookie.maxAge = 1000 * 60 * 30; //Cookie expired after 30 minutes
             }
             //Error occurred while login

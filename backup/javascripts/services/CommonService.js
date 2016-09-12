@@ -4,9 +4,24 @@
 angular.module('ticketSystem')
     .factory('CommonFactory',function($http){
         var factory = {};
+
         factory.getInitialStaticData = function(){
             return $http.get('tickets/static-data');
+        };        
+
+        return factory;
+    })
+    .factory('TaskFactory', function(){
+        var taskName;
+        var factory = {};
+        factory.setTask = function(name){
+            taskName = name;
         };
+
+        factory.getTask = function(){
+            return taskName;
+        };
+
         return factory;
     })
     .filter('reverse',function(){
