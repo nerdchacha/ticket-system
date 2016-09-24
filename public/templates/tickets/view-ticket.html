@@ -1,13 +1,17 @@
 <div class="container">   
-    <div ng-controller="CommentCtrl">
-        <h2 class="page-header"> Ticket Details</h2>
+    <div>
+        <h2 class="page-header clearfix"> Ticket Details
+            <div class="pull-right">
+                <button ng-if="showEdit" type="button" ng-click="edit()" class="btn btn-default">
+                    <i class="fa fa-pencil"></i>
+                </button>
+                <span ng-include="'templates/partials/button-group-partial.html'"></span>
+            </div>  
+        </h2>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4>
                     Ticket Id : {{ticket.id}} - {{ticket.title}}
-                    <div class="pull-right">
-                        <div ng-include="'templates/partials/button-group-partial.html'"></div>
-                    </div>
                 </h4>
             </div>
             <div class="panel-body">
@@ -55,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <div ng-include="'templates/partials/action/task-partial.html'"></div>
+        <div ng-include="'templates/partials/action/action-partial.html'"></div>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4>Comments</h4>

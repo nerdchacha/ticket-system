@@ -30,8 +30,9 @@ var input = {
 				'src/js/services/TicketsService.js',
 				'src/js/services/CommonService.js',
 				'src/js/services/UsersService.js',
-				'src/js/services/HelperService.js',
 				'src/js/services/Authentication.js',
+				'src/js/services/HelperService.js',
+				'src/js/services/ActionService.js',
 				'src/js/controllers/**/*.js'
 				// 'src/js/controllers/Ticket/TicketsCtrl.js',
 				// 'src/js/controllers/Ticket/NewTicketCtrl.js',

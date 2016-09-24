@@ -213,8 +213,6 @@ router.delete('/deleteComment/:id', function(req,res,next){
         })
         .then(function(response){
             //user cannot delete comment
-            console.log('can delete');
-            console.log(response);
             if(!response.canDelete)
                 res.json({errors: [{error : response.error}]});
             //user can delete comment
@@ -223,8 +221,6 @@ router.delete('/deleteComment/:id', function(req,res,next){
             return ticketsBl.deleteComment(ticketId,commentId)
         })
         .then(function(ticket){
-            console.log('deleted');
-            console.log(ticket);
 
             //Comment deleted successfully
             res.json(ticket);
@@ -237,4 +233,94 @@ router.delete('/deleteComment/:id', function(req,res,next){
         });
 });
 
+
+//Change assignee for a ticket
+router.post('/assign/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketAssign(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var assignee = req.body.assignee;
+        var comment = req.body.comment;
+        return ticketsBl.assignTicket(req.user.username, id, assignee, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    })
+});
+
+//Change status for a ticket
+router.post('/change-status/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketChangeStatus(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var status = req.body.status;
+        var comment = req.body.comment;
+        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    })
+});
+
+//Change status for a ticket to awaiting users response
+router.post('/awaiting-user-response/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketAddComment(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var status = 'Awaiting User Response';
+        var comment = req.body.comment;
+        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    });
+});
+
+//Change status for a ticket to awaiting users response
+router.post('/close/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketAddComment(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var status = 'Closed';
+        var comment = req.body.comment;
+        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    });
+});
+
+//Change status for a ticket to awaiting users response
+router.post('/re-open/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketAddComment(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var status = 'Re-Open';
+        var comment = req.body.comment;
+        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    });
+});
 module.exports = router;

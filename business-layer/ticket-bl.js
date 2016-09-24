@@ -244,4 +244,46 @@ ticket.deleteComment = function(id, commentId){
     return deferred.promise;
 };
 
+ticket.assignTicket = function(username ,id, newAssignee, userComment){
+    var deferred = q.defer();
+    Ticket.getTicketById(id, function(err, oldTicket){
+        if(err) deferred.reject(err);
+        var oldAssignee = oldTicket.assignee;
+        var comment = {};
+        comment.commentDate = Date.now();
+        comment.commentBy = username;
+        comment.commentMessage = {};
+        comment.commentMessage.title = "Changes";
+        comment.commentMessage.message = ['Assignee changed from "' + oldAssignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
+        comment.isDeletable = false;       
+        Ticket.assignTicket(id, newAssignee, comment, function(err, newTicket){
+            if(err) promise.reject(err);
+            deferred.resolve(newTicket);
+        });
+    });
+    return deferred.promise;
+};
+
+ticket.changeStatus = function(username ,id, newStatus, userComment){
+    var deferred = q.defer();
+    Ticket.getTicketById(id, function(err, oldTicket){
+        if(err) deferred.reject(err);
+        var oldStatus = oldTicket.status;
+        var comment = {};
+        comment.commentDate = Date.now();
+        comment.commentBy = username;
+        comment.commentMessage = {};
+        comment.commentMessage.title = "Changes";
+        comment.commentMessage.message = ['Status changed from "' + oldStatus + '" to "' + newStatus + '"', 'Comment : "' + userComment + '"'];
+        comment.isDeletable = false;       
+        Ticket.changeStatus(id, newStatus, comment, function(err, newTicket){
+            if(err) promise.reject(err);
+            deferred.resolve(newTicket);
+        });
+    });
+    
+    return deferred.promise;
+};
+
+
 module.exports = ticket;

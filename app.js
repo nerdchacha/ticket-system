@@ -18,12 +18,12 @@ var express             = require('express');
 mongoose.connect('mongodb://localhost/ticket-system');
 var db = mongoose.connection;
 
-var indexRoutes     = require('./routes/index-router'),
-    accountsRoutes  = require('./routes/account-router'),
-    ticketsRoutes   = require('./routes/tickets-router'),
-    usersRoutes     = require('./routes/users-router'),
-    staticRouter    = require('./routes/static-data-router'),
-    adminRoutes     = require('./routes/admin-routes/admin-users-router');
+var indexRoutes         = require('./routes/index-router'),
+    accountsRoutes      = require('./routes/account-router'),
+    ticketsRoutes       = require('./routes/tickets-router'),
+    usersRoutes         = require('./routes/users-router'),
+    staticRouter        = require('./routes/static-data-router'),
+    adminRoutes         = require('./routes/admin-routes/admin-users-router');
 
 var app = express();
 

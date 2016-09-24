@@ -1,22 +1,51 @@
 angular.module('ticketSystem')
-    .controller('ButtonGroupCtrl',['$scope','TaskFactory',
-    	function($scope,TaskFactory){
+    .controller('ButtonGroupCtrl',['$scope','ActionFactory',
+    	function($scope,ActionFactory){
     		$scope.buttongroup = {};
-    		$scope.buttongroup.showAssign = true;
-    		$scope.buttongroup.showComment = true;
-    		$scope.buttongroup.showEdit = true;
-            $scope.buttongroup.showchangeStatus = true;
+
+            $scope.$watch('ticket.status', function(newVal){
+                if(newVal){
+                    ActionFactory.getAllowedButtons(newVal)
+                        .then(function(res){
+                            //Get possible actio buttons from server and set the status
+                            $scope.buttongroup.showAssign = res.assign;
+                            $scope.buttongroup.showComment = res.comment;
+                            $scope.buttongroup.showchangeStatus = res.changeStatus;
+                            $scope.buttongroup.showReopen = res.reopen;
+                            $scope.buttongroup.showClose = res.close;
+                            $scope.buttongroup.showAcknowledge = res.acknowledge;
+                            $scope.buttongroup.showAwaitingUsersResponse = res.awaitingUserResponse;
+                        });
+                }
+            });
+    		
 
     		$scope.buttongroup.comment = function(){
-				TaskFactory.setTask('comment');
+				ActionFactory.setTask('comment');
     		}
 
     		$scope.buttongroup.assign = function(){
-    			TaskFactory.setTask('assign');	
+    			ActionFactory.setTask('assign');	
     		}	
 
             $scope.buttongroup.changeStatus = function(){
-                TaskFactory.setTask('changestatus');  
+                ActionFactory.setTask('changestatus');  
+            }
+
+            $scope.buttongroup.close = function(){
+                ActionFactory.setTask('close');  
+            }
+
+            $scope.buttongroup.reopen = function(){
+                ActionFactory.setTask('reopen');  
+            }
+
+            $scope.buttongroup.acknowledge = function(){
+                ActionFactory.setTask('acknowledge');  
+            }
+
+            $scope.buttongroup.awaitingusersresponse = function(){
+                ActionFactory.setTask('awaitingusersresponse');  
             }
 
     	}]);

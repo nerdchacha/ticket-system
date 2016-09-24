@@ -2,8 +2,8 @@
  * Created by dell on 7/27/2016.
  */
  angular.module('ticketSystem')
-    .controller('EditTicketCtrl',['$scope','$stateParams','$state','TicketFactory','Flash','HelperFactory','Authentication','TaskFactory',
-        function($scope, $stateParams, $state, TicketFactory, Flash, HelperFactory,Authentication, TaskFactory){
+    .controller('EditTicketCtrl',['$scope','$stateParams','$state','TicketFactory','Flash','HelperFactory','Authentication',
+        function($scope, $stateParams, $state, TicketFactory, Flash, HelperFactory,Authentication){
             $scope.toolbarConfig = [
                 ['h1','p', 'pre', 'quote'],
                 ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -60,8 +60,5 @@
                         Flash.create('danger', "An error occurred while trying to update ticket details. Please try again later.", 5000, {}, false);
                     });
             };
-
-            //Task panel related objects
-            $scope.taskpartial = 'templates/partials/task-partial.html';
             
         }]);

@@ -233,4 +233,36 @@ validator.validateResetPassword = function(req,res){
     return deferred.promise;
 };
 
+validator.validateTicketAssign = function(req,res){
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'ticket id is require').notEmpty();
+        req.checkBody('assignee' ,'assignee is require').notEmpty();
+        req.checkBody('comment' ,'comment is require').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;;
+}
+
+validator.validateTicketChangeStatus = function(req,res){
+    var deferred = q.defer();
+    //Make task async
+    process.nextTick(function(){
+        req.checkParams('id' ,'ticket id is require').notEmpty();
+        req.checkBody('status' ,'status is require').notEmpty();
+        req.checkBody('comment' ,'comment is require').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
+}
+
 module.exports = validator;

@@ -175,5 +175,43 @@ Ticket.getTicketByCommentId = function(commentId, callback){
     );
 };
 
+/*-------------------------------------------------------
+ ASSIGN TICKET TO NEW ASSIGNEE
+ PARAMS:
+ [id - id of the ticket
+ assignee - username of the new assignee
+ comment - comment added by user]
+ -------------------------------------------------------*/
+ Ticket.assignTicket = function(id, assignee, comment, callback){
+        Ticket.findOneAndUpdate(
+            {id: id},
+            {
+                $set: { assignee: assignee }, 
+                $push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
+            },
+            {new : true},
+            callback
+    );
+};
+
+/*-------------------------------------------------------
+ ASSIGN TICKET TO NEW ASSIGNEE
+ PARAMS:
+ [id - id of the ticket
+ status - new status
+ comment - comment added by user]
+ -------------------------------------------------------*/
+ Ticket.changeStatus = function(id, status, comment, callback){
+        Ticket.findOneAndUpdate(
+            {id: id},
+            {
+                $set: { status: status }, 
+                $push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
+            },
+            {new : true},
+            callback
+    );
+};
+
 module.exports = Ticket;
 

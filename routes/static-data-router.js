@@ -34,4 +34,43 @@ router.get('/allowed-status/:status',function(req,res){
 	})
 });
 
+router.get('/action-buttons/:status',function(req,res,next){
+    validator.validateGetTicketData(req,res)
+    .then(function(){
+        return staticBl.getInitialStaticData();
+    })
+    .then(function(data){
+        var currentStatus = req.params.status;
+        var allowedStatusList = data.values.find(function (value) {
+            return value.name === 'allowed state';
+        });
+        var allowedStatus = allowedStatusList.values.find(function(value){
+            return value.status === currentStatus;
+        });
+        var actionButtons = {};
+        actionButtons.comment = true;
+        if(currentStatus === 'Closed'){
+            actionButtons.reopen = true;
+        }
+        else{
+            actionButtons.changeStatus = true;
+            actionButtons.assign = true;
+            if(currentStatus === 'New'){
+                actionButtons.acknowledge = true;
+            }
+            if(currentStatus === 'Resolved'){
+                actionButtons.close = true;
+            }
+            if(allowedStatus.allowed.indexOf('Awaiting User Response') > -1){
+                actionButtons.awaitingUserResponse = true;
+            }
+        }
+        res.json({errors: null, actionButtons: actionButtons});
+    })
+    .catch(function(err){
+        console.log(err);
+        res.json({errors: err, actionButtons: null});
+    })
+});
+
 module.exports = router;
