@@ -323,4 +323,24 @@ router.post('/re-open/:id', function(req,res,next){
         res.json({errors: errors});
     });
 });
+
+
+//Change status for a ticket to awaiting users response
+router.post('/acknowledge/:id', function(req,res,next){
+    //Check if http request has mandatory parameters
+    validator.validateTicketAddComment(req,res)
+    .then(function(){
+        var id = req.params.id;
+        var status = 'Open';
+        var comment = req.body.comment;
+        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+    })
+    .then(function(ticket){
+        res.json(ticket);
+    })
+    .catch(function(err){
+        res.json({errors: errors});
+    });
+});
+
 module.exports = router;

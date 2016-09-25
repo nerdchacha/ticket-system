@@ -3,7 +3,9 @@ angular.module('ticketSystem')
     	function($scope, ActionFactory,HelperFactory) {
 			$scope.getTask = ActionFactory.getTask;
 			$scope.task = {};
-			
+			$scope.task.showTaskPanel = false;
+            $scope.task.showMainPanel = false;
+
 			$scope.setSaveFn = function(callback){
 				$scope.saveTask = callback;
 			}
@@ -100,12 +102,13 @@ angular.module('ticketSystem')
     		$scope.setSaveBtnName('Assign Ticket');
     	}])
     .controller('ChangeStatusActionCtrl',['$scope','ActionFactory','YgNotify',
-    	function($scope,ActionFactory, YgNotify){  
+    	function($scope,ActionFactory, YgNotify){
             var currentStatus = $scope.ticket.status;
             ActionFactory.getAllowedStatus(currentStatus)
             .then(function(res){
+                console.log(res.data);
                 $scope.allowedStatus = res.data.status.allowed;
-                $scope.newStatus  = $scope.allowedStatus[0]
+                $scope.newStatus  = $scope.allowedStatus[0];
             });  
 			$scope.setSaveFn(
     			function(){
@@ -244,3 +247,31 @@ angular.module('ticketSystem')
 
 			$scope.setSaveBtnName('Change Status');
     	}])
+    .controller('AcknowledgeActionCtrl',['$scope','ActionFactory','YgNotify',
+        function($scope,ActionFactory,YgNotify){            
+            $scope.setSaveFn(
+                function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+                    
+                    ActionFactory.acknowledgeTicket($scope.ticket.id, $scope.task.comment)
+                    .then(function(res){
+                        //Update comments and status on view
+                        $scope.ticket.comments = res.data.comments;
+                        $scope.ticket.status = res.data.status;
+                        YgNotify.alert('success', 'The status has been changed successfully', 5000);
+                        //Close panel
+                        $scope.cancelTask();
+                    })
+                    .catch(function(err){
+                        YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.cancelTask();    
+                    });
+                });
+
+            $scope.setSaveBtnName('Acknowledge Ticket');
+        }])

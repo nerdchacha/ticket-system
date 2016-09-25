@@ -480,6 +480,7 @@ body {
   border-radius: 5px 0 0 5px;
   margin: 10px 0;
   transform: translateX(100%);
+  color: #EEE;
 }
 
 .yg-notification .yg-message.in{
@@ -491,15 +492,15 @@ body {
 }
 
 .yg-notification .success{
-  background-color: rgba(102,179,78, 0.6);
+  background-color: rgba(102,179,78, 0.9);
 }
 
 .yg-notification .danger{
-  background-color: rgba(249,70,65,0.6);
+  background-color: rgba(249,70,65,0.9);
 }
 
 .yg-notification .warning{
-  background-color: rgba(252,192,77, 0.6);
+  background-color: rgba(252,192,77, 0.9);
 }
 
 @keyframes slide-in{

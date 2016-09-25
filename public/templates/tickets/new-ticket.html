@@ -36,7 +36,7 @@
                             <label class="pull-right">Type<span class="font-weight-bold">*</span> :</label>
                         </div>
                         <div class="col-md-9" ng-class="newTicketForm.type.$invalid && newTicketForm.type.$touched ? 'has-error' : ''">
-                            <select class="form-control" ng-model="newTicket.type" ng-options="type.value as type.value for type in types" required></select>
+                            <select class="form-control" ng-model="newTicket.type" ng-options="type.value as type.value for type in newTicket.types" required></select>
                             <div ng-show="newTicketForm.type.$invalid && newTicketForm.type.$touched" class="help-block"><p class="text-danger">Type is required</p></div>
                         </div>
                     </div>

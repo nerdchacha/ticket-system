@@ -56,5 +56,8 @@ angular.module('ticketSystem')
             factory.deleteComment = function(ticket,comment){
                 return $http.delete('tickets/deleteComment/' + ticket._id + '?commentId=' + comment._id);
             };
+            factory.acknowledgeTicket = function(id,comment){
+                return $http.post('tickets/acknowledge/' + id, {comment: comment});
+            };
             return factory;
         }]);

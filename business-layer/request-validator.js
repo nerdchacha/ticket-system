@@ -246,7 +246,7 @@ validator.validateTicketAssign = function(req,res){
         else deferred.resolve();
     });
 
-    return deferred.promise;;
+    return deferred.promise;
 }
 
 validator.validateTicketChangeStatus = function(req,res){

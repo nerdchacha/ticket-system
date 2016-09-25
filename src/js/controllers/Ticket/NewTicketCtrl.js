@@ -6,12 +6,8 @@ angular.module('ticketSystem')
         function($scope,$state,TicketFactory,YgNotify,CommonFactory,HelperFactory){
             CommonFactory.getInitialStaticData()
                 .then(function(res){
-                    // $scope.priorities = res.data.priorities.values;
-                    $scope.types = res.data.types.values;
-                    // $scope.users = res.data.users;
-                    // $scope.newTicket.priority = $scope.priorities[0].value;
-                    $scope.newTicket.type = $scope.types[0].value;
-                    // $scope.newTicket.assignee = $scope.users[0].username;
+                    $scope.newTicket.types = res.data.types.values;
+                    $scope.newTicket.type = $scope.newTicket.types[0].value;
                 });
 
             $scope.newTicket = {};
@@ -22,17 +18,8 @@ angular.module('ticketSystem')
                 ['insertLink']
             ];
 
-            var validateForm = function(){
-                if(!$scope.newTicket.title)
-                    return false;
-                if(!$scope.newTicket.description)
-                    return false;
-                if(!$scope.newTicket.type)
-                    return false;
-            }
-
             $scope.save = function (){
-                //Do not submit form if form is invalid
+                //Validate required fields
                 if($scope.newTicketForm.$invalid){
                     $scope.newTicketForm.title.$touched = true;
                     $scope.newTicketForm.description.$touched = true;
