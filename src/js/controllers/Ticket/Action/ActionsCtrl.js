@@ -67,6 +67,14 @@ angular.module('ticketSystem')
             });
     		$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid || $scope.actionForm.assignee.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        $scope.actionForm.assignee.$touched = true;
+                        return;
+                    }
+
+
     				ActionFactory.assign($scope.ticket.id, $scope.assignee, $scope.task.comment)
     				.then(function(res){
                         if(res.data.errors){
@@ -101,6 +109,13 @@ angular.module('ticketSystem')
             });  
 			$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid || $scope.actionForm.newStatus.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        $scope.actionForm.newStatus.$touched = true;
+                        return;
+                    }
+
     				ActionFactory.changeStatus($scope.ticket.id, $scope.newStatus, $scope.task.comment)
     				.then(function(res){
 						//Update comments and assignee on view
@@ -122,6 +137,13 @@ angular.module('ticketSystem')
     	function($scope,ActionFactory,YgNotify){    		
 			$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+
     				ActionFactory.addComment($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -142,6 +164,13 @@ angular.module('ticketSystem')
     	function($scope,ActionFactory,YgNotify){    		
 			$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+
     				ActionFactory.close($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -163,6 +192,13 @@ angular.module('ticketSystem')
     	function($scope,ActionFactory,YgNotify){    		
 			$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+
     				ActionFactory.reopen($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -184,6 +220,13 @@ angular.module('ticketSystem')
     	function($scope,ActionFactory,YgNotify){    		
 			$scope.setSaveFn(
     			function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+                    
     				ActionFactory.awaitingUserResponse($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
