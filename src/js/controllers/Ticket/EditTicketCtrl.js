@@ -2,8 +2,8 @@
  * Created by dell on 7/27/2016.
  */
  angular.module('ticketSystem')
-    .controller('EditTicketCtrl',['$scope','$stateParams','$state','TicketFactory','Flash','HelperFactory','Authentication',
-        function($scope, $stateParams, $state, TicketFactory, Flash, HelperFactory,Authentication){
+    .controller('EditTicketCtrl',['$scope','$stateParams','$state','TicketFactory','YgNotify','HelperFactory','Authentication',
+        function($scope, $stateParams, $state, TicketFactory, YgNotify, HelperFactory,Authentication){
             $scope.toolbarConfig = [
                 ['h1','p', 'pre', 'quote'],
                 ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
@@ -23,7 +23,9 @@
                     if(res.data.errors){
                         $state.go('ticket.my-tickets');
                         var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                        Flash.create('danger', errorMessage, 4000, {}, false);
+                        errorMessage.forEach(function(error){
+                            YgNotify.alert('danger', error, 5000);
+                        });
                     }
                     else{
                         $scope.ticket = res.data;
@@ -39,25 +41,25 @@
                             })
                             .catch(function(err){
                                 console.log(err);
-                                Flash.create('danger', "An error occurred while trying to detch the static data.", 5000, {}, false);
+                                YgNotify.alert('danger', "An error occurred while trying to detch the static data.");
                             });
                     }
                 })
                 .catch(function(error){
                     console.log(error);
-                    Flash.create('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000, {}, false);
+                    YgNotify.alert('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000);
                 });
 
             $scope.update = function(){
                 TicketFactory.updateTicket($scope.ticket._id, $scope.ticket).
                     then(function(res){
                         $scope.ticket = res.data;
-                        Flash.create('success', "Ticket updated successfully.", 5000, {}, false);
+                        YgNotify.alert('success', "Ticket updated successfully.", 5000);
                         $state.go('ticket-view', {id : res.data.id});
                     })
                     .catch(function(err){
                         console.log(err);
-                        Flash.create('danger', "An error occurred while trying to update ticket details. Please try again later.", 5000, {}, false);
+                        YgNotify.alert('danger', "An error occurred while trying to update ticket details. Please try again later.", 5000);
                     });
             };
             

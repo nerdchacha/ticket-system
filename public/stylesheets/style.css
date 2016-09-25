@@ -460,3 +460,62 @@ body {
     font-size: 1em;
   }
 }
+
+
+/*--------------------------------------------------------*/
+/*----------------------yg Notification----------------------*/
+/*--------------------------------------------------------*/
+
+.yg-notification{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin: 0 0 20px 0;
+  width: 30%;
+  z-index: 1000;
+}
+
+.yg-notification .yg-message{
+  padding: 10px 10px 10px 20px;
+  border-radius: 5px 0 0 5px;
+  margin: 10px 0;
+  transform: translateX(100%);
+}
+
+.yg-notification .yg-message.in{
+  animation: slide-in 600ms ease-in-out forwards 1;
+}
+
+.yg-notification .yg-message.out{
+  animation: slide-out 600ms cubic-bezier(0.42, 0, 0.65, 1.75) forwards 1;
+}
+
+.yg-notification .success{
+  background-color: rgba(102,179,78, 0.6);
+}
+
+.yg-notification .danger{
+  background-color: rgba(249,70,65,0.6);
+}
+
+.yg-notification .warning{
+  background-color: rgba(252,192,77, 0.6);
+}
+
+@keyframes slide-in{
+  0%{
+    transform: translateX(100%);
+  }
+  100%{
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slide-out{
+  0%{
+    transform: translateX(0%);
+  }
+  100%{
+    transform: translateX(100%);
+  }
+}

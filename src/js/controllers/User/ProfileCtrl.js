@@ -1,6 +1,6 @@
 angular.module('ticketSystem')
-    .controller('ProfileCtrl',['$scope','$state','Authentication','UserFactory','HelperFactory','Flash',
-        function($scope,$state,Authentication,UserFactory,HelperFactory,Flash){
+    .controller('ProfileCtrl',['$scope','$state','Authentication','UserFactory','HelperFactory','YgNotify',
+        function($scope,$state,Authentication,UserFactory,HelperFactory,YgNotify){
             $scope.user = {};
             $scope.init = function(){
                 UserFactory.getUserByUsername(Authentication.getUser().username)
@@ -8,7 +8,9 @@ angular.module('ticketSystem')
                         if(res.data.errors) {
                             //If user details could not be fetched properly
                             var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            Flash.create('danger', errorMessage, 5000, {}, false);
+                            errorMessage.forEach(function(error){
+                                YgNotify.alert('danger', errorMessage, 5000);
+                            });
                             $state.go('ticket.my-tickets');
                         }
                         else
@@ -28,11 +30,11 @@ angular.module('ticketSystem')
                         $scope.user.username = res.data.user.username;
                         $scope.user.email = res.data.user.email;
                         Authentication.setUser($scope.user);
-                        Flash.create('success', 'User details have been updated successfully', 5000, {}, false);
+                        YgNotify.alert('success', 'User details have been updated successfully', 5000);
                         $state.go('/');
                     })
                     .catch(function(res){
-                        Flash.create('danger', 'There was some error trying to update user details. Please try again after some time.', 5000, {}, false);
+                        YgNotify.alert('danger', 'There was some error trying to update user details. Please try again after some time.', 5000);
                     })
             }
         }]);

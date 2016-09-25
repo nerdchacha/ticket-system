@@ -2,8 +2,8 @@
  * Created by dell on 7/24/2016.
  */
 angular.module('ticketSystem')
-    .controller('ViewTicketCtrl',['$scope','$stateParams','$state','TicketFactory','Flash','Authentication','HelperFactory','YgModal','ActionFactory',
-        function($scope, $stateParams, $state, TicketFactory, Flash, Authentication,HelperFactory,YgModal,ActionFactory){
+    .controller('ViewTicketCtrl',['$scope','$stateParams','$state','TicketFactory','YgNotify','Authentication','HelperFactory','YgModal','ActionFactory',
+        function($scope, $stateParams, $state, TicketFactory, YgNotify, Authentication,HelperFactory,YgModal,ActionFactory){
 
             $scope.ticket = {};
             $scope.renderDate = function(date){
@@ -20,10 +20,10 @@ angular.module('ticketSystem')
                         .then(function(res){
                             console.log(res);
                             $scope.ticket.comments = res.data.comments;
-                            Flash.create('success', "The comment was deleted successfully", 5000, {}, false);
+                            YgNotify.alert('success', "The comment was deleted successfully", 5000);
                         })
                         .catch(function(error){
-                            Flash.create('danger', "An error occurred while trying to delete comment. Please try again later.", 5000, {}, false);
+                            YgNotify.alert('danger', "An error occurred while trying to delete comment. Please try again later.", 5000);
                         });
                 }
             };
@@ -37,7 +37,10 @@ angular.module('ticketSystem')
                 .then(function(res){
                     if(res.data.errors){
                         $state.go('ticket.my-tickets');
-                        Flash.create('danger', res.data.errors[0].msg, 4000, {}, false);
+                        var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
+                        errorMessage.forEach(function(error){
+                            YgNotify.alert('danger', error, 5000);
+                        });
                     }
                     else{
                         $scope.ticket = res.data;
@@ -51,6 +54,6 @@ angular.module('ticketSystem')
                 })
                 .catch(function(error){
                     console.log(error);
-                    Flash.create('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000, {}, false);
+                    YgNotify.alert('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000);
                 });
         }]);

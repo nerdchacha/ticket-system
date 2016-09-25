@@ -22,7 +22,8 @@ var input = {
 				'bower_components/angular-flash-alert/dist/angular-flash.min.js',
 				'bower_components/angular-ui-router/release/angular-ui-router.js',
 				'src/js/angular-grid.js',
-				'src/js/yg-modal.js'
+				'src/js/yg-modal.js',
+				'src/js/yg-notification.js'
 			],
 	js: 	[
 				'src/js/app.js',

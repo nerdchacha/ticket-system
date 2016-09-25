@@ -2,8 +2,8 @@
  * Created by dell on 7/30/2016.
  */
 angular.module('ticketSystem')
-    .controller('MainCtrl',['$scope','$state','Authentication','UserFactory','$window','Flash',
-            function($scope,$state,Authentication,UserFactory,$window,Flash){
+    .controller('MainCtrl',['$scope','$state','Authentication','UserFactory','$window','YgNotify',
+            function($scope,$state,Authentication,UserFactory,$window,YgNotify){
             var checkRole = function(){
                 var user = Authentication.getUser();
                 if(user.role.indexOf('Admin') > -1){
@@ -46,7 +46,7 @@ angular.module('ticketSystem')
             $window.app = {};
             $window.app.auth = function(error, user){
                if(error !== '')
-                    Flash.create('danger', error.toString(), 5000, {}, false);
+                    YgNotify.alert('danger', error.toString(), 5000);
                 else if(!user.username || user.username === ''){
                     $state.go('auth-google', {id: user._id.toString(), email: user.email});
                }

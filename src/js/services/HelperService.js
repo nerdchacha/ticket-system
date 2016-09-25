@@ -8,9 +8,9 @@ angular.module('ticketSystem')
             var users;
                     
             fact.createErrorMessage = function(errors){
-                var errorMessage = '';
+                var errorMessage = [];
                 for(var i = 0; i < errors.length; i++){
-                    errorMessage += errors[i].error + '<br/>'
+                    errorMessage.push(errors[i].error);
                 }
                 return errorMessage;
             };

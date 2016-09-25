@@ -5,25 +5,27 @@
             <h4>Ticket details: </h4>
         </div>
         <div class="panel-body">
-            <form>
+            <form novalidate name="newTicketForm">
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-3">
-                            <label class="pull-right">Title :</label>
+                            <label class="pull-right">Title<span class="font-weight-bold">*</span> :</label>
                         </div>
-                        <div class="col-md-9">
-                            <input placeholder="Title for the ticket" class="form-control" type="text" ng-model="newTicket.title"/>
+                        <div class="col-md-9" ng-class="newTicketForm.title.$invalid && newTicketForm.title.$touched ? 'has-error' : ''">
+                            <input placeholder="Title for the ticket" name="title" class="form-control" type="text" ng-model="newTicket.title" required/>
+                            <div ng-show="newTicketForm.title.$invalid && newTicketForm.title.$touched" class="help-block"><p class="text-danger">Title is required</p></div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-3">
-                            <label class="pull-right">Description :</label>
+                            <label class="pull-right">Description<span class="font-weight-bold">*</span> :</label>
                         </div>
-                        <div class="col-md-9">
-                            <div text-angular ta-toolbar="toolbarConfig" ta-placeholder="Enter a short description for the ticket" ng-model="newTicket.description"  ta-text-editor-class="form-control texteditor-height"
-                                 ta-html-editor-class="form-control texteditor-height"></div>
+                        <div class="col-md-9" ng-class="newTicketForm.description.$invalid && newTicketForm.description.$touched ? 'has-error' : ''">
+                            <div name="description" text-angular ta-toolbar="toolbarConfig" ta-placeholder="Enter a short description for the ticket" ng-model="newTicket.description"  ta-text-editor-class="form-control texteditor-height"
+                                 ta-html-editor-class="form-control texteditor-height" required></div>
+                            <div ng-show="newTicketForm.description.$invalid && newTicketForm.description.$touched" class="help-block"><p class="text-danger">Description is required</p></div>
                         </div>
                     </div>
                 </div>
@@ -31,10 +33,11 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-3">
-                            <label class="pull-right">Type :</label>
+                            <label class="pull-right">Type<span class="font-weight-bold">*</span> :</label>
                         </div>
-                        <div class="col-md-9">
-                            <select class="form-control" ng-model="newTicket.type" ng-options="type.value as type.value for type in types">></select>
+                        <div class="col-md-9" ng-class="newTicketForm.type.$invalid && newTicketForm.type.$touched ? 'has-error' : ''">
+                            <select class="form-control" ng-model="newTicket.type" ng-options="type.value as type.value for type in types" required></select>
+                            <div ng-show="newTicketForm.type.$invalid && newTicketForm.type.$touched" class="help-block"><p class="text-danger">Type is required</p></div>
                         </div>
                     </div>
                 </div>

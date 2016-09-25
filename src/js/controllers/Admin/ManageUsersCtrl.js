@@ -2,8 +2,8 @@
  * Created by dell on 8/2/2016.
  */
 angular.module('ticketSystem')
-    .controller('ManageUsersCtrl',['$scope','$state','$stateParams','Authentication','HelperFactory','UserFactory','Flash',
-        function($scope,$state,$stateParams,Authentication,HelperFactory,UserFactory,Flash){
+    .controller('ManageUsersCtrl',['$scope','$state','$stateParams','Authentication','HelperFactory','UserFactory','YgNotify',
+        function($scope,$state,$stateParams,Authentication,HelperFactory,UserFactory,YgNotify){
             var renderIsActive = function(){
                 return '';
             };
@@ -76,7 +76,7 @@ angular.module('ticketSystem')
                         $scope.isAdmin.value = $scope.userDetails.isAdmin;
                     })
                     .catch(function(err){
-                        Flash.create('danger', 'There was some error trying to fetch user details. Please try again after some time.', 5000, {}, false);
+                        YgNotify.alert('danger', 'There was some error trying to fetch user details. Please try again after some time.', 5000);
                     });
             };
             $scope.userDetails.update = function(){
@@ -84,10 +84,10 @@ angular.module('ticketSystem')
                 $scope.userDetails.isActive = $scope.isActive.value;
                 UserFactory.updateUserDetails($scope.userDetails.username,$scope.userDetails)
                     .then(function(res){
-                        Flash.create('success', 'User details updated successfully', 5000, {}, false);
+                        YgNotify.alert('success', 'User details updated successfully', 5000);
                     })
                     .catch(function(err){
-                        Flash.create('danger', 'There was some error trying to update user details. Please try again after some time.', 5000, {}, false);
+                        YgNotify.alert('danger', 'There was some error trying to update user details. Please try again after some time.', 5000);
                     });
             };
 
@@ -99,16 +99,18 @@ angular.module('ticketSystem')
                     .then(function(res){
                         if(!res.data.errors){
                             //Password reset successfully
-                            Flash.create('success', 'Password has been reset successfully', 5000, {}, false);
+                            YgNotify.alert('success', 'Password has been reset successfully', 5000);
                             $state.go('admin-user-management');
                         }
                         else{
                             var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            Flash.create('danger', errorMessage, 5000, {}, false);
+                            errorMessage.forEach(function(error){
+                                YgNotify.alert('danger', error, 5000);
+                            });
                         }
                     })
                     .catch(function(err){
-                        Flash.create('danger', 'The request could not ben made successfully. Please try later', 5000, {}, false);
+                        YgNotify.alert('danger', 'The request could not ben made successfully. Please try later', 5000);
                     });
             };
         }]);
