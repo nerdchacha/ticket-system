@@ -2,8 +2,8 @@
  * Created by dell on 7/30/2016.
  */
 angular.module('ticketSystem')
-    .controller('MainCtrl',['$scope','$state','Authentication','UserFactory','$window','YgNotify','$rootScope','ActionFactory',
-            function($scope,$state,Authentication,UserFactory,$window,YgNotify, $rootScope, ActionFactory){
+    .controller('MainCtrl',['$scope','$state','Authentication','UserFactory','$window','YgNotify',
+            function($scope,$state,Authentication,UserFactory,$window,YgNotify){
             var checkRole = function(){
                 var user = Authentication.getUser();
                 if(user.role.indexOf('Admin') > -1){
@@ -27,6 +27,10 @@ angular.module('ticketSystem')
                         $scope.isAdmin = false;
                 }
             };
+            $scope.loading = false;
+            $scope.setLoading = function(val){
+                $scope.loading = val;
+            }
             $scope.getUser = Authentication.getUser;
             $scope.isAuthenticated = Authentication.getIsAuthenticated;
             $scope.logout = function(){
@@ -43,10 +47,10 @@ angular.module('ticketSystem')
             $scope.getProfile = function(){
                 $state.go('users-profile');
             };
-            //Setting state of axtion items to null to collapse all panels
-            $rootScope.$on('$stateChangeStart', function(){
-                ActionFactory.setTask(null);
-            });
+            // //Setting state of axtion items to null to collapse all panels
+            // $rootScope.$on('$stateChangeStart', function(){
+            //     ActionFactory.setTask(null);
+            // });
 
             $window.app = {};
             $window.app.auth = function(error, user){

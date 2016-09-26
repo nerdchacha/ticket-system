@@ -5,6 +5,7 @@ angular.module('ticketSystem')
 			$scope.task = {};
 			$scope.task.showTaskPanel = false;
             $scope.task.showMainPanel = false;
+            ActionFactory.setTask(null);
 
 			$scope.setSaveFn = function(callback){
 				$scope.saveTask = callback;

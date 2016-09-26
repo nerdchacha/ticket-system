@@ -16,14 +16,16 @@ angular.module('ticketSystem')
             //Create closure
             var deleteCallback = function(ticket, comment){
                 return function(){
+                    $scope.setLoading(true);
                     ActionFactory.deleteComment(ticket,comment)
                         .then(function(res){
-                            console.log(res);
                             $scope.ticket.comments = res.data.comments;
                             YgNotify.alert('success', "The comment was deleted successfully", 5000);
+                            $scope.setLoading(false);
                         })
                         .catch(function(error){
                             YgNotify.alert('danger', "An error occurred while trying to delete comment. Please try again later.", 5000);
+                            $scope.setLoading(false);
                         });
                 }
             };
@@ -33,6 +35,8 @@ angular.module('ticketSystem')
                 YgModal.open('Are you sure you want to do this?', 'This will delete the comment permanently');
             };
 
+
+            $scope.setLoading(true);
             TicketFactory.getTicketById($stateParams.id)
                 .then(function(res){
                     if(res.data.errors){
@@ -51,9 +55,11 @@ angular.module('ticketSystem')
                         if($scope.ticket.assignee === $scope.ticket.currentUser || $scope.ticket.createdBy === $scope.ticket.currentUser || HelperFactory.isCurrentUserAdmin() || HelperFactory.isCurrentUserSupport())
                             $scope.showEdit = true;
                     }
+                    $scope.setLoading(false);
                 })
                 .catch(function(error){
                     console.log(error);
                     YgNotify.alert('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000);
+                    $scope.setLoading(false);
                 });
         }]);
