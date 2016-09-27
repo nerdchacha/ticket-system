@@ -2,8 +2,8 @@
  * Created by dell on 7/18/2016.
  */
 angular.module('ticketSystem')
-    .controller('TicketsCtrl',['$scope','$state',
-        function($scope, $state){
+    .controller('TicketsCtrl',['$scope','$state','agSortFactory',
+        function($scope, $state,agSortFactory){
             $scope.isSupport = false;
             var user = JSON.parse(localStorage.getItem('ticketSystemUser'));
             if(user){
@@ -42,6 +42,7 @@ angular.module('ticketSystem')
             $scope.config.sizeQuerystringParam = 'size';
 
             $scope.active = '';
+            $scope.agLoading = agSortFactory.getLoading;
 
             $scope.config.onRowClick = function(row){
                 $state.go('ticket-view', {id: row.id});
@@ -63,4 +64,9 @@ angular.module('ticketSystem')
                 $scope.config.url = '/tickets/to-me';
                 $scope.$parent.active = 'tome';
             };
+
+            $scope.$watch('agLoading()', function(newVal, oldVal){
+                    $scope.setLoading(newVal);
+            });
+
         }]);
