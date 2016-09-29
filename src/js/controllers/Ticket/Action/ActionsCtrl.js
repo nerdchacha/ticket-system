@@ -1,6 +1,6 @@
 angular.module('ticketSystem')
-    .controller('ActionsCtrl',['$scope','ActionFactory','HelperFactory',
-    	function($scope, ActionFactory,HelperFactory) {
+    .controller('ActionsCtrl',['$scope','ActionFactory','HelperFactory','$rootScope',
+    	function($scope, ActionFactory,HelperFactory,$rootScope) {
 			$scope.getTask = ActionFactory.getTask;
 			$scope.task = {};
 			$scope.task.showTaskPanel = false;
@@ -22,9 +22,9 @@ angular.module('ticketSystem')
 				$scope.saveBtnName = name;
 			}
 
-
 			$scope.$watch('getTask()',function(newVal, oldVal){
 				if(newVal){
+                    $scope.setLoading(true);
 					$scope.task.showTaskPanel = true;
 					$scope.task.showMainPanel = true;
 					$scope.task.name = 'templates/partials/action/' + newVal +'-action-partial.html';
@@ -52,10 +52,14 @@ angular.module('ticketSystem')
 							break;
 					};
 				}
+                else{
+                    $scope.task.name = null;
+                }
 			});
     	}])
     .controller('AssignActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
     	function($scope,ActionFactory,YgNotify,HelperFactory){
+            console.log('set assignee');
             //Get list of all users
             ActionFactory.getAssignees()
             .then(function(res){
@@ -67,6 +71,7 @@ angular.module('ticketSystem')
                         $scope.ticket.assignee
                     ]);
                 $scope.assignee = $scope.users[0].username;
+                $scope.setLoading(false);
             });
     		$scope.setSaveFn(
     			function(){
@@ -77,7 +82,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-
+                    $scope.setLoading(true);
     				ActionFactory.assign($scope.ticket.id, $scope.assignee, $scope.task.comment)
     				.then(function(res){
                         if(res.data.errors){
@@ -92,11 +97,13 @@ angular.module('ticketSystem')
     					$scope.ticket.assignee = res.data.assignee;
     					YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
     					//Close panel
+                        $scope.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
 						YgNotify.alert('danger', 'There was some error trying to assign the ticket. Please try again after some time.', 5000);
 						$scope.cancelTask();
+                        $scope.setLoading(false);
     				})
     			});
 
@@ -110,6 +117,7 @@ angular.module('ticketSystem')
                 console.log(res.data);
                 $scope.allowedStatus = res.data.status.allowed;
                 $scope.newStatus  = $scope.allowedStatus[0];
+                $scope.setLoading(false);
             });  
 			$scope.setSaveFn(
     			function(){
@@ -120,6 +128,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
+                    $scope.setLoading(true);
     				ActionFactory.changeStatus($scope.ticket.id, $scope.newStatus, $scope.task.comment)
     				.then(function(res){
 						//Update comments and assignee on view
@@ -127,10 +136,12 @@ angular.module('ticketSystem')
     					$scope.ticket.status = res.data.status;
     					YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
     					//Close panel
+                        $scope.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -138,7 +149,8 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Change Status');
     	}])
     .controller('CommentActionCtrl',['$scope','ActionFactory','YgNotify',
-    	function($scope,ActionFactory,YgNotify){    		
+    	function($scope,ActionFactory,YgNotify){    
+            $scope.setLoading(false);		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -147,17 +159,19 @@ angular.module('ticketSystem')
                         return;
                     }
 
-
+                    $scope.setLoading(true);
     				ActionFactory.addComment($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
                         YgNotify.alert('success','The comment has been added successfully',5000);
     					//Close panel
-						$scope.cancelTask();
+                        $scope.setLoading(false);
+						$scope.cancelTask();                        
     				})
     				.catch(function(err){
                         YgNotify.alert('danger','There was some error trying to add comment. Please try again after some time.',5000);
+                        $scope.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -165,7 +179,8 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Add Comment');
     	}])
     .controller('CloseActionCtrl',['$scope','ActionFactory','YgNotify',
-    	function($scope,ActionFactory,YgNotify){    		
+    	function($scope,ActionFactory,YgNotify){    
+            $scope.setLoading(false);		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -174,7 +189,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-
+                    $scope.setLoading(true);
     				ActionFactory.close($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -182,10 +197,12 @@ angular.module('ticketSystem')
     					$scope.ticket.status = res.data.status;
     					YgNotify.alert('success', 'The status has been changed successfully', 5000);
     					//Close panel
+                        $scope.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -193,7 +210,8 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Close');
     	}])
     .controller('ReopenActionCtrl',['$scope','ActionFactory','YgNotify',
-    	function($scope,ActionFactory,YgNotify){    		
+    	function($scope,ActionFactory,YgNotify){   
+            $scope.setLoading(false); 		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -202,7 +220,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-
+                    $scope.setLoading(true);
     				ActionFactory.reopen($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -210,10 +228,12 @@ angular.module('ticketSystem')
     					$scope.ticket.status = res.data.status;
     					YgNotify.alert('success', 'The status has been changed successfully', 5000);
     					//Close panel
+                        $scope.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -221,7 +241,8 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Reopen');
     	}])
     .controller('AwaitingActionCtrl',['$scope','ActionFactory','YgNotify',
-    	function($scope,ActionFactory,YgNotify){    		
+    	function($scope,ActionFactory,YgNotify){  
+            $scope.setLoading(false);  		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -230,7 +251,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    
+                    $scope.setLoading(true);
     				ActionFactory.awaitingUserResponse($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
@@ -238,10 +259,12 @@ angular.module('ticketSystem')
     					$scope.ticket.status = res.data.status;
     					YgNotify.alert('success', 'The status has been changed successfully', 5000);
     					//Close panel
+                        $scope.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.setLoading(false);
 						$scope.cancelTask();	
     				});
     			});
@@ -250,6 +273,7 @@ angular.module('ticketSystem')
     	}])
     .controller('AcknowledgeActionCtrl',['$scope','ActionFactory','YgNotify',
         function($scope,ActionFactory,YgNotify){            
+            $scope.setLoading(false);
             $scope.setSaveFn(
                 function(){
                     //Validate required fields
@@ -258,7 +282,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    
+                    $scope.setLoading(true);
                     ActionFactory.acknowledgeTicket($scope.ticket.id, $scope.task.comment)
                     .then(function(res){
                         //Update comments and status on view
@@ -266,10 +290,12 @@ angular.module('ticketSystem')
                         $scope.ticket.status = res.data.status;
                         YgNotify.alert('success', 'The status has been changed successfully', 5000);
                         //Close panel
+                        $scope.setLoading(false);
                         $scope.cancelTask();
                     })
                     .catch(function(err){
                         YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
+                        $scope.setLoading(false);
                         $scope.cancelTask();    
                     });
                 });
