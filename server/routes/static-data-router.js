@@ -60,8 +60,12 @@ router.get('/action-buttons/:id',function(req,res,next){
             actionButtons.reopen = true;
         }
         else{
-            if(ticketDetails.assignee === req.user.username || ticketDetails.createdBy === req.user.username)
-                actionButtons.assignToSelf = false;
+            if(ticketDetails.assignee){
+                if(ticketDetails.assignee === req.user.username)
+                    actionButtons.assignToSelf = false;
+                if(ticketDetails.createdBy === req.user.username)
+                    actionButtons.assignToSelf = false;
+            }
             else
                 actionButtons.assignToSelf = true;
             actionButtons.changeStatus = true;

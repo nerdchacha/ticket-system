@@ -4,7 +4,7 @@ angular.module('ticketSystem')
     		$scope.buttongroup = {};
 
             $scope.$watchCollection('ticket', function(ticket){
-                if(ticket){
+                if(ticket && ticket.id){
                     ActionFactory.getAllowedButtons(ticket.id)
                         .then(function(res){
                             //Get possible action buttons from server and set the status
