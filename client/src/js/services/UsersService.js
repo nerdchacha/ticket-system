@@ -21,13 +21,16 @@ angular.module('ticketSystem')
             factory.getUserByUsername = function(username){
                 return $http.get('users/profile/' + username);
             };
-
             factory.updateProfile = function(user){
                 return $http.post('users/profile/' + user.username ,user);
             };
             factory.setUsername = function(details){
                 return $http.post('accounts/set-username', details);
             };
+            factory.changePassword = function(id,passwords){
+                return $http.post('users/profile/change-password/' + id, passwords);
+            };       
+
 
             //Admin related http requests
             factory.getAllUserDetails = function(){
@@ -41,7 +44,7 @@ angular.module('ticketSystem')
             };
             factory.resetPassword = function(id,passwords){
                 return $http.post('admin/reset-password/' + id, passwords);
-            };
+            };     
 
             return factory;
         }]);

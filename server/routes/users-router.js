@@ -1,11 +1,11 @@
 /**
  * Created by dell on 7/31/2016.
  */
-var express = require('express');
-var router = express.Router();
-var usersBl = require('../business-layer/users-bl.js');
-var validator = require('../business-layer/request-validator.js');
-var helper = require('../business-layer/helper.js');
+var express     = require('express'),
+    router      = express.Router(),
+    usersBl     = require('../business-layer/users-bl.js'),
+    validator   = require('../business-layer/request-validator.js'),
+    helper      = require('../business-layer/helper.js');
 
 //GET user profile
 router.get('/profile/:username',function(req,res,next){
@@ -56,6 +56,29 @@ router.post('/profile/:username',function(req,res,next){
         })
         .then(function(errors){
             res.json({errors: errors, user: null});
+        });
+});
+
+router.post('/profile/change-password/:id',function(req,res,next){
+    //Check if request has all mandatory parameters
+    validator.validateResetPassword(req,res)
+        .then(function(){
+            //Request is valid
+            return usersBl.changePassword(req, res)
+        })
+        .then(function(){
+            //Password successfully reset
+            res.json({errors: null});
+        },
+            function(err){
+                console.log(err);
+                //Error in resetting password
+                res.json({errors: [{msg : err}]});
+        })
+        .catch(function(err){
+            console.log(err);
+            //Request is invalid
+           res.json({errors : err});
         });
 });
 

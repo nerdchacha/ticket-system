@@ -89,6 +89,11 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                     controller: 'ProfileCtrl',
                     templateUrl: 'templates/users/profile.html'
                 })
+                .state('change-password',{
+                    url : '/users/profile/change-password/:id',
+                    controller: 'ChangePasswordCtrl',
+                    templateUrl: 'templates/users/change-password.html'
+                })
                 .state('users-register',{
                     url : '/users/register',
                     controller: 'RegisterCtrl',

@@ -21,6 +21,7 @@ angular.module('ticketSystem')
                             $scope.user.lastname = res.data.user.lastname;
                             $scope.user.username = res.data.user.username;
                             $scope.user.email = res.data.user.email;
+                            $scope.user.userId = res.data.user._id;
                             HelperFactory.setLoading(false);
                     });
             };

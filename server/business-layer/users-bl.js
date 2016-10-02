@@ -97,4 +97,16 @@ usersBl.comparePassword = function(password, hash){
     return deferred.promise;
 };
 
+usersBl.changePassword = function(req,res){
+    var deferred = q.defer();
+    var id = req.params.id;
+    var password = req.body.password;
+    User.resetPassword(id,password,function(err){
+        if(err) deferred.reject(err);
+        else deferred.resolve();
+    });
+
+    return deferred.promise;
+};
+
 module.exports = usersBl;

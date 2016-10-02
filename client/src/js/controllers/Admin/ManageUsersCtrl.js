@@ -114,17 +114,19 @@ angular.module('ticketSystem')
     .controller('ChangeUsersPasswordCtrl',['$scope','$state','$stateParams','HelperFactory','UserFactory','YgNotify',
         function($scope,$state,$stateParams,HelperFactory,UserFactory,YgNotify){
             //Reset password functionality
-            $scope.resetPassword = {};
-            $scope.resetPassword.reset = function(){
-                if($scope.resetUsersPasswordForm.$invalid){
-                    $scope.resetUsersPasswordForm.password2.$touched = true;
-                    $scope.resetUsersPasswordForm.password1.$touched = true;
+            $scope.changePassword = {};
+            $scope.changePassword.title = 'Reset Password';
+            $scope.changePassword.saveTitle = 'Reset';
+            $scope.changePassword.cancelHref = '#/admin/user-management';
+            $scope.changePassword.save = function(form){
+                if(form.$invalid){
+                    form.password2.$touched = true;
+                    form.password1.$touched = true;
                     return;
                 }
-
                 HelperFactory.setLoading(true);    
                 var id = $stateParams.id;
-                UserFactory.resetPassword(id, $scope.resetPassword)
+                UserFactory.resetPassword(id, $scope.changePassword)
                     .then(function(res){
                         HelperFactory.setLoading(false);
                         if(!res.data.errors){
