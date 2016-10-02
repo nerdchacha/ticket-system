@@ -3,11 +3,11 @@ angular.module('ticketSystem')
     	function($scope,ActionFactory){
     		$scope.buttongroup = {};
 
-            $scope.$watch('ticket.status', function(newVal){
-                if(newVal){
-                    ActionFactory.getAllowedButtons(newVal)
+            $scope.$watchCollection('ticket', function(ticket){
+                if(ticket){
+                    ActionFactory.getAllowedButtons(ticket.id)
                         .then(function(res){
-                            //Get possible actio buttons from server and set the status
+                            //Get possible action buttons from server and set the status
                             $scope.buttongroup.showAssign = res.assign;
                             $scope.buttongroup.showComment = res.comment;
                             $scope.buttongroup.showchangeStatus = res.changeStatus;
@@ -15,6 +15,7 @@ angular.module('ticketSystem')
                             $scope.buttongroup.showClose = res.close;
                             $scope.buttongroup.showAcknowledge = res.acknowledge;
                             $scope.buttongroup.showAwaitingUsersResponse = res.awaitingUserResponse;
+                            $scope.buttongroup.showAssignToSelf = res.assignToSelf;
                         });
                 }
             });
@@ -46,6 +47,10 @@ angular.module('ticketSystem')
 
             $scope.buttongroup.awaitingusersresponse = function(){
                 ActionFactory.setTask('awaitingusersresponse');  
+            }
+
+            $scope.buttongroup.assignToSelf = function(){
+                ActionFactory.setTask('assigntoself');  
             }
 
     	}]);

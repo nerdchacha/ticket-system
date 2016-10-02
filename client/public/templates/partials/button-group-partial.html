@@ -1,4 +1,7 @@
 <span ng-controller="ButtonGroupCtrl">
+	<button ng-if="buttongroup.showAssignToSelf" ng-click="buttongroup.assignToSelf()" title="Assign to self" type="button" class="btn btn-primary">
+		<i class="fa fa-plus"></i>
+	</button>
 	<button ng-if="buttongroup.showAssign" ng-click="buttongroup.assign()" title="Change assignee" type="button" class="btn btn-primary">
 		<i class="fa fa-user-plus"></i>
 	</button>

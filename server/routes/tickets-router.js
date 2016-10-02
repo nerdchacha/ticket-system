@@ -1,14 +1,14 @@
 /**
  * Created by dell on 7/18/2016.
  */
-var express = require('express');
-var router = express.Router();
-var ticketsBl = require('../business-layer/ticket-bl.js');
-var staticBl = require('../business-layer/static-bl.js');
-var usersBl = require('../business-layer/users-bl.js');
-var q = require('q');
-var validator = require('../business-layer/request-validator.js');
-var helper = require('../business-layer/helper.js');
+var express     = require('express'),
+    router      = express.Router(),
+    ticketsBl   = require('../business-layer/ticket-bl.js'),
+    staticBl    = require('../business-layer/static-bl.js'),
+    usersBl     = require('../business-layer/users-bl.js'),
+    q           = require('q'),
+    validator   = require('../business-layer/request-validator.js'),
+    helper      = require('../business-layer/helper.js');
 
 var setStaticData = function(values){
     var priorities = values[0].values.find(function (value) {

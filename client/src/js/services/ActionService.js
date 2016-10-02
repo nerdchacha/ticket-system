@@ -15,9 +15,9 @@ angular.module('ticketSystem')
             factory.getAllowedStatus = function(currentStatus){
               return $http.get('static/allowed-status/'+ currentStatus);  
             };
-            factory.getAllowedButtons = function(currentStatus){
+            factory.getAllowedButtons = function(id){
                 var deferred = $q.defer();
-                $http.get('static/action-buttons/'+ currentStatus)
+                $http.get('static/action-buttons/'+ id)
                 .then(function(res){
                     var buttons = {};
                     buttons.assign = res.data.actionButtons.assign;
@@ -27,6 +27,7 @@ angular.module('ticketSystem')
                     buttons.close = res.data.actionButtons.close;
                     buttons.acknowledge = res.data.actionButtons.acknowledge;
                     buttons.awaitingUserResponse = res.data.actionButtons.awaitingUserResponse;
+                    buttons.assignToSelf = res.data.actionButtons.assignToSelf;
                     deferred.resolve(buttons);
                 })
                 .catch(function(err){

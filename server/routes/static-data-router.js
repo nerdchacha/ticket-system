@@ -1,7 +1,9 @@
 var express 	= require('express'),
 	router 		= express.Router(),
 	usersBl 	= require('../business-layer/users-bl.js'),
-	staticBl 	= require('../business-layer/static-bl.js')
+	staticBl 	= require('../business-layer/static-bl.js'),
+    ticketBl    = require('../business-layer/ticket-bl.js'),
+    q           = require('q'),
 	validator 	= require('../business-layer/request-validator.js');
 
 router.get('/all-users',function(req,res){
@@ -34,14 +36,19 @@ router.get('/allowed-status/:status',function(req,res){
 	})
 });
 
-router.get('/action-buttons/:status',function(req,res,next){
-    validator.validateGetTicketData(req,res)
+router.get('/action-buttons/:id',function(req,res,next){
+    validator.validateGetTicketById(req,res)
     .then(function(){
-        return staticBl.getInitialStaticData();
+        return q.all([ 
+        staticBl.getInitialStaticData(),
+        ticketBl.getTicketByIdAll(req.params.id)
+        ])
     })
-    .then(function(data){
-        var currentStatus = req.params.status;
-        var allowedStatusList = data.values.find(function (value) {
+    .then(function(resValues){
+        var statusDetails = resValues[0];
+        var ticketDetails = resValues[1];
+        var currentStatus = ticketDetails.status;
+        var allowedStatusList = statusDetails.values.find(function (value) {
             return value.name === 'allowed state';
         });
         var allowedStatus = allowedStatusList.values.find(function(value){
@@ -53,6 +60,10 @@ router.get('/action-buttons/:status',function(req,res,next){
             actionButtons.reopen = true;
         }
         else{
+            if(ticketDetails.assignee === req.user.username || ticketDetails.createdBy === req.user.username)
+                actionButtons.assignToSelf = false;
+            else
+                actionButtons.assignToSelf = true;
             actionButtons.changeStatus = true;
             actionButtons.assign = true;
             if(currentStatus === 'New'){

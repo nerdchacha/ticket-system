@@ -50,6 +50,9 @@ angular.module('ticketSystem')
 						case 'changestatus':
 							$scope.task.title = 'Change ticket status'
 							break;
+                        case 'assigntoself':
+                            $scope.task.title = 'Assign to self'
+                            break;
 					};
 				}
                 else{
@@ -134,7 +137,7 @@ angular.module('ticketSystem')
 						//Update comments and assignee on view
     					$scope.ticket.comments = res.data.comments;
     					$scope.ticket.status = res.data.status;
-    					YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
+    					YgNotify.alert('success', 'The status has been changed successfully', 5000);
     					//Close panel
                         HelperFactory.setLoading(false);
 						$scope.cancelTask();
@@ -301,4 +304,44 @@ angular.module('ticketSystem')
                 });
 
             $scope.setSaveBtnName('Acknowledge Ticket');
+        }])
+    .controller('AssignToSelfActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory','Authentication',
+        function($scope,ActionFactory,YgNotify,HelperFactory,Authentication){   
+            HelperFactory.setLoading(false);        
+            $scope.setSaveFn(
+                function(){
+                    //Validate required fields
+                    if($scope.actionForm.comment.$invalid){
+                        $scope.actionForm.comment.$touched = true;
+                        return;
+                    }
+
+                    HelperFactory.setLoading(true);
+                    var currentUser = Authentication.getUser();
+                    console.log(currentUser);
+                    ActionFactory.assign($scope.ticket.id, currentUser.username, $scope.task.comment)
+                    .then(function(res){
+                        if(res.data.errors){
+                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
+                            errorMessage.forEach(function(error){
+                                YgNotify.alert('danger', error, 5000);
+                            });
+                            return;
+                        }
+                        //Update comments and assignee on view
+                        $scope.ticket.comments = res.data.comments;
+                        $scope.ticket.assignee = res.data.assignee;
+                        YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
+                        //Close panel
+                        HelperFactory.setLoading(false);
+                        $scope.cancelTask();
+                    })
+                    .catch(function(err){
+                        YgNotify.alert('danger', 'There was some error trying to assign the ticket. Please try again after some time.', 5000);
+                        $scope.cancelTask();
+                        HelperFactory.setLoading(false);
+                    });
+                });
+
+            $scope.setSaveBtnName('Assign To Self');
         }])

@@ -205,6 +205,15 @@ ticket.updateTicket = function(req,res){
     return deferred.promise;
 };
 
+ticket.getTicketByIdAll = function(id){
+    var deferred = q.defer();
+    Ticket.getTicketById(id,function(err, ticket){
+      if(err) deferred.reject(err);
+      deferred.resolve(ticket);
+    });
+    return deferred.promise;
+};
+
 ticket.getTicketById = function(id, user){
     var deferred = q.defer();
     Ticket.getTicketById(id,function(err, ticket){
