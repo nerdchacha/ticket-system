@@ -4,7 +4,7 @@
             <span class="lbl lbl-{{statusClass}}">{{::ticket.status}}</span>
             <span class="lbl lbl-{{priorityClass}}">{{::ticket.priority}} Priority</span>
             <div class="pull-right">
-                <button ng-if="showEdit" type="button" ng-click="edit()" class="btn btn-primary">
+                <button ng-if="showEdit" type="button" title="Edit" ng-click="edit()" class="btn btn-primary">
                     <i class="fa fa-pencil"></i>
                 </button>
                 <span ng-include="'templates/partials/button-group-partial.html'"></span>

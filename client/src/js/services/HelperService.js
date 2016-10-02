@@ -43,6 +43,9 @@ angular.module('ticketSystem')
                     return true;
                 return false;
             };
+            fact.isCurrentUserAdminOrSupport = function(){
+                return fact.isCurrentUserAdmin() || fact.isCurrentUserAdmin();
+            }
             fact.stripHtml = function(text){
                 //Strip HTML
                 return text ? String(text).replace(/<[^>]+>/gm, '') : '';

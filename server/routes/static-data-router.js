@@ -83,7 +83,6 @@ router.get('/action-buttons/:id',function(req,res,next){
         res.json({errors: null, actionButtons: actionButtons});
     })
     .catch(function(err){
-        console.log(err);
         res.json({errors: err, actionButtons: null});
     })
 });
