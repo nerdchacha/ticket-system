@@ -10,7 +10,7 @@ var gulp 		= require('gulp'),
 	browserSync = require('browser-sync');
 
 var input = {
-	sass: 'src/sass/**/*.scss',
+	sass: 'client/src/sass/**/*.scss',
 	depsjs: [
 				'bower_components/jquery/dist/jquery.js',
 				'bower_components/bootstrap/dist/js/bootstrap.js',
@@ -21,42 +21,30 @@ var input = {
 				'bower_components/textAngular/dist/textAngular.min.js',
 				'bower_components/angular-flash-alert/dist/angular-flash.min.js',
 				'bower_components/angular-ui-router/release/angular-ui-router.js',
-				'src/js/angular-grid.js',
-				'src/js/yg-modal.js',
-				'src/js/yg-notification.js'
+				'client/src/js/angular-grid.js',
+				'client/src/js/yg-modal.js',
+				'client/src/js/yg-notification.js'
 			],
 	js: 	[
-				'src/js/app.js',
-				'src/js/directives/directive.js',
-				'src/js/services/TicketsService.js',
-				'src/js/services/CommonService.js',
-				'src/js/services/UsersService.js',
-				'src/js/services/Authentication.js',
-				'src/js/services/HelperService.js',
-				'src/js/services/ActionService.js',
-				'src/js/controllers/**/*.js'
-				// 'src/js/controllers/Ticket/TicketsCtrl.js',
-				// 'src/js/controllers/Ticket/NewTicketCtrl.js',
-				// 'src/js/controllers/Ticket/TaskCtrl.js',
-				// 'src/js/controllers/Ticket/ViewTicketCtrl.js',
-				// 'src/js/controllers/Ticket/EditTicketCtrl.js',
-				// 'src/js/controllers/MainCtrl.js',
-				// 'src/js/controllers/User/LoginCtrl.js',
-				// 'src/js/controllers/User/MainLoginCtrl.js',
-				// 'src/js/controllers/User/ProfileCtrl.js',
-				// 'src/js/controllers/User/RegisterCtrl.js',
-				// 'src/js/controllers/User/SetUserCtrl.js',
-				// 'src/js/controllers/Admin/ManageUsersCtrl.js'
+				'client/src/js/app.js',
+				'client/src/js/directives/directive.js',
+				'client/src/js/services/TicketsService.js',
+				'client/src/js/services/CommonService.js',
+				'client/src/js/services/UsersService.js',
+				'client/src/js/services/Authentication.js',
+				'client/src/js/services/HelperService.js',
+				'client/src/js/services/ActionService.js',
+				'client/src/js/controllers/**/*.js'
 			]
 };
 
 var output = {
-	js: 'public/javascripts',
-	css: 'public/stylesheets',
+	js: 'client/public/javascripts',
+	css: 'client/public/stylesheets',
 	miniCss: 'main.min.css',
 	miniJs: 'main.min.js',
 	miniDepsJs: 'dependencies.min.js',	
-	html: 'public/templates/**/*.html'
+	html: 'client/public/templates/**/*.html'
 };
 
 
