@@ -1,0 +1,25 @@
+<nav class="mainnav" ng-if="isAuthenticated()">
+  <div class="site-logo"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
+    <section class="dashboard">
+        <div class="heading">Utility</div>
+        <ul>
+          <li><a ui-sref="ticket.my-tickets"><i class="fa fa-lg fa-dashboard"></i> Tickets</a></li>
+          <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> New Ticket</a></li>
+        </ul>
+    </section>
+    <section class="profile-menu">
+    <div class="heading">Profile</div>
+      <ul>
+          <li>
+          <a ng-click="getProfile()"><i class="fa fa-user"></i> {{getUser().username}}</a>
+          </li>
+          <li><a ng-click="logout()"><i class="fa fa-sign-out"></i> Log Off</a></li>
+      </ul>
+    </section>
+    <section class="admin-menu" ng-if="isAdmin">
+    <div class="heading">Admin</div>
+      <ul>
+        <li><a href="#/admin/user-management"><i class="fa fa-users"></i> User management</a></li>
+      </ul>
+    </section>
+  </nav>

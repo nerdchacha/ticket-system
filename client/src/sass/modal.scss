@@ -1,0 +1,146 @@
+/*--------------------------------------------------------*/
+/*----------------------MODAL STYLE----------------------*/
+/*--------------------------------------------------------*/
+
+
+.yg-modal-overlay {
+  background-color: rgba(53, 53, 53, 0.7);
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  color: rgba(0, 0, 0, 0.8);
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: all 300ms ease-in-out;
+  transition: all 300ms ease-in-out;
+}
+.yg-modal-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.yg-modal-overlay.is-open .yg-modal {
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.yg-modal-overlay .yg-modal {
+  height: auto;
+  width: 90%;
+  max-width: 400px;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -500%);
+  transform: translate(-50%, -500%);
+  box-shadow: 3px 3px 7px -1px rgba(122, 122, 122, 0.76);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 30px 20px;
+  -webkit-transition: -webkit-transform 300ms ease-in-out;
+  transition: -webkit-transform 300ms ease-in-out;
+  transition: transform 300ms ease-in-out;
+  transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.yg-modal-overlay .yg-modal .yg-modal-header {
+  font-size: 1.3em;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.yg-modal-overlay .yg-modal .yg-modal-header .yg-modal-close {
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+.yg-modal-overlay .yg-modal .yg-modal-header .yg-modal-close:hover {
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+}
+.yg-modal-overlay .yg-modal .yg-modal-header .yg-modal-close:before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  -webkit-transform: translate(0, -50%) rotate(45deg);
+  transform: translate(0, -50%) rotate(45deg);
+  position: absolute;
+  top: 50%;
+}
+.yg-modal-overlay .yg-modal .yg-modal-header .yg-modal-close:after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(0, -50%) rotate(-45deg);
+  transform: translate(0, -50%) rotate(-45deg);
+}
+.yg-modal-overlay .yg-modal .yg-modal-body {
+  font-size: 1em;
+  /* background-color: pink */
+  padding: 20px 0 0 0;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body:before {
+  content: " ";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-bottom: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons {
+  padding-top: 50px;
+  width: 100%;
+  text-align: right;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button {
+  padding: 10px;
+  width: 30%;
+  color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  font-size: 0.8em;
+  margin-left: 5px;
+  text-align: center;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button:hover {
+  -webkit-transform: scale(1.02);
+  transform: scale(1.02);
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button.confirm {
+  background-color: #30A9DE;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button.confirm:hover {
+  background-color: #2687b1;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button.cancel {
+  background-color: #E53A40;
+}
+.yg-modal-overlay .yg-modal .yg-modal-body .yg-modal-buttons button.cancel:hover {
+  background-color: #e74d53;
+}
+
+@media screen and (max-width: 600px) {
+  .yg-modal {
+    font-size: 14px;
+  }
+}
+@media screen and (max-width: 420px) {
+  .yg-modal {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>HelpDesk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link type="text/css" rel="stylesheet" href="/bower/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="/bower/font-awesome/css/font-awesome.min.css" />
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.min.css" />
+  </head>
+  <body ng-app="ticketSystem" class="clearfix" ng-controller="MainCtrl" ng-init="init()">
+    <div ng-include="'templates/partials/navbar.html'"></div>  
+    <div class="content" ui-view=""></div>
+    <yg-modal></yg-modal>
+    <yg-notification></yg-notification>
+    <div ng-show="loading" class="loading"></div>
+
+    <script src="/javascripts/dependencies.min.js"></script>
+    <script src="/javascripts/main.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+/*--------------------------------------------------------*/
+/*----------------------TOGGLE BUTTON---------------------*/
+/*--------------------------------------------------------*/
+
+.toggle-button {
+  top: 200%;
+  width: 50px;
+  height: 25px;
+  background-color: rgba(255, 0, 0, 0.7);
+  position: absolute;
+  border-radius: 80px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+  cursor: pointer;
+}
+.toggle-button .toggle {
+  width: 19px;
+  height: 19px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(140%, -50%);
+  transform: translate(140%, -50%);
+  z-index: 1;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+  outline: none;
+}
+
+.toggle-button.is-active {
+  background-color: rgba(0, 180, 0, 0.6);
+}
+.toggle-button.is-active .toggle {
+  -webkit-transform: translate(5%, -50%);
+  transform: translate(5%, -50%);
+}

@@ -1,0 +1,74 @@
+<div class="">    
+    <h2 class="page-heading">User details </h2>
+    <form ng-init="init()" novalidate="" name="profileForm">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>*First Name :</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group" ng-class="profileForm.firstname.$invalid && profileForm.firstname.$touched ? 'has-error' : ''">
+                    <input name="firstname" ng-model="user.firstname" class="form-control" placeholder="Enter first name" type="text" required/>
+                    <div ng-show="profileForm.firstname.$invalid && profileForm.firstname.$touched" class="help-block">
+                        <p class="text-danger">Firstname is required</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>*Last Name :</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group" ng-class="profileForm.lastname.$invalid && profileForm.lastname.$touched ? 'has-error' : ''">
+                    <input name="lastname" ng-model="user.lastname" class="form-control" placeholder="Enter last name" type="text" required/>
+                    <div ng-show="profileForm.lastname.$invalid && profileForm.lastname.$touched" class="help-block">
+                        <p class="text-danger">Lastname is required</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>*Emaid ID:</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group" ng-class="profileForm.email.$invalid && profileForm.email.$touched ? 'has-error' : ''">
+                    <input name="email" ng-model="user.email" class="form-control" placeholder="Enter email id" type="email" required/>
+                    <div ng-show="profileForm.email.$error.required && profileForm.email.$touched" class="help-block">
+                        <p class="text-danger">Email is required</p>
+                    </div>
+                    <div ng-show="profileForm.email.$error.email && profileForm.email.$touched" class="help-block">
+                        <p class="text-danger">Email should be in proper format</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>*Username:</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <input ng-model="user.username" disabled="disabled" class="form-control" placeholder="Enter username" type="text" required/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="button-panel">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button class="btn btn-success" ng-click="update()">Update</button>
+                    <a class="btn btn-danger" ui-sref="ticket.my-tickets">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+    

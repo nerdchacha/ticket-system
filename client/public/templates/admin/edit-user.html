@@ -1,0 +1,85 @@
+<div class="wrapper">
+    <!-- <div ng-init="userDetails.getUserDetails()"> -->
+    <div>
+        <h2 class="page-heading">User details</h2>
+        <form novalidate="" name="editUserForm">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>*First Name :</label>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group" ng-class="editUserForm.firstname.$invalid && editUserForm.firstname.$touched ? 'has-error' : ''">
+                        <input name="firstname" ng-model="userDetails.firstname" class="form-control" placeholder="Enter first name" type="text" required/>
+                        <div ng-show="editUserForm.firstname.$invalid && editUserForm.firstname.$touched" class="help-block">
+                            <p class="text-danger">Firstname is required</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>*Last Name :</label>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group" ng-class="editUserForm.lastname.$invalid && editUserForm.lastname.$touched ? 'has-error' : ''">
+                        <input name="lastname" ng-model="userDetails.lastname" class="form-control" placeholder="Enter last name" type="text"/ required="">
+                        <div ng-show="editUserForm.lastname.$invalid && editUserForm.lastname.$touched" class="help-block">
+                            <p class="text-danger">Lastname is required</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>*Emaid ID:</label>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group" ng-class="editUserForm.email.$invalid && editUserForm.email.$touched ? 'has-error' : ''">
+                        <input name="email" ng-model="userDetails.email" class="form-control" placeholder="Enter email id" type="email" required />
+                        <div ng-show="editUserForm.email.$error.required && editUserForm.email.$touched" class="help-block">
+                            <p class="text-danger">Email is required</p>
+                        </div>
+                        <div ng-show="editUserForm.email.$error.email && editUserForm.email.$touched" class="help-block">
+                            <p class="text-danger">Email should be in proper format</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Is Active</label>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <yg-toggle toggle="isActive"></yg-toggle>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Is Admin</label>
+                    </div>
+                </div>
+                <div class="col-sm-9">
+                    <yg-toggle toggle="isAdmin"></yg-toggle>
+                </div>
+            </div>
+            <div class="row">
+                <div class="button-panel">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button class="btn btn-success" ng-click="userDetails.update()">Update</button>
+                        <a class="btn btn-danger" href="#/admin/user-management">Cancel</a>
+                        <a class="btn btn-info" ng-href="#/admin/reset-password/{{userDetails.id}}" >Reset Password</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

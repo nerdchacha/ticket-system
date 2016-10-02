@@ -1,0 +1,9 @@
+<div class="form-horizontal">
+  <div class="form-group">
+    <label class="col col--1-of-6 col--m-1-of-4 col--s-1-of-4 control-label">Comment<span>*</span></label>
+    <div class="col col--5-of-6 col--m-3-of-4 col--s-3-of-4" ng-class="actionForm.comment.$invalid && actionForm.comment.$touched ? 'has-error' : ''">
+    	<textarea class="form-control" name="comment" ng-model="task.comment" rows="4" required></textarea>
+    	<div ng-show="actionForm.comment.$invalid && actionForm.comment.$touched" class="help-block"><p class="text-danger">Comment is required</p></div>
+    </div>
+  </div>
+</div>

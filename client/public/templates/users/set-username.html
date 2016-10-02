@@ -1,0 +1,39 @@
+<div class="">
+    <h2 class="page-header">Set username</h2>
+    <p class="jumbotron">Hi, you would need to set a username first before you could start using the application.</p>
+    <div class="alert alert-info">Please note that the username can be set only once anc cannot be changed.</div>
+    <form>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Email ID :</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <input disabled="disabled" ng-model="setUsername.email" class="form-control" placeholder="Enter email id" type="email"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>*Username :</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <input ng-model="setUsername.username" class="form-control" placeholder="Enter username" type="text"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="button-panel">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button class="btn btn-success" ng-click="saveUsername()">Save</button>
+                    <a class="btn btn-danger" href="#/users/login">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

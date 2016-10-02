@@ -1,0 +1,25 @@
+<div class="panelbody-basic" ng-controller="ActionsCtrl" id="task-panel" ng-show="task.showTaskPanel">
+    <div class="trow">
+        <div class="col col--6-of-6">
+            <form novalidate="" name="actionForm">
+            <div class="sub-heading">
+                <h4>{{task.title}}</h4>
+            </div>
+            <div class="">
+                <div ng-show="task.showMainPanel">
+                    <div ng-include="task.name"></div>
+                </div>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col col--1-of-6 col--m-1-of-4 col--s-1-of-4"></div>
+                    <div class="col col--5-of-6 col--m-3-of-4 col--s-3-of-4">
+                        <button class="btn btn-primary" ng-click="saveTask()">{{saveBtnName}}</button>
+                        <button class="btn btn-danger" ng-click="cancelTask()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
