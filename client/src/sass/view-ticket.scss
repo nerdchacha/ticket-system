@@ -3,4 +3,112 @@
   box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.2);
   margin: 20px 0 20px 0;
   padding: 10px;
+  .pnl-title{
+  	padding: 10px;
+  	font-size: 1.5em;
+  	text-align: center;
+  	margin-bottom: 20px;
+  	color: white;
+	background-color: #d9534f;
+  }
+}
+
+.list-group{
+  padding-left: 0;
+}
+
+.list-group-item{
+    transition: all;
+    transition-duration: 0.4s;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 1px;
+    background-color: #fff;
+    border: 1px solid #e3e3e3
+}
+
+.recent-comments{
+  margin-bottom: 0;
+  li{
+    border-radius: 0;
+    border-top-width: 0;
+    border-left-width: 5px;
+    border-bottom-width: 0;
+    border-right-width: 0;
+    margin-bottom: 10px;
+    background-color: #f2f2f2;
+    &.comment-success{
+      border-left-color : #449d44;
+    }
+    &.comment-danger{
+    	border-left-color :#d9534f
+    }
+    .avatar img{
+      border-radius: 50%;
+    }
+    p{
+      margin-top: 2px;
+    }
+  }
+}
+
+.mr15{
+  margin-right: 15px !important;
+}
+
+.strong{
+  font-weight: bold;
+}
+
+.text-muted{
+  color: #777777;
+}
+
+.avatar{
+  img{
+    width: 100%;
+  }
+}
+
+.view-comments{
+	max-height: 600px;
+	overflow-y: auto;
+}
+
+.name{
+	display: block;
+	text-transform: capitalize;
+}
+
+.sub-heading{
+	&.rm{
+		margin: 0;
+	}
+}
+
+.center{
+	text-align: center;
+}
+
+.ticket-details{
+	.trow{		
+		padding-bottom: 10px;
+	}
+}
+
+
+@media screen and (max-width: 1000px){
+	.avatar{
+		display: none;
+		+ div{
+			width: 100%;
+		}
+	}
+}
+
+@media screen and (max-width: 700px){
+	.date{
+		text-align: left;
+	}
 }

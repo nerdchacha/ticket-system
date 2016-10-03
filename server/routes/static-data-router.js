@@ -40,9 +40,9 @@ router.get('/action-buttons/:id',function(req,res,next){
     validator.validateGetTicketById(req,res)
     .then(function(){
         return q.all([ 
-        staticBl.getInitialStaticData(),
-        ticketBl.getTicketByIdAll(req.params.id)
-        ])
+            staticBl.getInitialStaticData(),
+            ticketBl.getTicketByIdAll(req.params.id)
+        ]);
     })
     .then(function(resValues){
         var statusDetails = resValues[0];

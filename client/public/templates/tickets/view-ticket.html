@@ -20,41 +20,71 @@
         </div>
         <div class="trow">
             <div class="col col--3-of-8">
-                <div class="panelbody-basic">
+                <div class="panelbody-basic ticket-details">
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">ID :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4" >{{ticket.id}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">ID :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4" >{{::ticket.id}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Type :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.type}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Type :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.type}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Status :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.status}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Status :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.status}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Priority :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.priority}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Priority :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.priority}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Assigned To :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.assignee}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Assigned To :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.assignee}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Created By :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.createdBy}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Created By :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.createdBy}}</span>
                         </div>
                         <div class="trow">
-                            <label class="col col--3-of-8 col--m-1-of-4 col--s-1-of-4">Created Date :</label>
-                            <span class="col col--5-of-8 col--m-3-of-4 col--s-3-of-4">{{ticket.createdDate}}</span>
+                            <label class="col col--3-of-8 col--m-2-of-4 col--s-2-of-4">Created Date :</label>
+                            <span class="col col--5-of-8 col--m-2-of-4 col--s-2-of-4">{{::ticket.createdDate}}</span>
                         </div>
                 </div>
             </div>
             <div class="col col--5-of-8">
                 <div class="panelbody-basic">
-                    <div class="trow">
-                        <div class="col col--6-of-6 comments-panel">
+                <div class="pnl-title">Comments</div>
+                    <div class="trow" ng-controller="DeleteCommentCtrl">
+                        <div class="col col--2-of-2">
+                            <ul class="list-group recent-comments view-comments">
+                                <li ng-repeat="comment in ticket.comments | reverse track by $index" class="list-group-item clearfix" ng-class="{'comment-success': comment.isDeletable, 'comment-danger' : !comment.isDeletable}">
+                                    <div class="trow">
+                                        <div class="avatar col center col--1-of-6 col--am">
+                                          <img src="/images/avatar.png" alt="avatar">  
+                                        </div>
+                                        <div class="col col--5-of-6">                                        
+                                            <p>
+                                                <span class="name strong sub-heading rm">
+                                                    {{::comment.commentBy}}
+                                                    <button ng-if="ticket.currentUser === comment.commentBy && comment.isDeletable" type="button" class="close pull-right" title="delete comment" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true" ng-click="deleteComment(ticket,comment)">&times;</span>
+                                                    </button>
+                                                </span>
+                                                <p>
+                                                    <strong class="text-muted">{{::comment.commentMessage.title}}</strong>
+                                                    <div ng-repeat="message in comment.commentMessage.message track by $index">
+                                                        {{::message}}    
+                                                        <br />
+                                                    </div>
+                                                </p>
+                                            </p>
+                                        </div>
+                                        <span class="col col--1-of-6 col--am center date text-muted small">{{renderDate(comment.commentDate)}}</span>                                    
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+<!--                         <div class="col col--6-of-6 comments-panel" ng-controller="DeleteCommentCtrl">
                             <div>
                                 <div class="sub-heading">
                                     <h4>Comments</h4>
@@ -64,8 +94,8 @@
                                         <div class="col-sm-2">
                                             <div class="thumbnail">
                                                 <img class="img-responsive user-photo" src="/images/avatar.png">
-                                            </div><!-- /thumbnail -->
-                                        </div><!-- /col-sm-1 -->
+                                            </div>
+                                        </div>
                                         <div class="col-sm-10">
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">
@@ -75,68 +105,17 @@
                                                 <div class="panel-body">
                                                     <strong>{{comment.commentMessage.title}}</strong>
                                                     <div ng-repeat="message in comment.commentMessage.message track by $index">{{message}} <br /></div>
-                                                </div><!-- /panel-body -->
-                                            </div><!-- /panel panel-default -->
-                                        </div><!-- /col-sm-5 -->
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div ng-include="'templates/partials/action/action-partial.html'"></div>
             </div>
         </div>
-
-
-<!--         <div class="panel panel-default">
-            <div class="panel-heading">
-            </div>
-            <div class="panel-body">
-                <table class="table table-bordered">
-                    <tr>
-                        <td><label>Title :</label></td>
-                        <td colspan="3">{{::ticket.title}}</td>
-                    </tr>
-                    <tr>
-                        <td><label>Description :</label></td>
-                        <td colspan="3"><span ng-bind-html="ticket.description"></span></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-3"><label>ID :</label></td>
-                        <td class="col-md-3">{{::ticket.id}}</td>
-                        <td class="col-md-3"><label>Status :</label></td>
-                        <td class="col-md-3">{{::ticket.status}}</td>
-                    </tr>
-                    <tr>
-                        <td><label>Type :</label></td>
-                        <td>{{::ticket.type}}</td>
-                        <td><label>Created By: </label></td>
-                        <td>{{::ticket.createdBy}}</td>
-                    </tr>
-                    <tr>
-                        <td><label>Assignee :</label></td>
-                        <td>{{::ticket.assignee}}</td>
-                        <td><label>Created Date: </label></td>
-                        <td>{{::ticket.createdDate}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div> -->
-
-<!--         <div ng-show="showCommentPanel" id="comment-panel" class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Add new comment</h4>
-            </div>
-            <div class="panel-body">
-                <div class="form-group">
-                    <textarea class="form-control" ng-model="ticket.newComment" trows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-primary" ng-click="addComment()">Add</button>
-                    <button class="btn btn-danger" ng-click="hideCommentPanelFn()">Cancel</button>
-                </div>
-            </div>
-        </div> -->
     </div>
 </div>

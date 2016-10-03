@@ -2,8 +2,8 @@
  * Created by dell on 7/24/2016.
  */
 angular.module('ticketSystem')
-    .controller('ViewTicketCtrl',['$scope','$stateParams','$state','TicketFactory','YgNotify','Authentication','HelperFactory','YgModal','ActionFactory',
-        function($scope, $stateParams, $state, TicketFactory, YgNotify, Authentication,HelperFactory,YgModal,ActionFactory){
+    .controller('ViewTicketCtrl',['$scope','$stateParams','$state','TicketFactory','YgNotify','Authentication','HelperFactory',
+        function($scope, $stateParams, $state, TicketFactory, YgNotify, Authentication, HelperFactory){
 
             HelperFactory.setLoading(true);
 
@@ -20,7 +20,7 @@ angular.module('ticketSystem')
                     $scope.ticket = res.data;
                     $scope.ticket.description = HelperFactory.stripHtml($scope.ticket.description);
                     $scope.ticket.assignee = !$scope.ticket.assignee ? 'Unassigned' : $scope.ticket.assignee;
-                    $scope.ticket.createdDate = renderDate($scope.ticket.createdDate);
+                    $scope.ticket.createdDate = $scope.renderDate($scope.ticket.createdDate);
                     $scope.ticket.currentUser = Authentication.getUser().username;
                     $scope.statusClass = setStatusClass($scope.ticket.status);
                     $scope.ticket.priority = $scope.ticket.priority || 'N.A';
@@ -39,30 +39,6 @@ angular.module('ticketSystem')
             $scope.edit = function(){
                 $state.go('ticket-edit', {id: $scope.ticket.id});
             };
-
-            //TODO: Move to different conntroller
-            var deleteCallback = function(ticket, comment){
-                return function(){
-                    HelperFactory.setLoading(true);
-                    ActionFactory.deleteComment(ticket,comment)
-                        .then(function(res){
-                            $scope.ticket.comments = res.data.comments;
-                            YgNotify.alert('success', "The comment was deleted successfully", 5000);
-                            HelperFactory.setLoading(false);
-                        })
-                        .catch(function(error){
-                            YgNotify.alert('danger', "An error occurred while trying to delete comment. Please try again later.", 5000);
-                            HelperFactory.setLoading(false);
-                        });
-                }
-            };
-
-            $scope.deleteComment = function(ticket, comment){
-                YgModal.confirm(deleteCallback(ticket, comment));
-                YgModal.open('Are you sure you want to do this?', 'This will delete the comment permanently');
-            };
-
-
 
             function setLabelClass(value, config){
                 value = value || '';
@@ -120,7 +96,7 @@ angular.module('ticketSystem')
 
             }
 
-            function renderDate(date){
+            $scope.renderDate = function(date){
                 return new Date(Date.parse(date)).toLocaleDateString();
             };
 

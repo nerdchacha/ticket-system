@@ -23,6 +23,7 @@ angular.module('ticketSystem')
 			}
 
 			$scope.$watch('getTask()',function(newVal, oldVal){
+                $scope.task.name = null;
 				if(newVal){
                    HelperFactory.setLoading(true);
 					$scope.task.showTaskPanel = true;
@@ -55,9 +56,6 @@ angular.module('ticketSystem')
                             break;
 					};
 				}
-                else{
-                    $scope.task.name = null;
-                }
 			});
     	}])
     .controller('AssignActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
