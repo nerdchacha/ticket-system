@@ -47,10 +47,6 @@ angular.module('ticketSystem')
             $scope.getProfile = function(){
                 $state.go('users-profile');
             };
-            // //Setting state of axtion items to null to collapse all panels
-            // $rootScope.$on('$stateChangeStart', function(){
-            //     ActionFactory.setTask(null);
-            // });
 
             $window.app = {};
             $window.app.auth = function(error, user){

@@ -74,3 +74,26 @@
     border-color: #e69900  !important;
   }
 }
+
+.row{
+  padding-bottom: 10px;
+}
+
+.text-md-left{
+ text-align: left; 
+}
+
+.text-md-right{
+  text-align: left;
+}
+
+//medius and large devices
+@media screen and (min-width: 992px){
+  .text-md-left{
+   text-align: left; 
+  }
+
+  .text-md-right{
+    text-align: right;
+  }
+}

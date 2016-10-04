@@ -66,9 +66,10 @@
 }
 
 .avatar{
-  img{
-    width: 100%;
-  }
+	// transform: translate(0%, 50%);
+	img{
+		width: 100%;
+	}
 }
 
 .view-comments{
@@ -97,18 +98,20 @@
 	}
 }
 
+.no-padding{
+	padding: 0;
+}
+
+.date{
+  text-align: left;
+}
+
 
 @media screen and (max-width: 1000px){
 	.avatar{
 		display: none;
-		+ div{
+		> div{
 			width: 100%;
 		}
-	}
-}
-
-@media screen and (max-width: 700px){
-	.date{
-		text-align: left;
 	}
 }

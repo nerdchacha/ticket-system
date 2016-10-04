@@ -117,12 +117,6 @@ $maincolor: #d9534f;
       }
     }
   }
-  // &.is-open{
-  //   transform: translateX(0%);
-  // }
-  // &.is-close{
-  //   transform: translateX(100%);
-  // }
   a{
     color: white;
     text-decoration: none;
@@ -167,38 +161,30 @@ $maincolor: #d9534f;
   }
 }
 
-// @keyframes spin-toggle{
-//   0%{
-//     transform: rotate(0deg)
-//   }
-//   25%{
-//     transform: rotate(90deg)
-//   }
-//   50%{
-//     transform: rotate(180deg)
-//   }
-//   75%{
-//     transform: rotate(270deg)
-//   }
-//   100%{
-//     transform: rotate(360deg)
-//   }
-// }
-  
-// @keyframes spin-toggle-reverse{
-//   100%{
-//     transform: rotate(0deg)
-//   }
-//   75%{
-//     transform: rotate(90deg)
-//   }
-//   50%{
-//     transform: rotate(180deg)
-//   }
-//   25%{
-//     transform: rotate(270deg)
-//   }
-//   0%{
-//     transform: rotate(360deg)  
-//   }
-// }
+@media screen and (max-width: 992px){
+  .mainnav{
+    width: 55%;
+    float: none;
+    z-index: 1000;
+    transform: translateX(-100%);
+    &.is-open{
+      transform: translateX(0%);
+    }
+    &.is-close{
+      transform: translateX(-100%);
+    }
+  }
+}
+
+@media screen and (max-width: 768px){
+  .mainnav{
+    width: 65%;
+  }
+}
+
+
+@media screen and (max-width: 544px){
+  .mainnav{
+    width: 75%;
+  }
+}

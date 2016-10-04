@@ -1,5 +1,5 @@
-<nav class="mainnav" ng-if="isAuthenticated()">
-  <div class="site-logo"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
+<nav class="mainnav" ng-class="navClass" ng-if="isAuthenticated()" ng-click="navClick($event)">
+  <div class="site-logo pl60"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
     <section class="dashboard">
         <div class="heading">Utility</div>
         <ul>

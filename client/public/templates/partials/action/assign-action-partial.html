@@ -1,7 +1,7 @@
 <div class="form-horizontal" ng-controller="AssignActionCtrl">
   <div class="form-group">
-    <label class="col col--1-of-6 col--m-1-of-4 col--s-1-of-4 control-label">Assignee</label>
-    <div class="col col--5-of-6 col--m-3-of-4 col--s-3-of-4" ng-class="actionForm.assignee.$invalid && actionForm.assignee.$touched ? 'has-error' : ''">
+    <label class="col-md-2 col-xs-12">Assignee</label>
+    <div class="col-md-10 col-xs-12" ng-class="actionForm.assignee.$invalid && actionForm.assignee.$touched ? 'has-error' : ''">
       <select name="assignee" ng-model="assignee" ng-options="user.username as user.username for user in users" class="form-control"></select>
       <div ng-show="actionForm.assignee.$invalid && actionForm.assignee.$touched" class="help-block"><p class="text-danger">Comment is required</p></div>
     </div>
