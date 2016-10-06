@@ -1,32 +1,19 @@
 /**
  * Created by dell on 7/18/2016.
  */
-var q = require('q');
-var Ticket = require('../models/ticket-model.js');
-var helper = require('../business-layer/helper.js');
+var q       = require('q'),
+    _       = require('underscore'),
+    Ticket  = require('../models/ticket-model.js'),
+    helper  = require('../business-layer/helper.js');
 
 var ticket = {};
 
 var sortLogic = function(tickets,order,sort,size,page){
     var ret = {};
-    tickets.sort(function(a,b){
-        if(order === 'asc'){
-            if(a[sort] < b[sort])
-                return -1;
-            else if(a[sort] > b[sort])
-                return 1;
-            return 0;
-        }
-        else{
-            if(a[sort] > b[sort])
-                return -1;
-            else if(a[sort] < b[sort])
-                return 1;
-            return 0;
-        }
-    });
-    ret.tickets = tickets.slice((page - 1) * size, ((page - 1) * size) + size);
-    ret.page = parseInt(page);
+    var sort = helper.sortByKey(sort, order, 'asc');
+    var getPerPage = helper.itemsPerPage(page, size);
+    ret.tickets = _.compose(getPerPage, sort)(tickets);
+    ret.page = helper.intify(page);
     ret.count = tickets.length;
     ret.size = size;
     return ret;
@@ -40,12 +27,12 @@ ticket.fetchAllTickets = function(req,res){
         .then(function(isRegularUser){
             //Current user is admin or support user
             if(!isRegularUser){
-                var sort = req.query.sort || 'id';
-                var order = req.query.order || 'asc';
-                var page = req.query.page || 1;
-                var size = parseInt(req.query.size) || 10;
-                if(page === 'undefined') page = 1;
-                if(size === 'undefined') size = 10;
+                var sort = helper.isOrDefault(req.query.sort,'id');
+                var order = helper.isOrDefault(req.query.order,'asc');
+                var page = helper.isOrDefault(helper.intify(req.query.page), 1);
+                var size = helper.isOrDefault(helper.intify(req.query.size), 10);
+                // if(page === 'undefined') page = 1;
+                // if(size === 'undefined') size = 10;
 
                 Ticket.getAllTickets(function(err,tickets){
                     if(err) deferred.reject(err);

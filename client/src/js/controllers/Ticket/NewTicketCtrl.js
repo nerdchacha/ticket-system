@@ -31,14 +31,17 @@ angular.module('ticketSystem')
                     type: $scope.newTicket.type
                 })
                 .then(function(res){
-                        if(res.data.errors){
-                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            errorMessage.forEach(function(error){
-                                YgNotify.alert('danger', error, 5000);
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The assignee has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
                             });
-                        }
-                        else
+
+                        if(res.data.id)
                             $state.go('ticket-view',{id: res.data.id});
+
                 },function(err){
                     YgNotify.alert('danger', "An error occurred while trying to create new ticket. Please try again later.", 5000);
                     console.log(err);

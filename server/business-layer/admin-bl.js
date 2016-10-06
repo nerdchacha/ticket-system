@@ -58,12 +58,13 @@ admin.updateUser = function(username,userDetails){
 
 admin.resetPassword = function(req,res){
     var deferred = q.defer();
-    var id = req.params.id;
-    var password = req.body.password;
-    User.resetPassword(id,password,function(err){
-        if(err) deferred.reject(err);
-        else deferred.resolve();
-    });
+    User.resetPassword(
+        req.params.id,
+        req.body.password,
+        function(err){
+            if(err) deferred.reject(err);
+            else deferred.resolve();
+        });
 
     return deferred.promise;
 };

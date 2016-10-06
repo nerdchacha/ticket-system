@@ -8,18 +8,18 @@ angular.module('ticketSystem')
             $scope.saveUsername = function(){
                 UserFactory.setUsername({id: id,username :$scope.setUsername.username})
                     .then(function(res){
-                        if(res.data.errors){
-                            //SOme error on the server side
-                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            errorMessage.forEach(function(error){
-                                YgNotify.alert('danger', error, 5000);
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'Username has been set successfully.')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
                             });
-                        }
-                        else{
+                            
+                        if(!res.data.errors){
                             Authentication.setUser(res.data.user);
                             $scope.$emit('successful-login');
                             $state.go('ticket.my-tickets');
-                            YgNotify.alert('success', 'Username has been set successfully.', 5000);
                         }
                     })
                     .catch(function(err){

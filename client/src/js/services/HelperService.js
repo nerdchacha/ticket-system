@@ -5,22 +5,32 @@ angular.module('ticketSystem')
     .factory('HelperFactory',['Authentication',
         function(Authentication){
             var fact = {};
-            var users;
-            var loading = false;
+            var static = {}
+            static.loading = false;
+            // var users;
                     
-            fact.createErrorMessage = function(errors){
-                var errorMessage = [];
-                for(var i = 0; i < errors.length; i++){
-                    errorMessage.push(errors[i].error);
+            // fact.createErrorMessage = function(errors){
+            //     var errorMessage = [];
+            //     for(var i = 0; i < errors.length; i++){
+            //         errorMessage.push(errors[i].error);
+            //     }
+            //     return errorMessage;
+            // };
+
+            fact.createFlashMessage = function(res, successMessage){
+                if(res.data.errors){
+                    return res.data.errors.map(function(err) { return { message: err.error, class: 'danger' } });
                 }
-                return errorMessage;
+                return successMessage ? [{ message : successMessage, class: 'success' }] : [];
             };
-            fact.setAllUsers = function(users){
-                this.users = users;
-            };
-            fact.getAllUsers = function(){
-                return this.users;
-            };
+
+
+            // fact.setAllUsers = function(users){
+            //     this.users = users;
+            // };
+            // fact.getAllUsers = function(){
+            //     return this.users;
+            // };
             fact.getAllUsersButSelf = function(users){
                 var currentUsername = Authentication.getUser().username;
                 return users.filter(function(user){ return user.username !== currentUsername });
@@ -51,10 +61,10 @@ angular.module('ticketSystem')
                 return text ? String(text).replace(/<[^>]+>/gm, '') : '';
             };
             fact.getLoading = function(){
-                return loading;
+                return static.loading;
             };
             fact.setLoading = function(val){
-                loading = val;
+                static.loading = val;
             }
             return fact;
         }]);

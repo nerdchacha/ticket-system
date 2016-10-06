@@ -72,4 +72,37 @@ helper.isRegularUser = function(user){
     return deferred.promise;
 };
 
+
+
+//============================================================
+//====================FUNCTIONAL==============================
+//============================================================
+
+helper.sortByKey = function(key, order, asc, list){
+    return function(list){
+        return order === asc ? list.sort(function(a,b){return b[key] <= a[key]}) : list.sort(function(a,b){return b[key] >= a[key]});
+    }
+};
+
+helper.compose = function(){
+    var args = Array.prototype.slice.call(arguments);
+    return function(value){
+        return args.reverse().reduce(function(seed, func){ return func(seed); }, value);
+    }
+};
+
+helper.itemsPerPage = function(page, size, list){
+    return function(list){
+        return list.slice((page - 1) * size, ((page - 1) * size) + size);
+    }
+}
+
+helper.isOrDefault = function(check, fallback){
+    return check || fallback;
+}
+
+helper.intify = function (value){
+    return parseInt(value);
+}
+
 module.exports = helper;

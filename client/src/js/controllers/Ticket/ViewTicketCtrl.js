@@ -5,18 +5,17 @@ angular.module('ticketSystem')
     .controller('ViewTicketCtrl',['$scope','$stateParams','$state','TicketFactory','YgNotify','Authentication','HelperFactory',
         function($scope, $stateParams, $state, TicketFactory, YgNotify, Authentication, HelperFactory){
 
-            HelperFactory.setLoading(true);
 
             TicketFactory.getTicketById($stateParams.id)
             .then(function(res){
-                if(res.data.errors){
-                    $state.go('ticket.my-tickets');
-                    var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                    errorMessage.forEach(function(error){
-                        YgNotify.alert('danger', error, 5000);
-                    });
-                }
-                else{
+                HelperFactory
+                    .createFlashMessage(
+                        res)
+                    .forEach(function(msg){
+                        YgNotify.alert(msg.class, msg.message, 5000);
+                    })
+
+                if(!res.data.errors){
                     $scope.ticket = res.data;
                     $scope.ticket.description = HelperFactory.stripHtml($scope.ticket.description);
                     $scope.ticket.assignee = !$scope.ticket.assignee ? 'Unassigned' : $scope.ticket.assignee;
@@ -27,12 +26,10 @@ angular.module('ticketSystem')
                     $scope.priorityClass = setPriorityClass($scope.ticket.priority);
                     if(showEdit($scope.ticket))
                         $scope.showEdit = true;
-                    HelperFactory.setLoading(false);
                 }
             })
             .catch(function(error){
                 YgNotify.alert('danger', "An error occurred while trying to get ticket details. Please try again later.", 5000);
-                HelperFactory.setLoading(false);
             });
 
             $scope.ticket = {};

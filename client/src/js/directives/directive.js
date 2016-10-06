@@ -33,4 +33,19 @@ angular.module('ticketSystem')
                 });
             }
         };
-    });
+    })
+    .directive('ygSpinner',['HelperFactory', function(HelperFactory){
+        return {
+            restrict: 'E',
+            template: '<div class="loading" ng-show="loading()"></div>',
+            scope: {},
+            link: function(scope, ele, attrs, ctrl){
+                // scope.getLoading = HelperFactory.getLoading;
+                // scope.$watch('getLoading()',function(newVal){
+                //     console.log(newVal);
+                //     scope.loading = newVal;
+                // });
+                scope.loading = HelperFactory.getLoading;
+            }
+        }
+    }]);

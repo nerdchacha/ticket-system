@@ -54,7 +54,7 @@ app.use(expressValidator({
         }
         return {
             param : formParam,
-            msg   : msg,
+            error   : msg,
             value : value
         };
     }

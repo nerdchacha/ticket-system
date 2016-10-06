@@ -42,7 +42,6 @@ angular.module('ticketSystem')
             $scope.config.sizeQuerystringParam = 'size';
 
             $scope.active = '';
-            $scope.agLoading = agSortFactory.getLoading;
 
             $scope.config.onRowClick = function(row){
                 $state.go('ticket-view', {id: row.id});
@@ -64,9 +63,5 @@ angular.module('ticketSystem')
                 $scope.config.url = '/tickets/to-me';
                 $scope.$parent.active = 'tome';
             };
-
-            $scope.$watch('agLoading()', function(newVal, oldVal){
-                HelperFactory.setLoading(newVal);
-            });
 
         }]);

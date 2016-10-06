@@ -25,7 +25,6 @@ angular.module('ticketSystem')
 			$scope.$watch('getTask()',function(newVal, oldVal){
                 $scope.task.name = null;
 				if(newVal){
-                   HelperFactory.setLoading(true);
 					$scope.task.showTaskPanel = true;
 					$scope.task.showMainPanel = true;
 					$scope.task.name = 'templates/partials/action/' + newVal +'-action-partial.html';
@@ -72,7 +71,6 @@ angular.module('ticketSystem')
                         $scope.ticket.assignee
                     ]);
                 $scope.assignee = $scope.users[0].username;
-                HelperFactory.setLoading(false);
             });
     		$scope.setSaveFn(
     			function(){
@@ -83,28 +81,29 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.assign($scope.ticket.id, $scope.assignee, $scope.task.comment)
     				.then(function(res){
-                        if(res.data.errors){
-                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            errorMessage.forEach(function(error){
-                                YgNotify.alert('danger', error, 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The assignee has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
                             });
-                            return;
-                        }
+
+                        if(res.data.comments){
     					//Update comments and assignee on view
-    					$scope.ticket.comments = res.data.comments;
-    					$scope.ticket.assignee = res.data.assignee;
-    					YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
+    					   $scope.ticket.comments = res.data.comments;
+    				    	$scope.ticket.assignee = res.data.assignee;
+                        }
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
 						YgNotify.alert('danger', 'There was some error trying to assign the ticket. Please try again after some time.', 5000);
 						$scope.cancelTask();
-                        HelperFactory.setLoading(false);
     				})
     			});
 
@@ -118,7 +117,6 @@ angular.module('ticketSystem')
                 console.log(res.data);
                 $scope.allowedStatus = res.data.status.allowed;
                 $scope.newStatus  = $scope.allowedStatus[0];
-                HelperFactory.setLoading(false);
             });  
 			$scope.setSaveFn(
     			function(){
@@ -129,20 +127,25 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.changeStatus($scope.ticket.id, $scope.newStatus, $scope.task.comment)
     				.then(function(res){
 						//Update comments and assignee on view
     					$scope.ticket.comments = res.data.comments;
     					$scope.ticket.status = res.data.status;
-    					YgNotify.alert('success', 'The status has been changed successfully', 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The status has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -150,8 +153,7 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Change Status');
     	}])
     .controller('CommentActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
-    	function($scope,ActionFactory,YgNotify,HelperFactory){    
-            HelperFactory.setLoading(false);		
+    	function($scope,ActionFactory,YgNotify,HelperFactory){    		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -160,19 +162,24 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.addComment($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
-                        YgNotify.alert('success','The comment has been added successfully',5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The comment has been added successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();                        
     				})
     				.catch(function(err){
                         YgNotify.alert('danger','There was some error trying to add comment. Please try again after some time.',5000);
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -180,8 +187,7 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Add Comment');
     	}])
     .controller('CloseActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
-    	function($scope,ActionFactory,YgNotify,HelperFactory){    
-            HelperFactory.setLoading(false);		
+    	function($scope,ActionFactory,YgNotify,HelperFactory){    		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -190,20 +196,25 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.close($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
     					$scope.ticket.status = res.data.status;
-    					YgNotify.alert('success', 'The status has been changed successfully', 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The status has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -211,8 +222,7 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Close');
     	}])
     .controller('ReopenActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
-    	function($scope,ActionFactory,YgNotify,HelperFactory){   
-            HelperFactory.setLoading(false); 		
+    	function($scope,ActionFactory,YgNotify,HelperFactory){    		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -221,20 +231,25 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.reopen($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
     					$scope.ticket.status = res.data.status;
-    					YgNotify.alert('success', 'The status has been changed successfully', 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The status has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();	
     				})
     			});
@@ -242,8 +257,7 @@ angular.module('ticketSystem')
 			$scope.setSaveBtnName('Reopen');
     	}])
     .controller('AwaitingActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
-    	function($scope,ActionFactory,YgNotify,HelperFactory){  
-            HelperFactory.setLoading(false);  		
+    	function($scope,ActionFactory,YgNotify,HelperFactory){    		
 			$scope.setSaveFn(
     			function(){
                     //Validate required fields
@@ -252,20 +266,28 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
     				ActionFactory.awaitingUserResponse($scope.ticket.id, $scope.task.comment)
     				.then(function(res){
-						//Update comments and status on view
-    					$scope.ticket.comments = res.data.comments;
-    					$scope.ticket.status = res.data.status;
-    					YgNotify.alert('success', 'The status has been changed successfully', 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The status has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
+                        if(res.data.comments){    
+                            //Update comments and status on view
+                            $scope.ticket.comments = res.data.comments;
+                            $scope.ticket.status = res.data.status;
+                        }
+
     					//Close panel
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();
     				})
     				.catch(function(err){
     					YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
-                        HelperFactory.setLoading(false);
 						$scope.cancelTask();	
     				});
     			});
@@ -274,7 +296,6 @@ angular.module('ticketSystem')
     	}])
     .controller('AcknowledgeActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory',
         function($scope,ActionFactory,YgNotify,HelperFactory){            
-            HelperFactory.setLoading(false);
             $scope.setSaveFn(
                 function(){
                     //Validate required fields
@@ -283,20 +304,25 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
                     ActionFactory.acknowledgeTicket($scope.ticket.id, $scope.task.comment)
                     .then(function(res){
                         //Update comments and status on view
                         $scope.ticket.comments = res.data.comments;
                         $scope.ticket.status = res.data.status;
-                        YgNotify.alert('success', 'The status has been changed successfully', 5000);
+
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The status has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
+
                         //Close panel
-                        HelperFactory.setLoading(false);
                         $scope.cancelTask();
                     })
                     .catch(function(err){
                         YgNotify.alert('danger', 'There was some error trying to change the ticket status. Please try again after some time.', 5000);
-                        HelperFactory.setLoading(false);
                         $scope.cancelTask();    
                     });
                 });
@@ -304,8 +330,7 @@ angular.module('ticketSystem')
             $scope.setSaveBtnName('Acknowledge Ticket');
         }])
     .controller('AssignToSelfActionCtrl',['$scope','ActionFactory','YgNotify','HelperFactory','Authentication',
-        function($scope,ActionFactory,YgNotify,HelperFactory,Authentication){   
-            HelperFactory.setLoading(false);        
+        function($scope,ActionFactory,YgNotify,HelperFactory,Authentication){           
             $scope.setSaveFn(
                 function(){
                     //Validate required fields
@@ -314,30 +339,31 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    HelperFactory.setLoading(true);
                     var currentUser = Authentication.getUser();
                     console.log(currentUser);
                     ActionFactory.assign($scope.ticket.id, currentUser.username, $scope.task.comment)
                     .then(function(res){
-                        if(res.data.errors){
-                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            errorMessage.forEach(function(error){
-                                YgNotify.alert('danger', error, 5000);
+                        
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'The assignee has been changed successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
                             });
-                            return;
+
+                        if(res.data.comments){    
+                            //Update comments and assignee on view
+                            $scope.ticket.comments = res.data.comments;
+                            $scope.ticket.assignee = res.data.assignee;
                         }
-                        //Update comments and assignee on view
-                        $scope.ticket.comments = res.data.comments;
-                        $scope.ticket.assignee = res.data.assignee;
-                        YgNotify.alert('success', 'The assignee has been changed successfully', 5000);
+
                         //Close panel
-                        HelperFactory.setLoading(false);
                         $scope.cancelTask();
                     })
                     .catch(function(err){
                         YgNotify.alert('danger', 'There was some error trying to assign the ticket. Please try again after some time.', 5000);
                         $scope.cancelTask();
-                        HelperFactory.setLoading(false);
                     });
                 });
 

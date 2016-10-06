@@ -4,7 +4,6 @@
 angular.module('ticketSystem')
     .controller('UsersListCtrl',['$scope','$state','$stateParams','HelperFactory','YgNotify',
         function($scope,$state,$stateParams,HelperFactory,YgNotify){
-            HelperFactory.setLoading(true);
             var renderIsActive = function(){
                 return '';
             };
@@ -49,10 +48,6 @@ angular.module('ticketSystem')
             $scope.config.onRowClick = function(row){
                 $state.go('admin-edit', {username: row.username});
             };
-
-            $scope.$watch('agLoading()', function(newVal, oldVal){
-                HelperFactory.setLoading(newVal);
-            });
         }
     ])
     .controller('EditUsersCtrl',['$scope','$state','$stateParams','HelperFactory','UserFactory','YgNotify',
@@ -64,7 +59,6 @@ angular.module('ticketSystem')
             var username = $stateParams.username;
             UserFactory.getUserDetails(username)
                 .then(function(res) {
-                    HelperFactory.setLoading(false);    
                     $scope.userDetails.username = res.data.user.username;
                     $scope.userDetails.firstname = res.data.user.firstname;
                     $scope.userDetails.lastname = res.data.user.lastname;
@@ -83,7 +77,6 @@ angular.module('ticketSystem')
                     $scope.isAdmin.value = $scope.userDetails.isAdmin;
                 })
                 .catch(function(err){
-                    HelperFactory.setLoading(false);
                     YgNotify.alert('danger', 'There was some error trying to fetch user details. Please try again after some time.', 5000);
                 });
 
@@ -96,16 +89,19 @@ angular.module('ticketSystem')
                     return;
                 }
 
-                HelperFactory.setLoading(true);
                 $scope.userDetails.isAdmin = $scope.isAdmin.value;
                 $scope.userDetails.isActive = $scope.isActive.value;
                 UserFactory.updateUserDetails($scope.userDetails.username,$scope.userDetails)
                     .then(function(res){
-                        HelperFactory.setLoading(false);
-                        YgNotify.alert('success', 'User details updated successfully', 5000);
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'User details updated successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
+                            });
                     })
                     .catch(function(err){
-                        HelperFactory.setLoading(false);
                         YgNotify.alert('danger', 'There was some error trying to update user details. Please try again after some time.', 5000);
                     });
             };
@@ -123,26 +119,20 @@ angular.module('ticketSystem')
                     form.password2.$touched = true;
                     form.password1.$touched = true;
                     return;
-                }
-                HelperFactory.setLoading(true);    
+                }    
                 var id = $stateParams.id;
                 UserFactory.resetPassword(id, $scope.changePassword)
                     .then(function(res){
-                        HelperFactory.setLoading(false);
-                        if(!res.data.errors){
-                            //Password reset successfully
-                            YgNotify.alert('success', 'Password has been reset successfully', 5000);
-                            $state.go('admin-user-management');
-                        }
-                        else{
-                            var errorMessage = HelperFactory.createErrorMessage(res.data.errors);
-                            errorMessage.forEach(function(error){
-                                YgNotify.alert('danger', error, 5000);
+                        HelperFactory
+                            .createFlashMessage(
+                                res,
+                                'Password has been reset successfully')
+                            .forEach(function(msg){
+                                YgNotify.alert(msg.class, msg.message, 5000);
                             });
-                        }
+                        //$state.go('admin-user-management');
                     })
                     .catch(function(err){
-                        HelperFactory.setLoading(false);
                         YgNotify.alert('danger', 'The request could not ben made successfully. Please try later', 5000);
                     });
             };

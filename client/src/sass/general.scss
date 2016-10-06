@@ -149,6 +149,10 @@ a {
   border-bottom: 1px solid rgba(0,0,0,0.15);
 }
 
+.underline{
+  border-bottom: 1px solid rgba(0,0,0,0.15); 
+}
+
 .form-row{
   margin-bottom: 15px;
 }
@@ -304,3 +308,10 @@ $maincolor: #d9534f;
     transform: rotate(360deg)  
   }
 }
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+

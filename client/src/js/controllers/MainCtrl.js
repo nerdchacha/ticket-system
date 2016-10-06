@@ -27,10 +27,6 @@ angular.module('ticketSystem')
                         $scope.isAdmin = false;
                 }
             };
-            $scope.getLoading = HelperFactory.getLoading;
-            $scope.$watch('getLoading()',function(newVal, oldVal){
-                $scope.loading = newVal;
-            })
             $scope.getUser = Authentication.getUser;
             $scope.isAuthenticated = Authentication.getIsAuthenticated;
             $scope.logout = function(){

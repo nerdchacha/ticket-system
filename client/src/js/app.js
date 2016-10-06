@@ -5,10 +5,17 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
     .service('authInterceptor', ['$q','$injector','Authentication','HelperFactory',
         function($q,$injector,Authentication,HelperFactory) {
             return {
+                request: function(config){
+                    //Show Spinner
+                    HelperFactory.setLoading(true);
+                    return config;
+                },
                 response: function(response){
+                    //Hide Spinner
+                    HelperFactory.setLoading(false);
+
                     if (response.status === 401) {
                         Authentication.clearUser();
-                        HelperFactory.setLoading(false);
                     }
                     return response || $q.when(response);
                 },
@@ -19,12 +26,10 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                         Authentication.clearUser();
                         //Redirect to login page in case user is unauthorized
                         $injector.get('$state').go('users-login.login');
-                        HelperFactory.setLoading(false);
                     }
                     //In case user if forbidden to access part of the web app, redirect to home page
                     if(rejection.status === 403){
                         $injector.get('$state').go('ticket.my-tickets');
-                        HelperFactory.setLoading(false);
                     }
                     return $q.reject(rejection);
                 }

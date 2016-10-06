@@ -1,9 +1,25 @@
 /**
  * Created by dell on 7/30/2016.
  */
-var validator = {};
-var Ticket = require('../models/ticket-model.js');
-var q = require('q');
+var validator           = {},
+    Ticket              = require('../models/ticket-model.js'),
+    helper              = require('./helper.js'),
+    q                   = require('q'),
+    _                   = require('underscore'),
+    bodyHasStatus       = checkRequiredBody('status', 'status is required'),  
+    bodyHasComment      = checkRequiredBody('comment', 'comment is required'),
+    queryHasCommentId   = checkRequiredQuery('commentId', 'commentId is required'),
+    bodyHasTitle        = checkRequiredBody('title', 'title is required'),
+    bodyHasDesc         = checkRequiredBody('description', 'description is required'),
+    bodyHasFirstname    = checkRequiredBody('firstname', 'firstname is required'),
+    bodyHasLastname     = checkRequiredBody('lastname', 'lastname is required'),
+    bodyHasEmail        = checkRequiredBody('email', 'email is required'),
+    bodyHasUserId       = checkRequiredBody('id', 'user is required'),
+    bodyHasAssignee     = checkRequiredBody('assigneee', 'assignee is required'),
+    bodyHasUsername     = checkRequiredBody('username', 'username is required'),
+    bodyHasType         = checkRequiredBody('type', 'type is required'),
+    paramsHasUsername   = checkRequiredParams('username', 'username is required'),
+    paramsHasId         = checkRequiredParams('id', 'id is required');
 
 /*-------------------------------------------------------
  A MODULE TO CHECK HTTP BODY AND PARAMS TO VALiDATE IF ALL MANDATORY PARAMETERS ARE A PART OF IT
@@ -14,13 +30,11 @@ validator.validateNewTicket = function(req,res){
 
     //Making task async
     process.nextTick(function(){
-        req.checkBody('title','Ticket title cannot be blank').notEmpty();
-        req.checkBody('description','Ticket description cannot be blank').notEmpty();
-        req.checkBody('type','Ticket type cannot be blank').notEmpty();
-
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+                resolveValidator(deferred), 
+                bodyHasType,
+                bodyHasDesc,
+                bodyHasTitle)(req);
     });
 
     return deferred.promise;
@@ -31,14 +45,12 @@ validator.validateUpdateTicket = function(req,res){
 
     //Making task async
     process.nextTick(function(){
-        req.checkBody('title','Ticket title cannot be blank').notEmpty();
-        req.checkBody('description','Ticket description cannot be blank').notEmpty();
-        req.checkBody('type','Ticket type cannot be blank').notEmpty();
-        req.checkBody('status','Ticket status cannot be blank').notEmpty();
-
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+                resolveValidator(deferred), 
+                bodyHasStatus,
+                bodyHasType,
+                bodyHasDesc,
+                bodyHasTitle)(req);
     });
 
     return deferred.promise;
@@ -49,10 +61,9 @@ validator.validateGetTicketById = function(req,res){
 
     //Make task async
     process.nextTick(function(){
-        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            paramsHasId)(req);
     });
 
     return deferred.promise;
@@ -63,10 +74,9 @@ validator.validateGetTicketData = function(req,res){
 
     //Make task async
     process.nextTick(function(){
-        req.checkParams('status' ,'ticket status is required').notEmpty();
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            bodyHasStatus)(req); 
     });
 
     return deferred.promise;
@@ -77,11 +87,10 @@ validator.validateTicketAddComment = function(req,res){
 
     //Make task async
     process.nextTick(function(){
-        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-        req.checkBody('comment' ,'Comment is required').notEmpty();
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred), 
+            bodyHasComment,
+            paramsHasId)(req);
     });
     return deferred.promise;
 };
@@ -91,13 +100,12 @@ validator.validateTicketDeleteComment = function(req,res){
 
     //Make task async
     process.nextTick(function(){
-        req.checkParams('id' ,'No ticket with selected id found').notEmpty();
-        req.checkParams('id' ,'Comment ID is required').notEmpty();
-
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            paramsHasId,
+            queryHasCommentId)(req);
     });
+
     return deferred.promise;
 };
 
@@ -122,9 +130,7 @@ validator.validateNewUser = function(req,res){
         req.checkBody('password2' ,'Re enter password is require').notEmpty();
         req.checkBody('password2' ,'Passwords do not match').equals(req.body.password);
 
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        resolveValidator(deferred, req);
     });
 
     return deferred.promise;
@@ -151,10 +157,10 @@ validator.canUserDeleteComment = function(req,res,commentId){
 validator.validateUsername = function(req,res){
     var deferred = q.defer();
     process.nextTick(function(){
-        req.checkParams('username' ,'Username is require').notEmpty();
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+
+        _.compose(
+            resolveValidator(deferred),
+            paramsHasUsername)(req);
     });
     return deferred.promise;
 };
@@ -163,14 +169,13 @@ validator.validateUpdateProfile = function(req,res){
     var deferred = q.defer();
     //Make task async
     process.nextTick(function(){
-        req.checkParams('username' ,'Username is require').notEmpty();
-        req.checkBody('firstname' ,'First name is require').notEmpty();
-        req.checkBody('lastname' ,'Last name is require').notEmpty();
-        req.checkBody('email' ,'Email is require').notEmpty();
 
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            bodyHasFirstname,
+            bodyHasLastname,
+            bodyHasEmail,
+            paramsHasUsername)(req);
     });
 
     return deferred.promise;
@@ -180,12 +185,11 @@ validator.checkSetUsername = function(req,res){
     var deferred = q.defer();
     //Make task async
     process.nextTick(function(){
-        req.checkBody('id' ,'user ID  is require').notEmpty();
-        req.checkBody('username' ,'Username is require').notEmpty();
 
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            bodyHasUserId,
+            bodyHasUsername)(req);
     });
 
     return deferred.promise;
@@ -225,9 +229,7 @@ validator.validateResetPassword = function(req,res){
         req.checkBody('password2' ,'retyped password is require').notEmpty();
         req.checkBody('password2' ,'Passwords do not match').equals(req.body.password);
 
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        resolveValidator(deferred, req);
     });
 
     return deferred.promise;
@@ -236,14 +238,12 @@ validator.validateResetPassword = function(req,res){
 validator.validateTicketAssign = function(req,res){
     var deferred = q.defer();
     //Make task async
-    process.nextTick(function(){
-        req.checkParams('id' ,'ticket id is require').notEmpty();
-        req.checkBody('assignee' ,'assignee is require').notEmpty();
-        req.checkBody('comment' ,'comment is require').notEmpty();
-
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+    process.nextTick(function(){    
+        _.compose(
+            resolveValidator(deferred),
+            bodyHasComment,
+            bodyHasAssignee,
+            paramsHasId)(req);
     });
 
     return deferred.promise;
@@ -253,16 +253,58 @@ validator.validateTicketChangeStatus = function(req,res){
     var deferred = q.defer();
     //Make task async
     process.nextTick(function(){
-        req.checkParams('id' ,'ticket id is require').notEmpty();
-        req.checkBody('status' ,'status is require').notEmpty();
-        req.checkBody('comment' ,'comment is require').notEmpty();
 
-        var errors = req.validationErrors();
-        if(errors) deferred.reject(errors);
-        else deferred.resolve();
+        _.compose(
+            resolveValidator(deferred),
+            bodyHasComment,
+            bodyHasStatus,
+            paramsHasId)(req);
     });
 
     return deferred.promise;
+}
+
+function resolveValidator(deferred, req){
+    return function(req){
+        return _.compose(resolver(deferred), req.validationErrors)();
+    }
+}
+
+function resolver(deferred, errors){
+    return function(errors){
+        if(errors) deferred.reject(errors);
+        else deferred.resolve();
+    }
+}
+
+function checkRequiredBody(param, message, req){
+    return function(req){
+        req
+        .checkBody(param, message)
+        .notEmpty();
+
+        return req
+    }
+}
+
+function checkRequiredParams(param, message, req){
+    return function(req){
+        req
+        .checkParams(param, message)
+        .notEmpty();
+
+        return req;
+    }
+}
+
+function checkRequiredQuery(param, message, req){
+    return function(req){
+        req
+        .checkQuery(param, message)
+        .notEmpty();
+
+        return req
+    }
 }
 
 module.exports = validator;

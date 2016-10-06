@@ -1,10 +1,24 @@
 <nav class="mainnav" ng-class="navClass" ng-if="isAuthenticated()" ng-click="navClick($event)">
   <div class="site-logo pl60"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
-    <section class="dashboard">
+      <section class="quick-link">
+        <div class="heading">Quick Link</div>
+        <ul>
+          <li>
+            <a ui-sref="ticket.my-tickets">
+              <span class="col-md-10 no-padding">
+                <i class="fa fa-lg fa-dashboard"></i> New Tickets                
+              </span>
+              <span class="col-md-2 vcenter badge badge-danger">2</span>
+            </a>
+          </li>
+          <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> Create Ticket</a></li>
+        </ul>
+    </section>
+    <section class="utility">
         <div class="heading">Utility</div>
         <ul>
-          <li><a ui-sref="ticket.my-tickets"><i class="fa fa-lg fa-dashboard"></i> Tickets</a></li>
-          <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> New Ticket</a></li>
+          <li><a ui-sref="ticket.my-tickets"><i class="fa fa-lg fa-dashboard"></i> All Tickets</a></li>
+          <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> Create Ticket</a></li>
         </ul>
     </section>
     <section class="profile-menu">
@@ -19,7 +33,7 @@
     <section class="admin-menu" ng-if="isAdmin">
     <div class="heading">Admin</div>
       <ul>
-        <li><a href="#/admin/user-management"><i class="fa fa-users"></i> User management</a></li>
+        <li><a href="#/admin/user-management"><i class="fa fa-users"></i> User Management</a></li>
       </ul>
     </section>
   </nav>

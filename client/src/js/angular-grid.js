@@ -2,7 +2,6 @@ angular.module('yangular-grid',[])
     .factory('agSortFactory',['$http',
         function($http){
             var apiurl,sortQuerystringName,orderQuerystringName,pageQueryStringName,sizeQueryStringName;
-            var loading = false;
             var ret = {};
             ret.setUrl = function(url){
                 apiurl = url;
@@ -19,12 +18,6 @@ angular.module('yangular-grid',[])
             ret.getRows = function(query){
                 return $http.get(apiurl + '?'+ sortQuerystringName +'=' + query.sort + '&'+ orderQuerystringName +'=' + query.order + '&'+ pageQueryStringName +'=' + query.page + '&' + sizeQueryStringName + '=' + query.size);
             };
-            ret.setLoading = function(val){
-                loading = val;
-            }
-            ret.getLoading = function(){
-                return loading;
-            }
             return ret;
         }])
 	.directive('yag',['agSortFactory','$timeout',
@@ -97,7 +90,6 @@ angular.module('yangular-grid',[])
                         return $scope.config.objectName;
                     };
                     $scope.size = "10";
-                    agSortFactory.setLoading(true);
                     agSortFactory.getRowsOnLoad()
                         .then(function(res){
                             readResponse(res);
@@ -105,10 +97,8 @@ angular.module('yangular-grid',[])
                                 $scope.order = 'asc';
                                 $scope.sort = 'id';
                             }
-                            agSortFactory.setLoading(false);
                         })
                         .catch(function(err){
-                            agSortFactory.setLoading(false);
                         });
 
                     $scope.getPageList = function(){
@@ -119,14 +109,11 @@ angular.module('yangular-grid',[])
                         if($scope.currentPage === $scope.totalPages)
                             return;
                         else {
-                            agSortFactory.setLoading(true);
                             agSortFactory.getRows({order : $scope.order, sort : $scope.sort , page : $scope.currentPage + 1, size: $scope.size})
                                 .then(function(res){
                                     readResponse(res);
-                                    agSortFactory.setLoading(false);
                                 })
                                 .catch(function(err){
-                                    agSortFactory.setLoading(false);
                                 });
                         }
                     };
@@ -135,14 +122,11 @@ angular.module('yangular-grid',[])
                         if($scope.currentPage === 1)
                             return;
                         else{
-                            agSortFactory.setLoading(true);
                             agSortFactory.getRows({order : $scope.order, sort : $scope.sort , page : $scope.currentPage - 1, size: $scope.size})
                                 .then(function(res){
                                     readResponse(res);
-                                    agSortFactory.setLoading(false);
                                 })
                                 .catch(function(err){
-                                    agSortFactory.setLoading(false);
                                 });
                         }
                     };
@@ -152,28 +136,22 @@ angular.module('yangular-grid',[])
                             return;
                         }
                         else {
-                            agSortFactory.setLoading(true);
                             agSortFactory.getRows({order: $scope.order, sort: $scope.sort, page: pageNumber, size: $scope.size})
                                 .then(function (res) {
                                     readResponse(res);
-                                    agSortFactory.setLoading(false);
                                 })
                                 .catch(function(err){
-                                    agSortFactory.setLoading(false);
                                 });
                         }
                     };
 
                     $scope.changeSize = function(){
                         $scope.currentPage = 1;
-                        agSortFactory.setLoading(true);
                         agSortFactory.getRows({order: $scope.order, sort: $scope.sort, page: $scope.currentPage, size: $scope.size})
                             .then(function (res) {
                                 readResponse(res);
-                                agSortFactory.setLoading(false);
                             })
                             .catch(function(err){
-                                agSortFactory.setLoading(false);
                             });
                     }
 
@@ -228,7 +206,6 @@ angular.module('yangular-grid',[])
                         var order = attrs.order;
                         var sort = attrs.name;
                         order = order === 'asc' ? 'desc' : 'asc';
-                        agSortFactory.setLoading(true);
                         agSortFactory.getRows({ order : order, sort : sort , page : yagCtrl.getCurrentPage(), size: yagCtrl.getPageSize()})
                             .then(function(res){
                                 yagCtrl.setRows(res.data[yagCtrl.getRowObjectName()]);
@@ -236,10 +213,8 @@ angular.module('yangular-grid',[])
                                 yagSortHeadCtrl.addCssClass(sort,order);
                                 yagCtrl.setOrder(order);
                                 yagCtrl.setSort(sort);
-                                agSortFactory.setLoading(false);
                             })
                             .catch(function(err){
-                                agSortFactory.setLoading(false);
                             });
                     });
                 }

@@ -224,11 +224,8 @@ router.delete('/deleteComment/:id', function(req,res,next){
 
             //Comment deleted successfully
             res.json(ticket);
-        })
+        })        
         .catch(function(errors){
-            return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
-        })
-        .then(function(errors){
             res.json({errors: errors});
         });
 });
@@ -247,7 +244,7 @@ router.post('/assign/:id', function(req,res,next){
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     })
 });
@@ -265,7 +262,7 @@ router.post('/change-status/:id', function(req,res,next){
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     })
 });
@@ -283,7 +280,7 @@ router.post('/awaiting-user-response/:id', function(req,res,next){
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     });
 });
@@ -301,7 +298,7 @@ router.post('/close/:id', function(req,res,next){
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     });
 });
@@ -319,7 +316,7 @@ router.post('/re-open/:id', function(req,res,next){
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     });
 });
@@ -330,15 +327,16 @@ router.post('/acknowledge/:id', function(req,res,next){
     //Check if http request has mandatory parameters
     validator.validateTicketAddComment(req,res)
     .then(function(){
-        var id = req.params.id;
-        var status = 'Open';
-        var comment = req.body.comment;
-        return ticketsBl.changeStatus(req.user.username, id, status, comment)
+        return ticketsBl.changeStatus(
+            req.user.username,
+            req.params.id,
+            'Open', 
+            req.body.comment)
     })
     .then(function(ticket){
         res.json(ticket);
     })
-    .catch(function(err){
+    .catch(function(errors){
         res.json({errors: errors});
     });
 });
