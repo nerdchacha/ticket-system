@@ -9,9 +9,7 @@ module.exports.isAuthenticated = function(req,res,next){
         return next();
     if(req.isAuthenticated()){
         return next();
-    }
-    else{
-        res.status(401);
-        res.end();
-    }
+    }    
+    res.status(401);
+    res.end();
 };

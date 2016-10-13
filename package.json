@@ -27,6 +27,7 @@
     "passport-http": "*",
     "passport-local": "*",
     "q": "^1.4.1",
+    "ramda": "^0.22.1",
     "serve-favicon": "~2.3.0",
     "underscore": "^1.8.3"
   },

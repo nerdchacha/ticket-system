@@ -4,96 +4,10 @@ $delay: 100ms;
 $red: #d9534f;
 $maincolor: #d9534f;
 
+
 *{
   box-sizing: border-box;
 }
-
-// .site-header{
-//     position: relative;
-//     color: #EEE;
-//     z-index: 151;
-//     float: left;
-//     width: 10%;
-//     left: 10px;
-//     padding: 20px;
-//     font-size: 1.8em;
-//   .site-toggle-button{
-//     cursor: pointer;
-//     position: relative;
-//     width: 50px;
-//     height: 50px;
-//     float: right;
-//     margin: 10px 10px 0 0;
-//     z-index: 100;
-//     .middle{
-//       width: 60%;
-//       height: 3px;
-//       position: absolute;
-//       background-color: $maincolor;
-//       top: 50%;
-//       left: 50%;
-//       transform: translate(-50%,-50%);
-//       transition: all $time ease-in-out $delay;     
-//     }    
-//     .top-left{
-//       width: 30%;
-//       height: 3px;
-//       position: absolute;
-//       background-color: $maincolor;
-//       top: 30%;
-//       left: 50%;
-//       transform: translate(-100%,-50%);
-//       transition: all $time ease-in-out $delay;
-//     }      
-//     .top-right{
-//       width: 30%;
-//       height: 3px;
-//       position: absolute;
-//       background-color: $maincolor;
-//       top: 30%;
-//       left: 50%;
-//       transform: translate(0%,-50%);
-//       transition: all $time ease-in-out $delay;
-//     }      
-//     .bottom-left{
-//       width: 30%;
-//       height: 3px;
-//       position: absolute;
-//       background-color: $maincolor;
-//       bottom: 25%;
-//       left: 50%;
-//       transform: translate(-100%,-50%);
-//       transition: all $time ease-in-out $delay;
-//     }
-//     .bottom-right{
-//       width: 30%;
-//       height: 3px;
-//       position: absolute;
-//       background-color: $maincolor;
-//       bottom: 25%;
-//       left: 50%;
-//       transform: translate(0%,-50%);
-//       transition: all $time ease-in-out $delay;
-//     }
-//     &.is-close{
-//       animation: spin-toggle-reverse $time linear 1 forwards;
-//     }  
-//     &.is-open{
-//       animation: spin-toggle $time linear 1 forwards; 
-//       .top-left, .bottom-left{
-//         transform: scale(0)      ;
-//       }
-//       .top-right{      
-//         transform: rotate(45deg);
-//         top: 34%;
-//       }
-//       .bottom-right{
-//         transform: rotate(-45deg);
-//         bottom: 34%;
-//       }
-//     }
-//   }
-// }
 
 .mainnav{
   top: 0;
@@ -162,6 +76,122 @@ $maincolor: #d9534f;
   }
 }
 
+.nav-toggle-button{
+  cursor: pointer;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  left: 10px;
+  top: 0px;
+  margin: 10px 10px 0 0;
+  z-index: 1100;
+  display: none;
+  .middle{
+    width: 60%;
+    height: 3px;
+    position: absolute;
+    background-color: $maincolor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    transition: all $time ease-in-out $delay;     
+  }    
+  .top-left{
+    width: 30%;
+    height: 3px;
+    position: absolute;
+    background-color: $maincolor;
+    top: 30%;
+    left: 50%;
+    transform: translate(-100%,-50%);
+    transition: all $time ease-in-out $delay;
+  }      
+  .top-right{
+    width: 30%;
+    height: 3px;
+    position: absolute;
+    background-color: $maincolor;
+    top: 30%;
+    left: 50%;
+    transform: translate(0%,-50%);
+    transition: all $time ease-in-out $delay;
+  }      
+  .bottom-left{
+    width: 30%;
+    height: 3px;
+    position: absolute;
+    background-color: $maincolor;
+    bottom: 25%;
+    left: 50%;
+    transform: translate(-100%,-50%);
+    transition: all $time ease-in-out $delay;
+  }
+  .bottom-right{
+    width: 30%;
+    height: 3px;
+    position: absolute;
+    background-color: $maincolor;
+    bottom: 25%;
+    left: 50%;
+    transform: translate(0%,-50%);
+    transition: all $time ease-in-out $delay;
+  }
+  &.is-close{
+    animation: spin-toggle-reverse $time linear 1 forwards;
+  }  
+  &.is-open{
+    animation: spin-toggle $time linear 1 forwards; 
+    .top-right, .bottom-right{
+      transform: scale(0);
+    }
+    .top-left{      
+      transform: translate(-104%,-0%) rotate(-45deg);
+      top: 34%;
+    }
+    .bottom-left{
+      transform: translate(-104%,0%) rotate(45deg);
+      bottom: 34%;
+    }
+  }
+}
+
+
+@keyframes spin-toggle{
+  0%{
+    transform: rotate(0deg)
+  }
+  25%{
+    transform: rotate(90deg)
+  }
+  50%{
+    transform: rotate(180deg)
+  }
+  75%{
+    transform: rotate(270deg)
+  }
+  100%{
+    transform: rotate(360deg)
+  }
+}
+  
+@keyframes spin-toggle-reverse{
+  100%{
+    transform: rotate(0deg)
+  }
+  75%{
+    transform: rotate(90deg)
+  }
+  50%{
+    transform: rotate(180deg)
+  }
+  25%{
+    transform: rotate(270deg)
+  }
+  0%{
+    transform: rotate(360deg)  
+  }
+}
+
 @media screen and (max-width: 992px){
   .mainnav{
     width: 55%;
@@ -174,6 +204,9 @@ $maincolor: #d9534f;
     &.is-close{
       transform: translateX(-100%);
     }
+  }
+  .nav-toggle-button{
+    display: block;
   }
 }
 

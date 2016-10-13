@@ -39,7 +39,6 @@ passport.use(new LocalStrategy(
                 }
             })
             .catch(function(err){
-                console.log(err);
                 //In case of any errors, throw error
                 if(err) throw err;
             });
@@ -108,8 +107,6 @@ router.post('/register',function(req,res,next){
             return helper.createResponseError(error, 'There was some issue trying to create user. Please try again after some time')
         })
         .then(function(errors){
-            console.log('errors everywhere');
-            console.log(errors);
             res.json({errors: errors});
         });
 });
@@ -129,7 +126,6 @@ router.post('/login', function(req, res, next) {
             if(!user) res.json({error : null, isAuthenticated : false, msg: info.message});
             //Successful login
             else {
-                console.log(user);
                 //User is not active
                 if(!user.isActive)
                 res.json({error : err, isAuthenticated : false, msg: 'The user is inactive.'});

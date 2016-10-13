@@ -1,13 +1,43 @@
 /**
  * Created by dell on 8/5/2016.
  */
-var q = require('q'),
-    User = require('../models/user-model.js');
+var q       = require('q'),
+    R       = require('ramda'),
+    User    = require('../models/user-model.js');
 
 var admin = {};
 
-admin.fetchAllUsers = function(req,res){
-    var sort = req.query.sort || 'id';
+admin.fetchAllUsers = req => {
+
+    var sort    = getSort(req),
+        order   = getOrder(req),
+        page    = getPage(req),
+        size    = getSize(req);
+
+    var deferred = q.defer();
+    var getUsersForPage = getDataforPage(page, size);
+    var sortUsers       = sortData(order, sort);    
+
+    User.getAllUserDetails((err, users) => {
+        if(err) deferred.reject(err);
+        
+        var processedUsers = R.pipe(
+            sortUsers,
+            getUsersForPage
+            )(users);
+
+        var response = {};
+        response.users   = processedUsers;
+        response.page    = page;
+        response.count   = processedUsers.length;
+        response.size    = size;
+
+        deferred.resolve(response);
+    });  
+
+    return deferred.promise;  
+
+    /*var sort = req.query.sort || 'id';
     var order = req.query.order || 'asc';
     var page = req.query.page || 1;
     var size = parseInt(req.query.size) || 10;
@@ -16,10 +46,10 @@ admin.fetchAllUsers = function(req,res){
     var ret = {};
     var deferred = q.defer();
 
-    User.getAllUserDetails(function(err, users){
+    User.getAllUserDetails((err, users) => {
         if(err) deferred.reject(err);
         else{
-            users.sort(function(a,b){
+            users.sort((a,b) => {
                 if(order === 'asc'){
                     if(a[sort] < b[sort])
                         return -1;
@@ -42,31 +72,66 @@ admin.fetchAllUsers = function(req,res){
             deferred.resolve(ret);
         }
     });
-    return deferred.promise;
+    return deferred.promise;*/
 };
 
-admin.updateUser = function(username,userDetails){
+admin.updateUser = userDetails => {
     var deferred = q.defer();
 
-    User.updateUser(username,userDetails,function(err,user){
-        if(err) deferred.reject(err);
-        else deferred.resolve(user);
-    });
+    User.updateUser(
+        userDetails.username, 
+        userDetails, 
+        (err,user) => {
+            if(err) deferred.reject(err);
+            else deferred.resolve(user);
+        });
 
     return deferred.promise;
 };
 
-admin.resetPassword = function(req,res){
+admin.resetPassword = req => {
     var deferred = q.defer();
     User.resetPassword(
         req.params.id,
         req.body.password,
-        function(err){
+        err => {
             if(err) deferred.reject(err);
             else deferred.resolve();
         });
 
     return deferred.promise;
 };
+
+
+
+function getSort(req){
+    return req.query.sort ? req.query.sort : 'id';
+}
+
+function getOrder(req){
+    return req.query.order ? req.query.order : 'asc';
+}
+
+function getPage(req){
+    return req.query.page ? parseInt(req.query.page) : 1;
+}
+
+function getSize(req){
+    return req.query.size ? parseInt(req.query.size) : 10;
+}
+
+function sortData(order, sort){
+    return function(list){
+        console.log(list.map((user) => user.username));
+        return order === 'asc' ? list.sort((a,b) => b[sort] <= a[sort]) : list.sort((a,b) => a[sort] <= b[sort]);
+    }
+}
+
+function getDataforPage(page, size){
+    return function(list){
+        console.log(list.map((user) => user.username));
+        return list.slice((page - 1) * size, ((page - 1) * size) + size);
+    }
+}
 
 module.exports = admin;

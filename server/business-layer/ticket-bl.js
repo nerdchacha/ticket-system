@@ -281,5 +281,17 @@ ticket.changeStatus = function(username ,id, newStatus, userComment){
     return deferred.promise;
 };
 
+ticket.canUserDeleteComment = function(req,res,commentId){
+    var deferred = q.defer();
+    Ticket.getTicketByCommentId(commentId, function(err, ticket){
+        if (err) deferred.reject({error: err});
+        var comment = ticket.comments.find(function (comment) {return comment._id.toString() === commentId;});
+        if(comment.commentBy !== req.user.username) deferred.reject({error: 'User cannot delete comments of other users'});
+        
+        deferred.resolve();
+    });
+    return deferred.promise;
+};
+
 
 module.exports = ticket;

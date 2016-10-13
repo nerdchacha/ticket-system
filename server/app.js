@@ -1,3 +1,7 @@
+//--------------------------------------------------------
+//-----------------General Middleware---------------------
+//--------------------------------------------------------
+
 var express             = require('express');
     path                = require('path'),
     favicon             = require('serve-favicon'),
@@ -15,8 +19,10 @@ var express             = require('express');
     checkRole           = require('./middleware/checkRole.js'),
     User                = require('./models/user-model.js');
 
-mongoose.connect('mongodb://127.0.0.1/ticket-system');
-var db = mongoose.connection;
+
+//--------------------------------------------------------
+//-----------------Router Middleware----------------------
+//--------------------------------------------------------
 
 var indexRoutes         = require('./routes/index-router'),
     accountsRoutes      = require('./routes/account-router'),
@@ -24,6 +30,16 @@ var indexRoutes         = require('./routes/index-router'),
     usersRoutes         = require('./routes/users-router'),
     staticRouter        = require('./routes/static-data-router'),
     adminRoutes         = require('./routes/admin-routes/admin-users-router');
+
+
+//--------------------------------------------------------
+//---------------------DB Config--------------------------
+//--------------------------------------------------------
+
+mongoose.connect('mongodb://127.0.0.1/ticket-system');
+var db = mongoose.connection;
+
+
 
 var app = express();
 
@@ -35,7 +51,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
-// view engine setup)
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 

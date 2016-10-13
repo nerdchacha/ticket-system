@@ -20,6 +20,9 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                     return response || $q.when(response);
                 },
                 responseError: function(rejection) {
+                    //Hide Spinner
+                    HelperFactory.setLoading(false);
+                    
                     //If server responds with unauthorized status code
                     if (rejection.status === 401) {
                         //Clear user data from local storage in case it is set

@@ -7,15 +7,6 @@ angular.module('ticketSystem')
             var fact = {};
             var static = {}
             static.loading = false;
-            // var users;
-                    
-            // fact.createErrorMessage = function(errors){
-            //     var errorMessage = [];
-            //     for(var i = 0; i < errors.length; i++){
-            //         errorMessage.push(errors[i].error);
-            //     }
-            //     return errorMessage;
-            // };
 
             fact.createFlashMessage = function(res, successMessage){
                 if(res.data.errors){
@@ -23,14 +14,6 @@ angular.module('ticketSystem')
                 }
                 return successMessage ? [{ message : successMessage, class: 'success' }] : [];
             };
-
-
-            // fact.setAllUsers = function(users){
-            //     this.users = users;
-            // };
-            // fact.getAllUsers = function(){
-            //     return this.users;
-            // };
             fact.getAllUsersButSelf = function(users){
                 var currentUsername = Authentication.getUser().username;
                 return users.filter(function(user){ return user.username !== currentUsername });

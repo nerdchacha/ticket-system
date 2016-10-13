@@ -1,9 +1,9 @@
 /**
  * Created by dell on 8/1/2016.
  */
-var userBl = require('../business-layer/users-bl.js');
-var q = require('q');
-var roles = require('../config/role-config.js');
+var userBl      = require('../business-layer/users-bl.js'),
+    q           = require('q'),
+    roles       = require('../config/role-config.js');
 
 module.exports.isAdmin = function(req,res,next){
     //User is not authenticated

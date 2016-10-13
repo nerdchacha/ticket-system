@@ -1,8 +1,9 @@
 /**
  * Created by dell on 8/5/2016.
  */
-var q = require('q');
-var roles = require('../config/role-config.js');
+var q           = require('q'),
+    _           = require('underscore'),
+    roles       = require('../config/role-config.js');
 
 var helper = {};
 
@@ -103,6 +104,32 @@ helper.isOrDefault = function(check, fallback){
 
 helper.intify = function (value){
     return parseInt(value);
+}
+
+helper.getFromBody = function(property){
+    return function(req){
+        return helper.getFromReq(req, 'body', property);
+    }
+}
+
+helper.getFromParams = function(property){
+    return function(req){
+        return helper.getFromReq(req, 'params', property);
+    }
+}
+
+helper.getFromQuery = function(property){
+    return function(req){
+        return helper.getFromReq(req, 'query', property);
+    }
+}
+
+helper.getFromReq = function(req, part, property){
+    return req[part][property];
+}
+
+helper.createError = function(err){
+    return !_.isArray(err) ? {errors: [{error : err}]} : {errors: err };
 }
 
 module.exports = helper;

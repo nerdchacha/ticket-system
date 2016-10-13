@@ -71,12 +71,10 @@ router.post('/profile/change-password/:id',function(req,res,next){
             res.json({errors: null});
         },
             function(err){
-                console.log(err);
                 //Error in resetting password
                 res.json({errors: [{msg : err}]});
         })
         .catch(function(err){
-            console.log(err);
             //Request is invalid
            res.json({errors : err});
         });

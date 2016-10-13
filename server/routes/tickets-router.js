@@ -162,7 +162,7 @@ router.get('/:id',function(req,res,next){
         })
         .then(function(ticket){
             if(!ticket) {
-                res.json({errors: [{msg : 'No ticket exists with given ticket id.'}]});
+                res.json({errors: [{error : 'No ticket exists with given ticket id.'}]});
             }
             else {
                 res.json(ticket);
@@ -203,30 +203,21 @@ router.post('/addComment/:id',function(req,res,next){
 
 //DELETE comment from a ticket
 router.delete('/deleteComment/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
     validator.validateTicketDeleteComment(req,res)
         .then(function(){
-            //No validation errors
-            //Check if comment was added by same user
             var commentId = req.query.commentId;
-            return validator.canUserDeleteComment(req,res,commentId)
+            return ticketsBl.canUserDeleteComment(req,res,commentId)
         })
-        .then(function(response){
-            //user cannot delete comment
-            if(!response.canDelete)
-                res.json({errors: [{error : response.error}]});
-            //user can delete comment
-            var ticketId = req.params.id;
-            var commentId = req.query.commentId;
-            return ticketsBl.deleteComment(ticketId,commentId)
+        .then(function(){
+            return ticketsBl.deleteComment(
+                req.params.id,
+                req.query.commentId)
         })
         .then(function(ticket){
-
-            //Comment deleted successfully
             res.json(ticket);
         })        
         .catch(function(errors){
-            res.json({errors: errors});
+            res.json(helper.createError(errors));
         });
 });
 
