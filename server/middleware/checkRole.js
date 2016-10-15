@@ -5,7 +5,7 @@ var userBl      = require('../business-layer/users-bl.js'),
     q           = require('q'),
     roles       = require('../config/role-config.js');
 
-module.exports.isAdmin = function(req,res,next){
+module.exports.isAdmin = (req,res,next) => {
     //User is not authenticated
     if (!req.user) {
         res.status(403);

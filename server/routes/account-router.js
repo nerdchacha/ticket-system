@@ -1,14 +1,15 @@
-var express = require('express');
-var router = express.Router();
-var usersBl = require('../business-layer/users-bl.js');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var User = require('../models/user-model.js');
-var validator = require('../business-layer/request-validator.js');
-var auth = require('../config/auth.js');
-var helper = require('../business-layer/helper.js');
-var q = require('q');
+var express             = require('express'),
+    usersBl             = require('../business-layer/users-bl.js'),
+    passport            = require('passport'),
+    LocalStrategy       = require('passport-local').Strategy,
+    GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy,
+    User                = require('../models/user-model.js'),
+    validator           = require('../business-layer/request-validator.js'),
+    auth                = require('../config/auth.js'),
+    helper              = require('../business-layer/helper.js'),
+    q                   = require('q'),
+    R                   = require('ramda'),
+    router              = express.Router();
 
 
 passport.use(new LocalStrategy(
@@ -82,31 +83,32 @@ passport.serializeUser(function(user, done) {
     done(null, user.id);
 });
 
+// passport.deserializeUser(function(id, done) {
+//     User.findUserById(id, function(err, user) {
+//         done(err, user);
+//     });
+// });
+
 passport.deserializeUser(function(id, done) {
-    User.findUserById(id, function(err, user) {
-        done(err, user);
+    User.findUserById(id)
+    .then(function(user) {
+        done(null, user);
+    })
+    .catch(function(error) {
+        done(error, null);
     });
 });
 
-//POST the data for the user registration form
 router.post('/register',function(req,res,next){
-    //validate if request has all required parameters
-    validator.validateNewUser(req,res)
-        .then(function(){
-            //No validation errors
-            //Crete a new local user
-            return usersBl.createLocalUser(req,res)
-        })
-        .then(function(user){
-            //New local user created successfully
-            res.json({errors: null});
-        })
-        .catch(function(error){
-            //If there was some error
-            //Create proper errors
-            return helper.createResponseError(error, 'There was some issue trying to create user. Please try again after some time')
-        })
-        .then(function(errors){
+    var createUser = R.composeP(
+            usersBl.createLocalUser,
+            validator.validateNewUser        
+        )(req);
+
+    createUser
+        .then(() => res.json())
+        .catch((error) => {
+            var errors = helper.createResponseError(error, 'There was some issue trying to create user. Please try again after some time')
             res.json({errors: errors});
         });
 });

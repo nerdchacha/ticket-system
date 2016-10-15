@@ -28,11 +28,11 @@ router.get('/users-details',(req,res,next) => {
  GET User details for a perticular user
  -------------------------------------------------------*/
 router.get('/user-details/:username',(req,res,next) => {
-    var getUserDetails = R.pipeP(
-        validator.validateUsername,  
-        getUsernameFromReq,      
+    var getUserDetails = R.composeP(
+        helper.createResponseUser,
         usersBl.getUserByUsername,
-        helper.createResponseUser
+        getUsernameFromReq,      
+        validator.validateUsername  
         )(req);
 
     getUserDetails
@@ -48,11 +48,11 @@ router.get('/user-details/:username',(req,res,next) => {
  UPDATE User details for a perticular user
  -------------------------------------------------------*/
 router.post('/update-user/:username',(req,res,next) => {
-    var updateUserDetails = R.pipeP(
-        validator.vaidateUpdateUser,
-        getUserDetails,
+    var updateUserDetails = R.composeP(
+        helper.createResponseUser,
         adminBl.updateUser,
-        helper.createResponseUser
+        getUserDetails,
+        validator.vaidateUpdateUser
         )(req);
 
     updateUserDetails
@@ -68,9 +68,9 @@ router.post('/update-user/:username',(req,res,next) => {
  RESET password for a perticular user
  -------------------------------------------------------*/
 router.post('/reset-password/:id',(req,res,next) => {
-    var resetPassword = R.pipeP(
-        validator.validateResetPassword,
-        adminBl.resetPassword
+    var resetPassword = R.composeP(
+        adminBl.resetPassword,
+        validator.validateResetPassword
         )(req);
 
     resetPassword

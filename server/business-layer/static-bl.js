@@ -1,14 +1,14 @@
 /**
  * Created by dell on 7/27/2016.
  */
-var staticModel = require('../models/static-model.js');
-var q = require('q');
+var staticModel 	= require('../models/static-model.js'),
+	q 				= require('q');
 
 var staticBl = {};
 
-staticBl.getInitialStaticData = function(req,res){
+staticBl.getInitialStaticData = (req,res) => {
     var deferred = q.defer();
-    staticModel.getStaticValues(function(err,staticData){
+    staticModel.getStaticValues((err,staticData) => {
        if(err) deferred.reject(err);
         else deferred.resolve(staticData);
     });

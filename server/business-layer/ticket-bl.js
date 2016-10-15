@@ -3,6 +3,7 @@
  */
 var q       = require('q'),
     _       = require('underscore'),
+    R       = require('ramda'),
     Ticket  = require('../models/ticket-model.js'),
     helper  = require('../business-layer/helper.js');
 

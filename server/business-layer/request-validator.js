@@ -287,7 +287,7 @@ function checkRequiredQuery(param, message, req){
 function checkIsEmailBody(param, message, req){
     return (req)  => {
         req
-        .checkQuery(param, message)
+        .checkBody(param, message)
         .isEmail();
 
         return req;
@@ -301,7 +301,6 @@ function checkIsEqualBody(param, message, check, req){
             req
             .checkBody(param, message)
             .equals(check);
-
             return req;
         }
     }    
