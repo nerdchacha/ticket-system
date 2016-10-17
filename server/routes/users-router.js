@@ -8,7 +8,7 @@ var express     = require('express'),
     R           = require('ramda'),
     router      = express.Router();
 
-router.get('/profile/:username',function(req,res,next){
+router.get('/profile/:username',(req,res,next) => {
     var getUserProfile = R.composeP(
             helper.createResponseUser,
             usersBl.getUserByUsername,
@@ -24,7 +24,7 @@ router.get('/profile/:username',function(req,res,next){
         })
 });
 
-router.post('/profile/:username',function(req,res,next){
+router.post('/profile/:username',(req,res,next) => {
     var updateProfile = R.composeP(
             helper.createResponseUser,
             usersBl.updateProfile,
@@ -39,7 +39,7 @@ router.post('/profile/:username',function(req,res,next){
         });
 });
 
-router.post('/profile/change-password/:id',function(req,res,next){
+router.post('/profile/change-password/:id',(req,res,next) => {
     var changePassword = R.composeP(
             usersBl.changePassword,
             validator.validateResetPassword

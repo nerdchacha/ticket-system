@@ -16,7 +16,7 @@ angular.module('ticketSystem')
                     })
 
                 if(!res.data.errors){
-                    $scope.ticket = res.data;
+                    $scope.ticket = res.data.ticket;
                     $scope.ticket.description = HelperFactory.stripHtml($scope.ticket.description);
                     $scope.ticket.assignee = !$scope.ticket.assignee ? 'Unassigned' : $scope.ticket.assignee;
                     $scope.ticket.createdDate = $scope.renderDate($scope.ticket.createdDate);

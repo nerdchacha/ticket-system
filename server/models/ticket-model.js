@@ -220,7 +220,8 @@
 /**
  * Created by dell on 7/23/2016.
  */
-var mongoose = require('mongoose');
+var mongoose    = require('mongoose'),
+    q           = require('q');
 
 var CounterSchema = mongoose.Schema({
     _id:{
@@ -275,9 +276,9 @@ var TicketSchema = mongoose.Schema({
 });
 
 //HOOK to set ticketId as auto incrementing identity
-TicketSchema.pre('save',function(next){
+TicketSchema.pre('save', next => {
     var doc = this;
-    Counter.findByIdAndUpdate({_id: 'ticketId'}, {$inc: { seq: 1} }, function(error, counter)   {
+    Counter.findByIdAndUpdate({_id: 'ticketId'}, {$inc: { seq: 1} }, (error, counter) => {
         if(error)
         return next(error);
         doc.id = counter.seq;
@@ -292,7 +293,7 @@ var Ticket = mongoose.model('ticket',TicketSchema);
  PARAMS:
  [newTicket - new ticket details]
  -------------------------------------------------------*/
-Ticket.createTicket = function(newTicket){
+Ticket.createTicket = newTicket => {
     var deferred = q.defer();
     newTicket.save(resolve(deferred));
     return deferred.promise;
@@ -302,7 +303,7 @@ Ticket.createTicket = function(newTicket){
  GET ALL TICKETS IN THE SYSTEM
  PARAMS:
  -------------------------------------------------------*/
-Ticket.getAllTickets = function(){
+Ticket.getAllTickets = () => {
     var deferred = q.defer();
     Ticket.find(
         {},
@@ -316,7 +317,7 @@ Ticket.getAllTickets = function(){
  PARAMS:
  [username - username of the user for which tickets needs to be searched]
  -------------------------------------------------------*/
-Ticket.getAllTicketsForUser = function(username){
+Ticket.getAllTicketsForUser = username => {
     var deferred = q.defer();
     Ticket.find(
         {createdBy: username},
@@ -330,7 +331,7 @@ Ticket.getAllTicketsForUser = function(username){
  PARAMS:
  [username - username of the user for which all tickets needs to be fetched that are assigned to him]
  -------------------------------------------------------*/
-Ticket.getAllAssignedToMeTickets = function(username){
+Ticket.getAllAssignedToMeTickets = username => {
     var deferred = q.defer();
     Ticket.find(
         {assignee: username},
@@ -343,7 +344,7 @@ Ticket.getAllAssignedToMeTickets = function(username){
  PARAMS:
  [id - id of the ticket that needs to be searched]
  -------------------------------------------------------*/
-Ticket.getTicketById = function(id){
+Ticket.getTicketById = id => {
     var deferred = q.defer();
     Ticket.findOne(
         {id : id},
@@ -356,7 +357,7 @@ Ticket.getTicketById = function(id){
  PARAMS:
  [id- id of the ticket that needs to be updated]
  -------------------------------------------------------*/
-Ticket.updateTicketBySupport = function(id, ticket){
+Ticket.updateTicketBySupport = (id, ticket) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {_id : id},
@@ -372,7 +373,7 @@ Ticket.updateTicketBySupport = function(id, ticket){
  [id - i d of the ticket for which comment needs to be added]
  [comment - comment that needs to be added]
  -------------------------------------------------------*/
-Ticket.addComment = function(id, comment){
+Ticket.addComment = (id, comment) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
@@ -389,7 +390,7 @@ Ticket.addComment = function(id, comment){
  [id - id of ticket that has the comment]
  [commentId - id of the comment]
  -------------------------------------------------------*/
-Ticket.deleteComment = function(id,commentId){
+Ticket.deleteComment = (id, commentId) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {_id : id, 'comments.isDeletable': true},
@@ -405,7 +406,7 @@ Ticket.deleteComment = function(id,commentId){
  PARAMS:
  [commentId - id of the comment]
  -------------------------------------------------------*/
-Ticket.getTicketByCommentId = function(commentId){
+Ticket.getTicketByCommentId = commentId => {
     var deferred = q.defer();
     Ticket.findOne(
         {'comments._id' : commentId},
@@ -421,7 +422,7 @@ Ticket.getTicketByCommentId = function(commentId){
  assignee - username of the new assignee
  comment - comment added by user]
  -------------------------------------------------------*/
- Ticket.assignTicket = function(id, assignee, comment){
+ Ticket.assignTicket = (id, assignee, comment) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
@@ -442,7 +443,7 @@ Ticket.getTicketByCommentId = function(commentId){
  status - new status
  comment - comment added by user]
  -------------------------------------------------------*/
- Ticket.changeStatus = function(id, status, comment){
+ Ticket.changeStatus = (id, status, comment) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
@@ -455,6 +456,8 @@ Ticket.getTicketByCommentId = function(commentId){
     );
     return deferred.promise;
 };
+
+
 
 function resolve(deferred){
     return (err, data) => {

@@ -367,7 +367,7 @@ User.findUserById = id => {
         id,
         resolve(deferred)
     );
-    return  deferred.promise;
+    return deferred.promise;
 };
 
 /*-------------------------------------------------------

@@ -53,34 +53,76 @@ helper.createResponseError = function(err, message){
  PARAMS:
  [user - User object that contains all the details for the user]
  -------------------------------------------------------*/
-helper.isRegularUser = function(user){
+helper.isRegularUser = user => {
     var deferred = q.defer();
     process.nextTick(function(){
-        // if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
-        if(user.role.includes(roles.admin) || user.role.includes(roles.support))
-            deferred.resolve(false);
-        else
+        if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
             deferred.resolve(true);
+        else
+            deferred.resolve(false);
     });
     return deferred.promise;
 };
 
+/*-------------------------------------------------------
+ A HELPER METHOD TO CHECK IF THE USER IS A SUPPORT USER OF NOT
+ PARAMS:
+ [user - User object that contains all the details for the user]
+ -------------------------------------------------------*/
+helper.isSupportUser = user => {
+    var deferred = q.defer();
+    process.nextTick(function(){
+        if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
+            deferred.resolve();
+        else
+            deferred.reject(403);
+    });
+    return deferred.promise;
+};
 
 
 //============================================================
 //====================FUNCTIONAL==============================
 //============================================================
 
+helper.getSort = req => {
+    return req.query.sort ? req.query.sort : 'id';
+}
+
+helper.getOrder = req => {
+    return req.query.order ? req.query.order : 'asc';
+}
+
+helper.getPage = req => {
+    return req.query.page ? parseInt(req.query.page) : 1;
+}
+
+helper.getSize= req => {
+    return req.query.size ? parseInt(req.query.size) : 10;
+}
+
+helper.sortData = (order, sort) => {
+    return function(list){
+        return order === 'asc' ? list.sort((a,b) => b[sort] <= a[sort]) : list.sort((a,b) => a[sort] <= b[sort]);
+    }
+}
+
+helper.getDataforPage = (page, size) => {
+    return function(list){
+        return list.slice((page - 1) * size, ((page - 1) * size) + size);
+    }
+}
+
+
+
+
+
+
+
+
 helper.sortByKey = function(key, order, asc, list){
     return function(list){
         return order === asc ? list.sort(function(a,b){return b[key] <= a[key]}) : list.sort(function(a,b){return b[key] >= a[key]});
-    }
-};
-
-helper.compose = function(){
-    var args = Array.prototype.slice.call(arguments);
-    return function(value){
-        return args.reverse().reduce(function(seed, func){ return func(seed); }, value);
     }
 };
 

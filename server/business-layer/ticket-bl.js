@@ -5,124 +5,107 @@ var q       = require('q'),
     _       = require('underscore'),
     R       = require('ramda'),
     Ticket  = require('../models/ticket-model.js'),
+    roles       = require('../config/role-config.js'),
     helper  = require('../business-layer/helper.js');
 
 var ticket = {};
 
-var sortLogic = function(tickets,order,sort,size,page){
-    var ret = {};
-    var sort = helper.sortByKey(sort, order, 'asc');
-    var getPerPage = helper.itemsPerPage(page, size);
-    ret.tickets = _.compose(getPerPage, sort)(tickets);
-    ret.page = helper.intify(page);
-    ret.count = tickets.length;
-    ret.size = size;
-    return ret;
-};
-
-ticket.fetchAllTickets = function(req,res){
+ticket.fetchAllTickets = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
     var deferred = q.defer();
+    var getTicketsForPage = helper.getDataforPage(page, size);
+    var sortTickets       = helper.sortData(order, sort);  
 
-    //check if current logged in user is regular user
-    helper.isRegularUser(req.user)
-        .then(function(isRegularUser){
-            //Current user is admin or support user
-            if(!isRegularUser){
-                var sort = helper.isOrDefault(req.query.sort,'id');
-                var order = helper.isOrDefault(req.query.order,'asc');
-                var page = helper.isOrDefault(helper.intify(req.query.page), 1);
-                var size = helper.isOrDefault(helper.intify(req.query.size), 10);
-                // if(page === 'undefined') page = 1;
-                // if(size === 'undefined') size = 10;
+    var getAllTickets = R.composeP(
+            sortTickets,
+            getTicketsForPage,
+            Ticket.getAllTickets,
+            helper.isSupportUser,
+            getUserFromReq
+        )(req);
 
-                Ticket.getAllTickets(function(err,tickets){
-                    if(err) deferred.reject(err);
-                    var ret = sortLogic(tickets,order,sort,size,page);
-                    deferred.resolve(ret);
-                });
-            }
-            else{
-                deferred.reject(403);
-            }
-        });
+    getAllTickets
+        .then(tickets => {
+            var response = {};
+            response.tickets   = tickets;
+            response.page    = page;
+            response.count   = tickets.length;
+            response.size    = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
 
     return deferred.promise;
 };
 
-ticket.fetchMyTickets = function(req,res){
-    var sort = req.query.sort || 'id';
-    var order = req.query.order || 'asc';
-    var page = req.query.page || 1;
-    var size = parseInt(req.query.size) || 10;
-    if(page === 'undefined') page = 1;
-    if(size === 'undefined') size = 10;
+ticket.fetchMyTickets = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
     var deferred = q.defer();
+    var getTicketsForPage = helper.getDataforPage(page, size);
+    var sortTickets       = helper.sortData(order, sort);  
 
-    Ticket.getAllTicketsForUser(req.user.username,function(err,tickets){
-        if(err) deferred.reject(err);
-        var ret = sortLogic(tickets,order,sort,size,page);
-        deferred.resolve(ret);
-    });
+    var getAllTickets = R.composeP(
+            sortTickets,
+            getTicketsForPage,
+            Ticket.getAllTicketsForUser,
+            getUsernameFromReq
+        )(req);
+
+    getAllTickets
+        .then(tickets => {
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = tickets.length;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
 
     return deferred.promise;
 };
 
-ticket.fetchToMeTickets = function(req,res){
+ticket.fetchToMeTickets = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
     var deferred = q.defer();
-    //Check is currently logged in user is regular user or not
-    helper.isRegularUser(req.user)
-        .then(function(isRegularUser){
-            //Current user is admin or support user
-            if(!isRegularUser){
-                var sort = req.query.sort || 'id';
-                var order = req.query.order || 'asc';
-                var page = req.query.page || 1;
-                var size = parseInt(req.query.size) || 10;
-                if (page === 'undefined') page = 1;
-                if (size === 'undefined') size = 10;
+    var getTicketsForPage = helper.getDataforPage(page, size);
+    var sortTickets       = helper.sortData(order, sort);  
 
-                Ticket.getAllAssignedToMeTickets(req.user.username, function (err, tickets) {
-                    if (err) deferred.reject(err);
-                    var ret = sortLogic(tickets, order, sort, size, page);
-                    deferred.resolve(ret);
-                });
-            }
-            else{
-                deferred.reject(403);
-            }
-        });
+    var getAllTickets = R.composeP(
+            sortTickets,
+            getTicketsForPage,
+            Ticket.getAllAssignedToMeTickets,
+            getUsernameFromReq
+        )(req);
+
+    getAllTickets
+        .then(tickets => {
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = tickets.length;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
     return deferred.promise;
 };
 
 ticket.createNewTicket = function(req,res){
-    var deferred = q.defer();
-    var title = req.body.title;
-    var description = req.body.description;
-    /*var priority = req.body.priority;*/
-    var type = req.body.type;
-    /*var assignee = req.body.assignee;*/
-    var status = 'New';
-    var createdBy = req.user.username;
-    var createdDate = new Date();
-    var lastUpdatedDate = Date.now();
-    var newTicket = new Ticket({
-        title: title,
-        description: description,
-        /*priority: priority,*/
-        type: type,
-        /*assignee: assignee,*/
-        status: status,
-        createdBy: createdBy,
-        createdDate: createdDate,
-        lastUpdatedDate : lastUpdatedDate,
-        comments:[]
-    });
-    Ticket.createTicket(newTicket,function(err,ticket){
-        if(err) deferred.reject(err);
-        deferred.resolve(ticket);
-    });
-
-    return deferred.promise;
+    return Ticket.createTicket(new Ticket(createNewTicketObject(req)));
 };
 
 ticket.updateTicket = function(req,res){
@@ -194,30 +177,22 @@ ticket.updateTicket = function(req,res){
 };
 
 ticket.getTicketByIdAll = function(id){
-    var deferred = q.defer();
-    Ticket.getTicketById(id,function(err, ticket){
-      if(err) deferred.reject(err);
-      deferred.resolve(ticket);
-    });
-    return deferred.promise;
+    return Ticket.getTicketById(id);
 };
 
 ticket.getTicketById = function(id, user){
     var deferred = q.defer();
-    Ticket.getTicketById(id,function(err, ticket){
-        //If normal user is trying to access tickets created by other users
-        helper.isRegularUser(user)
-            .then(function(isRegularUser){
-              if(!isRegularUser || ticket.createdBy === user.username){
-                  if(err) deferred.reject(err);
-                  deferred.resolve(ticket);
-              }
-                else{
-                  //reject with 403
-                  deferred.reject(403);
-              }
-            });
-    });
+
+    Ticket.getTicketById(id)
+        .then(ticket => {
+            var isSupportUser = isSupport(user);    
+            if(isSupportUser || ticket.createdBy === user.username)
+                deferred.resolve(ticket)
+            else
+                deferred.reject(403)
+        })
+        .catch(error => deferred.reject(error));
+
     return deferred.promise;
 };
 
@@ -225,74 +200,131 @@ ticket.addComment = function(id, comment){
     var deferred = q.defer();
     comment.isDeletable = true;
     comment.commentMessage = {title: 'Comment', message: [comment.comment]};
-    Ticket.addComment(id,comment, function(err, ticket){
-        if(err) deferred.reject(err);
-        deferred.resolve(ticket);
-    });
-    return deferred.promise;
+    return Ticket.addComment(
+        id,
+        comment
+    );
 };
 
 ticket.deleteComment = function(id, commentId){
-    var deferred = q.defer();
-    Ticket.deleteComment(id, commentId, function(err, ticket){
-        if(err) deferred.reject(err);
-        deferred.resolve(ticket);
-    });
-    return deferred.promise;
+    return Ticket.deleteComment(
+        id, 
+        commentId
+    );
 };
 
 ticket.assignTicket = function(username ,id, newAssignee, userComment){
-    var deferred = q.defer();
-    Ticket.getTicketById(id, function(err, oldTicket){
-        if(err) deferred.reject(err);
-        var oldAssignee = oldTicket.assignee;
-        var comment = {};
-        comment.commentDate = Date.now();
-        comment.commentBy = username;
-        comment.commentMessage = {};
-        comment.commentMessage.title = "Changes";
-        comment.commentMessage.message = ['Assignee changed from "' + oldAssignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
-        comment.isDeletable = false;       
-        Ticket.assignTicket(id, newAssignee, comment, function(err, newTicket){
-            if(err) promise.reject(err);
-            deferred.resolve(newTicket);
-        });
-    });
-    return deferred.promise;
+    return R.composeP(
+        changeAssigneeCurried(id, newAssignee),
+        createAssignTicketComment(username, newAssignee, userComment),
+        Ticket.getTicketById
+    )(id);
 };
 
 ticket.changeStatus = function(username ,id, newStatus, userComment){
+    return R.composeP(
+        changeStatusCurried(id, newStatus),
+        createChangeStatusComment(username, newStatus, userComment),
+        Ticket.getTicketById
+    )(id);
+};
+
+ticket.canUserDeleteComment = function(commentId, req){
     var deferred = q.defer();
-    Ticket.getTicketById(id, function(err, oldTicket){
-        if(err) deferred.reject(err);
-        var oldStatus = oldTicket.status;
-        var comment = {};
-        comment.commentDate = Date.now();
-        comment.commentBy = username;
-        comment.commentMessage = {};
-        comment.commentMessage.title = "Changes";
-        comment.commentMessage.message = ['Status changed from "' + oldStatus + '" to "' + newStatus + '"', 'Comment : "' + userComment + '"'];
-        comment.isDeletable = false;       
-        Ticket.changeStatus(id, newStatus, comment, function(err, newTicket){
-            if(err) promise.reject(err);
-            deferred.resolve(newTicket);
-        });
-    });
-    
+    Ticket.getTicketByCommentId(commentId)
+        .then(function(ticket){
+            var comment = ticket.comments.find(comment => comment._id.toString() === commentId);
+            if(comment.commentBy !== req.user.username) 
+                deferred.reject('User cannot delete comments of other users');
+            else
+                deferred.resolve();
+        })
+        .catch(error => deferred.reject(error));
     return deferred.promise;
 };
 
-ticket.canUserDeleteComment = function(req,res,commentId){
-    var deferred = q.defer();
-    Ticket.getTicketByCommentId(commentId, function(err, ticket){
-        if (err) deferred.reject({error: err});
-        var comment = ticket.comments.find(function (comment) {return comment._id.toString() === commentId;});
-        if(comment.commentBy !== req.user.username) deferred.reject({error: 'User cannot delete comments of other users'});
-        
-        deferred.resolve();
-    });
-    return deferred.promise;
-};
 
+
+
+
+/*--------------------------------------------------------------------------
+--------------------------------FUNCTIONS-----------------------------------
+--------------------------------------------------------------------------*/
+
+
+
+function getUserFromReq(req){
+    var deferred = q.defer()
+    deferred.resolve(req.user);
+    return deferred.promise;
+}
+
+function getUsernameFromReq(req){
+    var deferred = q.defer()
+    deferred.resolve(req.user.username);
+    return deferred.promise;
+}
+
+function createNewTicketObject(req){
+    return{
+        title : req.body.title,
+        description : req.body.description,
+        type : req.body.type,
+        status : 'New',
+        createdBy : req.user.username,
+        createdDate : Date.now(),
+        lastUpdatedDate : Date.now(),
+        comments: []
+    }
+}
+
+function canUserViewTicket(user){
+    return function(ticket){
+        return isSupport(user) || ticket.createdBy === user.username;
+    }
+}
+
+function isSupport(user){
+    return user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1;
+}
+
+function createCommentBoiler(username){
+    return {
+        commentDate     : Date.now(),
+        commentBy       : username,
+        isDeletable     : false,
+        commentMessage  : {
+            title : "Changes"
+        }
+    }
+}
+
+function createChangeStatusComment(username, newStatus, userComment){
+    return function(ticket){
+        var comment = createCommentBoiler(username);
+        comment.commentMessage.message = ['Status changed from "' + ticket.status + '" to "' + newStatus + '"', 'Comment : "' + userComment + '"'];
+        return comment;
+    }
+}
+
+function createAssignTicketComment(username, newAssignee, userComment){
+    return function(ticket){
+        var comment = createCommentBoiler(username);
+        comment.commentMessage.message = ['Assignee changed from "' + ticket.assignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
+        return comment;
+    }
+}
+
+function changeAssigneeCurried(id, newAssignee){
+    return function(comment){
+        return Ticket.assignTicket(id, newAssignee, comment);
+    }
+}
+
+function changeStatusCurried(id, newStatus){
+    return function(comment){
+        return Ticket.changeStatus(id, newStatus, comment);
+    }
+}
 
 module.exports = ticket;
