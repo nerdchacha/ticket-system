@@ -41,30 +41,17 @@ admin.fetchAllUsers = req => {
 };
 
 admin.updateUser = userDetails => {
-    var deferred = q.defer();
 
-    User.updateUser(
+    return User.updateUser(
         userDetails.username, 
-        userDetails, 
-        (err,user) => {
-            if(err) deferred.reject(err);
-            else deferred.resolve(user);
-        });
-
-    return deferred.promise;
+        userDetails);
 };
 
 admin.resetPassword = req => {
-    var deferred = q.defer();
-    User.resetPassword(
+    
+    return User.resetPassword(
         req.params.id,
-        req.body.password,
-        err => {
-            if(err) deferred.reject(err);
-            else deferred.resolve();
-        });
-
-    return deferred.promise;
+        req.body.password);
 };
 
 module.exports = admin;

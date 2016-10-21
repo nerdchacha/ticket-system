@@ -377,17 +377,14 @@ router.get('/static-data',(req,res,next) => {
         });
 });
 
-//GET static data with only possible ticket status on edit ticket page load
 router.get('/edit-ticket/initial-load/:status',function(req,res,next){
-    //Check if request is valid
-    validator.validateGetTicketData(req,res)
+    validator.validateGetTicketData(req)
         .then(function(){
             return q.all([
                 staticBl.getInitialStaticData(),
                 usersBl.getAllActiveUsers()]);
         })
         .then(function(values) {
-            //request is valid
             var currentStatus = req.params.status;
             var allowedStatusList = values[0].values.find(function (value) {
                 return value.name === 'allowed state';
@@ -402,11 +399,9 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
             res.json(staticValues);
         })
         .catch(function(err){
-            //invalid request
-            helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
-        })
-        .then(function(error){
-            res.json({errors: error});
+            console.log(err);
+            var errors = helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
+            res.json({errors: errors});
         });
 });
 
@@ -437,48 +432,39 @@ router.get('/to-me',function(req,res,next){
         });
 });
 
-//POST new ticket
-router.post('/new',function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateNewTicket(req,res)
-        .then(function(){
-            //No validation errors
-            return ticketsBl.createNewTicket(req,res)
-        })
-        .then(function(ticket){
-            //Create new ticket and send ticket data to client
-            res.json(ticket);
-        })
-        .catch(function(errors){
-            //validation errors
-            return helper.createResponseError(errors, 'There was some error trying to create a new ticket. Please try again after some time.');
-        })
-        .then(function(errors){
-            res.json({errors: errors});
-        })
-});
 
-//Update ticket after edit
-router.put('/:id',(req,res,next) => {
-    validator.validateUpdateTicket(req)
-        .then(function(){
-            //Request is valid
-            return ticketsBl.updateTicket(req,res);
-        })
-        .then(function(ticket){
-            res.json(ticket)
-        })
-        .catch(function(errors){
-            return helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
-        })
-        .then(function(errors){
+router.post('/new',function(req,res,next){
+    validator.validateNewTicket(req,res)
+        .then(() => ticketsBl.createNewTicket(req,res))
+        .then(ticket => res.json(ticket))
+        .catch(errors => {
+            var errors = helper.createResponseError(errors, 'There was some error trying to create a new ticket. Please try again after some time.');
             res.json({errors: errors});
         });
 });
 
-//GET ticket by Id
+
+router.put('/:id',(req,res,next) => {
+    validator.validateUpdateTicket(req)
+        .then(() => ticketsBl.updateTicket(req,res))
+        .then(ticket => res.json(ticket))
+        .catch(errors => {
+            var errors = helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
+            res.json({errors: errors});
+        });
+});
+
+
 router.get('/:id', (req,res,next) => {
-    var getTicketDetails = R.composeP(
+    validator.validateGetTicketById(req)
+    .then(() => ticketsBl.getTicketById(req.params.id, req.user))
+    .then(ticket => res.json({ticket : ticket}))
+    .catch(err => {
+        var errors = helper.createResponseError(null, 'No ticket exists with given ticket id.');
+        res.json({errors: errors});
+    })
+
+    /*var getTicketDetails = R.composeP(
         createGetTicketResponse,
         R.curry(ticketsBl.getTicketById)(req.params.id),
         getUserFromReq,
@@ -490,7 +476,7 @@ router.get('/:id', (req,res,next) => {
         .catch(error => {
             var errors= helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
             res.json({errors: errors});
-        });
+        });*/
 });
 
 router.post('/addComment/:id',(req,res,next) => {
@@ -516,138 +502,78 @@ router.post('/addComment/:id',(req,res,next) => {
 });
 
 router.delete('/deleteComment/:id', function(req,res,next){
-    /*R.composeP(
-        R.curry(ticketsBl.canUserDeleteComment)(req.query.commentId),
-        validator.validateTicketDeleteComment
-    )(req);*/
-
-
-    validator.validateTicketDeleteComment(req,res)
-        .then(function(){
-            var commentId = req.query.commentId;
-            return ticketsBl.canUserDeleteComment(commentId, req)
-        })
-        .then(function(){
-            return ticketsBl.deleteComment(
-                req.params.id,
-                req.query.commentId)
-        })
-        .then(function(ticket){
-            res.json(ticket);
-        })        
-        .catch(function(errors){
-            res.json(helper.createError(errors));
+    validator.validateTicketDeleteComment(req)
+        .then(() => ticketsBl.canUserDeleteComment(req.query.commentId, req))
+        .then(() => ticketsBl.deleteComment(req.params.id,req.query.commentId))
+        .then(ticket => res.json(ticket))        
+        .catch((err) => {
+            var errors = helper.createResponseError(err, 'There was some error trying to delete the comment. Please try again after some time.');
+            res.json({ errors: errors});
         });
 });
 
 
-//Change assignee for a ticket
 router.post('/assign/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketAssign(req,res)
-    .then(function(){
-        var id = req.params.id;
-        var assignee = req.body.assignee;
-        var comment = req.body.comment;
-        return ticketsBl.assignTicket(req.user.username, id, assignee, comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
-    })
+    validator.validateTicketAssign(req)
+    .then(() => ticketsBl.assignTicket(req.user.username, req.params.id, req.body.assignee, req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch((err) => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket assignee. Please try again after some time.');
+        res.json({ errors: errors});
+    });
 });
 
-//Change status for a ticket
+
 router.post('/change-status/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketChangeStatus(req,res)
-    .then(function(){
-        var id = req.params.id;
-        var status = req.body.status;
-        var comment = req.body.comment;
-        return ticketsBl.changeStatus(req.user.username, id, status, comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
-    })
+    validator.validateTicketChangeStatus(req)
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, req.body.status, req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
+        res.json({ errors: errors});
+    });
 });
 
-//Change status for a ticket to awaiting users response
+
 router.post('/awaiting-user-response/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketAddComment(req,res)
-    .then(function(){
-        var id = req.params.id;
-        var status = 'Awaiting User Response';
-        var comment = req.body.comment;
-        return ticketsBl.changeStatus(req.user.username, id, status, comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
+    validator.validateTicketAddComment(req)
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Awaiting User Response', req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
+        res.json({ errors: errors});
     });
 });
 
-//Change status for a ticket to awaiting users response
 router.post('/close/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketAddComment(req,res)
-    .then(function(){
-        var id = req.params.id;
-        var status = 'Closed';
-        var comment = req.body.comment;
-        return ticketsBl.changeStatus(req.user.username, id, status, comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
+    validator.validateTicketAddComment(req)
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Closed', req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
+        res.json({ errors: errors});
     });
 });
 
-//Change status for a ticket to awaiting users response
+
 router.post('/re-open/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketAddComment(req,res)
-    .then(function(){
-        var id = req.params.id;
-        var status = 'Re-Open';
-        var comment = req.body.comment;
-        return ticketsBl.changeStatus(req.user.username, id, status, comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
+    validator.validateTicketAddComment(req)
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Re-Open', req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
+        res.json({ errors: errors});
     });
 });
 
 
-//Change status for a ticket to awaiting users response
 router.post('/acknowledge/:id', function(req,res,next){
-    //Check if http request has mandatory parameters
-    validator.validateTicketAddComment(req,res)
-    .then(function(){
-        return ticketsBl.changeStatus(
-            req.user.username,
-            req.params.id,
-            'Open', 
-            req.body.comment)
-    })
-    .then(function(ticket){
-        res.json(ticket);
-    })
-    .catch(function(errors){
-        res.json({errors: errors});
+    validator.validateTicketAddComment(req)
+    .then(() => ticketsBl.changeStatus(req.user.username,req.params.id,'Open', req.body.comment))
+    .then(ticket => res.json(ticket))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
+        res.json({ errors: errors});
     });
 });
 

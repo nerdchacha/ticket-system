@@ -5,9 +5,9 @@ var validator                   = {},
     Ticket                      = require('../models/ticket-model.js'),
     q                           = require('q'),
     R                           = require('ramda'),
+    queryHasCommentId           = checkRequiredQuery('commentId', 'commentId is required'),
     bodyHasStatus               = checkRequiredBody('status', 'status is required'),  
     bodyHasComment              = checkRequiredBody('comment', 'comment is required'),
-    queryHasCommentId           = checkRequiredQuery('commentId', 'commentId is required'),
     bodyHasTitle                = checkRequiredBody('title', 'title is required'),
     bodyHasDesc                 = checkRequiredBody('description', 'description is required'),
     bodyHasFirstname            = checkRequiredBody('firstname', 'firstname is required'),
@@ -24,6 +24,7 @@ var validator                   = {},
     bodyHasisActive             = checkRequiredBody('isActive' ,'Is Active id is require'),
     bodyPasswordEqualsPassword2 = checkIsEqualBody('password2', 'password and re entered password do not match'),
     paramsHasUsername           = checkRequiredParams('username', 'username is required'),
+    paramsHasStatus             = checkRequiredParams('status', 'status is required'),
     paramsHasId                 = checkRequiredParams('id', 'id is required');
 
 
@@ -78,11 +79,10 @@ validator.validateGetTicketById = (req) => {
 validator.validateGetTicketData = (req) =>{
     var deferred = q.defer();
 
-
     process.nextTick(() => {
         R.compose(
             resolve(deferred),
-            bodyHasStatus)(req); 
+            paramsHasStatus)(req); 
     });
 
     return deferred.promise;

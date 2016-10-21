@@ -5,7 +5,7 @@ var q       = require('q'),
     _       = require('underscore'),
     R       = require('ramda'),
     Ticket  = require('../models/ticket-model.js'),
-    roles       = require('../config/role-config.js'),
+    roles   = require('../config/role-config.js'),
     helper  = require('../business-layer/helper.js');
 
 var ticket = {};
@@ -113,65 +113,16 @@ ticket.updateTicket = function(req,res){
 
     var id = req.body._id;
     var ticketId = req.body.id;
-    var newDetails = [];
-    var title = req.body.title;
-    newDetails.push(title);
-    var description = req.body.description;
-    newDetails.push(description);
-    var priority = req.body.priority;
-    newDetails.push(priority);
-    var type = req.body.type;
-    newDetails.push(type);
-    var assignee = req.body.assignee;
-    newDetails.push(assignee);
-    var status = req.body.status;
-    newDetails.push(status);
-    var lastUpdatedDate = Date.now();
-
-    var newTicket = {title: title, description: description, priority: priority, type: type, assignee: assignee, status: status, lastUpdatedDate : lastUpdatedDate};
-
-    Ticket.getTicketById(ticketId,function(err, oldTicket){
-        if(err) deferred.reject(err);
-        else{
-            Ticket.updateTicketBySupport(id, newTicket, function(err, updatedTicket){
-                if(err) deferred.reject(err);
-                var propertyNames = ['Title', 'Description', 'Priority', 'Type', 'Assignee' , 'Status']
-                var oldDetails = [];
-                var oldTitle = oldTicket.title;
-                oldDetails.push(oldTitle);
-                var oldDescription = oldTicket.description;
-                oldDetails.push(oldDescription);
-                var oldPriority = oldTicket.priority;
-                oldDetails.push(oldPriority);
-                var oldType = oldTicket.type;
-                oldDetails.push(oldType);
-                var oldAssignee = oldTicket.assignee;
-                oldDetails.push(oldAssignee);
-                var oldStatus = oldTicket.status;
-                oldDetails.push(oldStatus);
-
-                var comment = {};
-                comment.commentDate = Date.now();
-                comment.commentBy = req.user.username;
-                comment.commentMessage = {};
-                comment.commentMessage.title = "Changes";
-                comment.commentMessage.message = [];
-                comment.isDeletable = false;
-                for(var i= 0; i<oldDetails.length; i++){
-                    if(oldDetails[i] !== newDetails[i]){
-                        var oldPropVal = !oldDetails[i] || typeof oldDetails[i] === 'undefined'|| oldDetails[i] === '' ? 'none' : oldDetails[i];
-                        var newPropVal = newDetails[i];
-                        comment.commentMessage.message.push(propertyNames[i] + ': changed from "' + oldPropVal + '" to "' + newPropVal + '"');
-                    }
-                }
-
-                Ticket.addComment(ticketId, comment, function(err, ticket){
-                    if(err) deferred.reject(err);
-                    else deferred.resolve(ticket);
-                });
-            });
-        }
-    });
+    var newTicket = createUpdateTicketObject(req);
+    Ticket.getTicketById(ticketId)
+    .then(oldTicket => {
+        var comment = createDiffComment(req, oldTicket, newTicket);
+        Ticket.updateTicketBySupport(id, newTicket)
+        .then(() => Ticket.addComment(ticketId, comment))
+        .then(ticket => deferred.resolve(ticket))
+        .catch(err => deferred.reject(err));
+    })
+    .catch(err => deferred.reject(err));
 
     return deferred.promise;
 };
@@ -232,7 +183,7 @@ ticket.changeStatus = function(username ,id, newStatus, userComment){
 ticket.canUserDeleteComment = function(commentId, req){
     var deferred = q.defer();
     Ticket.getTicketByCommentId(commentId)
-        .then(function(ticket){
+        .then(ticket => {
             var comment = ticket.comments.find(comment => comment._id.toString() === commentId);
             if(comment.commentBy !== req.user.username) 
                 deferred.reject('User cannot delete comments of other users');
@@ -242,6 +193,11 @@ ticket.canUserDeleteComment = function(commentId, req){
         .catch(error => deferred.reject(error));
     return deferred.promise;
 };
+
+
+
+
+
 
 
 
@@ -325,6 +281,40 @@ function changeStatusCurried(id, newStatus){
     return function(comment){
         return Ticket.changeStatus(id, newStatus, comment);
     }
+}
+
+function createUpdateTicketObject(req){
+    return{
+        title: req.body.title,
+        description: req.body.description,
+        priority: req.body.priority,
+        type: req.body.type,
+        assignee: req.body.assignee,
+        status: req.body.status,
+        lastUpdatedDate: Date.now()
+    }
+}
+
+function createDiffComment(req, oldTicket, newTicket){
+    var comment = {
+        commentDate: Date.now(),
+        commentBy: req.user.username,
+        isDeletable: false,
+        commentMessage : {
+            title: "Changes",
+            message: []
+        },
+    };
+
+    for(var prop in newTicket){
+        if(oldTicket[prop] != newTicket[prop] && !(oldTicket[prop] instanceof Date)){
+            var oldPropVal = !oldTicket[prop] || typeof oldTicket[prop] === 'undefined'|| oldTicket[prop] === '' ? 'none' : oldTicket[prop];
+            var newPropVal = newTicket[prop];
+            comment.commentMessage.message.push(prop + ': changed from "' + oldPropVal + '" to "' + newPropVal + '"');
+        }
+    }
+
+    return comment;
 }
 
 module.exports = ticket;

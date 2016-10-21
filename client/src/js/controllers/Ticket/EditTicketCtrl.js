@@ -28,7 +28,7 @@
                         });
                     }
                     else{
-                        $scope.ticket = res.data;
+                        $scope.ticket = res.data.ticket;
                         $scope.ticket.currentUser = Authentication.getUser().username;
                         TicketFactory.getInitialTicketData($scope.ticket.status)
                             .then(function(res){
@@ -36,7 +36,7 @@
                                 $scope.types = res.data.types.values;
                                 $scope.users = res.data.users;
                                 //Set users in factory to be shared accross views
-                                HelperFactory.setAllUsers($scope.users);
+                                //HelperFactory.setAllUsers($scope.users);
                                 $scope.statuses = res.data.statuses;
                             })
                             .catch(function(err){
