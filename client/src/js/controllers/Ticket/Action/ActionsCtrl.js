@@ -93,9 +93,9 @@ angular.module('ticketSystem')
                             });
 
                         if(res.data.comments){
-    					//Update comments and assignee on view
-    					   $scope.ticket.comments = res.data.comments;
-    				    	$scope.ticket.assignee = res.data.assignee;
+				            //Update comments and assignee on view
+				            $scope.ticket.comments = res.data.comments;
+			    	        $scope.ticket.assignee = res.data.assignee;
                         }
 
     					//Close panel

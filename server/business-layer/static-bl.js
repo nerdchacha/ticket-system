@@ -7,12 +7,7 @@ var staticModel 	= require('../models/static-model.js'),
 var staticBl = {};
 
 staticBl.getInitialStaticData = (req,res) => {
-    var deferred = q.defer();
-    staticModel.getStaticValues((err,staticData) => {
-       if(err) deferred.reject(err);
-        else deferred.resolve(staticData);
-    });
-    return deferred.promise;
+    return staticModel.getStaticValues();
 };
 
 module.exports = staticBl;

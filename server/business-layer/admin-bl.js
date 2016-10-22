@@ -41,17 +41,11 @@ admin.fetchAllUsers = req => {
 };
 
 admin.updateUser = userDetails => {
-
-    return User.updateUser(
-        userDetails.username, 
-        userDetails);
+    return User.updateUser(userDetails.username, userDetails);
 };
 
-admin.resetPassword = req => {
-    
-    return User.resetPassword(
-        req.params.id,
-        req.body.password);
+admin.resetPassword = req => {    
+    return User.resetPassword(req.params.id,req.body.password);
 };
 
 module.exports = admin;

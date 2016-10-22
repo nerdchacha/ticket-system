@@ -19,7 +19,8 @@ router.get('/users-details',(req,res,next) => {
             res.json(users);
         })
         .catch(err => {
-            res.json(helper.createError(err));
+            var errors = helper.createResponseError(errors, 'There was some error getting all the users. Please try again later');
+            res.json({ errors: errors });
         });
 });
 
@@ -40,7 +41,8 @@ router.get('/user-details/:username',(req,res,next) => {
             res.json({user : user});
         })
         .catch(err => {
-            res.json(helper.createError(err))
+            var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
+            res.json({ errors: errors });
         });
 });
 
@@ -60,7 +62,8 @@ router.post('/update-user/:username',(req,res,next) => {
             res.json({user : user});
         })
         .catch(err => {
-            res.json(helper.createError(err));
+            var errors = helper.createResponseError(errors, 'There was some error updating user details. Please try again later');
+            res.json({ errors: errors });
         });
 });
 
@@ -78,7 +81,8 @@ router.post('/reset-password/:id',(req,res,next) => {
             res.json();
         })
         .catch(err => {
-           res.json(helper.createError(err));
+            var errors = helper.createResponseError(errors, 'There was some error resetting user password. Please try again later');
+            res.json({ errors: errors });
         });
 });
 

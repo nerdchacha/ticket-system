@@ -3,7 +3,7 @@
  */
 var userBl      = require('../business-layer/users-bl.js'),
     q           = require('q'),
-    roles       = require('../config/role-config.js');
+    rolesEnum   = require('../config/enum-config.js').roles;
 
 module.exports.isAdmin = (req,res,next) => {
     //User is not authenticated
@@ -12,7 +12,7 @@ module.exports.isAdmin = (req,res,next) => {
         res.end();
     };
     //User trying to access the route is not an admin
-    if (req.user.role.indexOf(roles.admin) === -1) {
+    if (req.user.role.indexOf(rolesEnum.admin) === -1) {
         res.status(403);
         res.end();
     }

@@ -152,12 +152,12 @@
  */
 var User        = require('../models/user-model.js'),
     q           = require('q'),
-    roles       = require('../config/role-config.js');
+    rolesEnum   = require('../config/enum-config.js').roles;
 
 var usersBl = {};
 
 usersBl.createLocalUser = (req) => {
-    return User.createUser(new User(createLocalUserObject(req, roles)));
+    return User.createUser(new User(createLocalUserObject(req, rolesEnum)));
 };
 
 usersBl.getAllActiveUsers = (req) => {
@@ -203,10 +203,7 @@ usersBl.comparePassword = (password, hash) => {
 };
 
 usersBl.changePassword = (req) => {
-    return User.resetPassword(
-        req.params.id,
-        req.body.password
-    );
+    return User.resetPassword(req.params.id,req.body.password);
 };
 
 function createUpdateProfileObject(req){

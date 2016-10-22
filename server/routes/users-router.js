@@ -9,48 +9,35 @@ var express     = require('express'),
     router      = express.Router();
 
 router.get('/profile/:username',(req,res,next) => {
-    var getUserProfile = R.composeP(
-            helper.createResponseUser,
-            usersBl.getUserByUsername,
-            getUsernameFromRequest,
-            validator.validateUsername      
-        )(req);
-
-    getUserProfile
-        .then(user => res.json({ user : user }))
-        .catch(error => {
-            var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
-            res.json({ errors: errors });
-        })
+    validator.validateUsername(req)
+    .then(() => usersBl.getUserByUsername(req.params.username))
+    .then(user => helper.createResponseUser(user))
+    .then(user => res.json({ user : user }))
+    .catch(error => {
+        var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
+        res.json({ errors: errors });
+    });
 });
 
 router.post('/profile/:username',(req,res,next) => {
-    var updateProfile = R.composeP(
-            helper.createResponseUser,
-            usersBl.updateProfile,
-            validator.validateUpdateProfile
-        )(req);
-
-    updateProfile
-        .then(user => res.json({ user: user }))
-        .catch(error => {
-            var errors = helper.createResponseError(errors, 'There was some error update user details. Please try again later');
-            res.json({ errors: errors });
-        });
+    validator.validateUpdateProfile(req)
+    .then(() => usersBl.updateProfile(req))
+    .then(user => helper.createResponseUser(user))
+    .then(user => res.json({ user: user }))
+    .catch(error => {
+        var errors = helper.createResponseError(errors, 'There was some error update user details. Please try again later');
+        res.json({ errors: errors });
+    });        
 });
 
 router.post('/profile/change-password/:id',(req,res,next) => {
-    var changePassword = R.composeP(
-            usersBl.changePassword,
-            validator.validateResetPassword
-        )(req);
-
-    changePassword
-        .then(() => res.json({}))
-        .catch(error => {
-            var errors = helper.createResponseError(errors, 'There was some error in resetting the users password. Please try again later');
-            res.json({ errors: errors });
-        });
+    validator.validateResetPassword(req)
+    .then(() => usersBl.changePassword(req))
+    .then(() => res.json({}))
+    .catch(error => {
+        var errors = helper.createResponseError(errors, 'There was some error in resetting the users password. Please try again later');
+        res.json({ errors: errors });
+    });        
 });
 
 

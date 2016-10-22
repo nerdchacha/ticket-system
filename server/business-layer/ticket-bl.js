@@ -1,12 +1,13 @@
 /**
  * Created by dell on 7/18/2016.
  */
-var q       = require('q'),
-    _       = require('underscore'),
-    R       = require('ramda'),
-    Ticket  = require('../models/ticket-model.js'),
-    roles   = require('../config/role-config.js'),
-    helper  = require('../business-layer/helper.js');
+var q           = require('q'),
+    _           = require('underscore'),
+    R           = require('ramda'),
+    Ticket      = require('../models/ticket-model.js'),
+    rolesEnum   = require('../config/enum-config.js').roles,
+    statusEnum  = require('../config/enum-config.js').status,
+    helper      = require('../business-layer/helper.js');
 
 var ticket = {};
 
@@ -140,7 +141,7 @@ ticket.getTicketById = function(id, user){
             if(isSupportUser || ticket.createdBy === user.username)
                 deferred.resolve(ticket)
             else
-                deferred.reject(403)
+                deferred.reject('User doesn\'t have access to view the ticket');
         })
         .catch(error => deferred.reject(error));
 
@@ -151,22 +152,17 @@ ticket.addComment = function(id, comment){
     var deferred = q.defer();
     comment.isDeletable = true;
     comment.commentMessage = {title: 'Comment', message: [comment.comment]};
-    return Ticket.addComment(
-        id,
-        comment
-    );
+    return Ticket.addComment(id, comment);
 };
 
 ticket.deleteComment = function(id, commentId){
-    return Ticket.deleteComment(
-        id, 
-        commentId
-    );
+    return Ticket.deleteComment(id, commentId);
 };
 
 ticket.assignTicket = function(username ,id, newAssignee, userComment){
     return R.composeP(
-        changeAssigneeCurried(id, newAssignee),
+        R.curry(Ticket.assignTicket)(id, newAssignee),
+        //changeAssigneeCurried(id, newAssignee),
         createAssignTicketComment(username, newAssignee, userComment),
         Ticket.getTicketById
     )(id);
@@ -174,7 +170,8 @@ ticket.assignTicket = function(username ,id, newAssignee, userComment){
 
 ticket.changeStatus = function(username ,id, newStatus, userComment){
     return R.composeP(
-        changeStatusCurried(id, newStatus),
+        R.curry(Ticket.changeStatus)(id, newStatus),
+        //changeStatusCurried(id, newStatus),
         createChangeStatusComment(username, newStatus, userComment),
         Ticket.getTicketById
     )(id);
@@ -226,7 +223,7 @@ function createNewTicketObject(req){
         title : req.body.title,
         description : req.body.description,
         type : req.body.type,
-        status : 'New',
+        status : statusEnum.new,
         createdBy : req.user.username,
         createdDate : Date.now(),
         lastUpdatedDate : Date.now(),
@@ -241,7 +238,7 @@ function canUserViewTicket(user){
 }
 
 function isSupport(user){
-    return user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1;
+    return user.role.indexOf(rolesEnum.admin) > -1 || user.role.indexOf(rolesEnum.support) > -1;
 }
 
 function createCommentBoiler(username){
@@ -271,17 +268,19 @@ function createAssignTicketComment(username, newAssignee, userComment){
     }
 }
 
-function changeAssigneeCurried(id, newAssignee){
-    return function(comment){
-        return Ticket.assignTicket(id, newAssignee, comment);
-    }
-}
 
-function changeStatusCurried(id, newStatus){
-    return function(comment){
-        return Ticket.changeStatus(id, newStatus, comment);
-    }
-}
+// //TODO: change to use ramda curry
+// function changeAssigneeCurried(id, newAssignee){
+//     return function(comment){
+//         return Ticket.assignTicket(id, newAssignee, comment);
+//     }
+// }
+
+// function changeStatusCurried(id, newStatus){
+//     return function(comment){
+//         return Ticket.changeStatus(id, newStatus, comment);
+//     }
+// }
 
 function createUpdateTicketObject(req){
     return{

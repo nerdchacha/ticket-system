@@ -345,6 +345,7 @@ var express     = require('express'),
     usersBl     = require('../business-layer/users-bl.js'),
     q           = require('q'),
     R           = require('ramda'),
+    statusEnum  = require('../config/enum-config.js').status,
     validator   = require('../business-layer/request-validator.js'),
     helper      = require('../business-layer/helper.js');
 
@@ -408,8 +409,8 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
 router.get('/all',function(req,res,next){
     ticketsBl.fetchAllTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(error => {            
-            var errors= helper.createResponseError(error, 'There was some error trying to get all the tickets. Please try again after some time.');
+        .catch(err => {            
+            var errors= helper.createResponseError(err, 'There was some error trying to get all the tickets. Please try again after some time.');
             res.json({errors: errors});
         });
 });
@@ -417,8 +418,8 @@ router.get('/all',function(req,res,next){
 router.get('/my',function(req,res,next){
     ticketsBl.fetchMyTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(error => {            
-            var errors= helper.createResponseError(error, 'There was some error trying to get your tickets. Please try again after some time.');
+        .catch(err => {            
+            var errors= helper.createResponseError(err, 'There was some error trying to get your tickets. Please try again after some time.');
             res.json({errors: errors});
         });
 });
@@ -426,8 +427,8 @@ router.get('/my',function(req,res,next){
 router.get('/to-me',function(req,res,next){
     ticketsBl.fetchToMeTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(error => {            
-            var errors= helper.createResponseError(error, 'There was some error trying to get the tickets assigned to me. Please try again after some time.');
+        .catch(err => {            
+            var errors= helper.createResponseError(err, 'There was some error trying to get the tickets assigned to me. Please try again after some time.');
             res.json({errors: errors});
         });
 });
@@ -437,8 +438,8 @@ router.post('/new',function(req,res,next){
     validator.validateNewTicket(req,res)
         .then(() => ticketsBl.createNewTicket(req,res))
         .then(ticket => res.json(ticket))
-        .catch(errors => {
-            var errors = helper.createResponseError(errors, 'There was some error trying to create a new ticket. Please try again after some time.');
+        .catch(err => {
+            var errors = helper.createResponseError(err, 'There was some error trying to create a new ticket. Please try again after some time.');
             res.json({errors: errors});
         });
 });
@@ -448,8 +449,8 @@ router.put('/:id',(req,res,next) => {
     validator.validateUpdateTicket(req)
         .then(() => ticketsBl.updateTicket(req,res))
         .then(ticket => res.json(ticket))
-        .catch(errors => {
-            var errors = helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
+        .catch(err => {
+            var errors = helper.createResponseError(err, 'There was some error trying to get the ticket details. Please try again after some time.');
             res.json({errors: errors});
         });
 });
@@ -460,45 +461,20 @@ router.get('/:id', (req,res,next) => {
     .then(() => ticketsBl.getTicketById(req.params.id, req.user))
     .then(ticket => res.json({ticket : ticket}))
     .catch(err => {
-        var errors = helper.createResponseError(null, 'No ticket exists with given ticket id.');
+        var errors = helper.createResponseError(err, 'No ticket exists with given ticket id.');
         res.json({errors: errors});
-    })
-
-    /*var getTicketDetails = R.composeP(
-        createGetTicketResponse,
-        R.curry(ticketsBl.getTicketById)(req.params.id),
-        getUserFromReq,
-        validator.validateGetTicketById
-    )(req);
-
-    getTicketDetails
-        .then(response => res.json(response))
-        .catch(error => {
-            var errors= helper.createResponseError(errors, 'There was some error trying to get the ticket details. Please try again after some time.');
-            res.json({errors: errors});
-        });*/
+    });
 });
 
+
 router.post('/addComment/:id',(req,res,next) => {
-    var getCommentObject = function(req){
-        return {
-            comment: req.body.comment, 
-            commentBy: req.user.username
-        };
-    }
-
-    var addComment = R.composeP(
-        R.curry(ticketsBl.addComment)(req.params.id),
-        getCommentObject,
-        validator.validateTicketAddComment
-    )(req);
-
-    addComment
-        .then(ticket => res.json(ticket))
-        .catch((err) => {
-            var errors = helper.createResponseError(err, 'There was some error trying to get the ticket details. Please try again after some time.');
-            res.json({ errors: errors});
-        });
+    validator.validateTicketAddComment(req)
+    .then(() => ticketsBl.addComment(req.params.id, {comment: req.body.comment, commentBy: req.user.username}))
+    .then(ticket => res.json(ticket))
+    .catch( err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to add comment to the ticket. Please try again after some time.');
+        res.json({ errors: errors});
+    });
 });
 
 router.delete('/deleteComment/:id', function(req,res,next){
@@ -506,7 +482,7 @@ router.delete('/deleteComment/:id', function(req,res,next){
         .then(() => ticketsBl.canUserDeleteComment(req.query.commentId, req))
         .then(() => ticketsBl.deleteComment(req.params.id,req.query.commentId))
         .then(ticket => res.json(ticket))        
-        .catch((err) => {
+        .catch(err => {
             var errors = helper.createResponseError(err, 'There was some error trying to delete the comment. Please try again after some time.');
             res.json({ errors: errors});
         });
@@ -517,7 +493,7 @@ router.post('/assign/:id', function(req,res,next){
     validator.validateTicketAssign(req)
     .then(() => ticketsBl.assignTicket(req.user.username, req.params.id, req.body.assignee, req.body.comment))
     .then(ticket => res.json(ticket))
-    .catch((err) => {
+    .catch(err => {
         var errors = helper.createResponseError(err, 'There was some error trying to change the ticket assignee. Please try again after some time.');
         res.json({ errors: errors});
     });
@@ -537,7 +513,7 @@ router.post('/change-status/:id', function(req,res,next){
 
 router.post('/awaiting-user-response/:id', function(req,res,next){
     validator.validateTicketAddComment(req)
-    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Awaiting User Response', req.body.comment))
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.awaitingUserResponse , req.body.comment))
     .then(ticket => res.json(ticket))
     .catch(err => {
         var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
@@ -547,7 +523,7 @@ router.post('/awaiting-user-response/:id', function(req,res,next){
 
 router.post('/close/:id', function(req,res,next){
     validator.validateTicketAddComment(req)
-    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Closed', req.body.comment))
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.closed, req.body.comment))
     .then(ticket => res.json(ticket))
     .catch(err => {
         var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
@@ -558,7 +534,7 @@ router.post('/close/:id', function(req,res,next){
 
 router.post('/re-open/:id', function(req,res,next){
     validator.validateTicketAddComment(req)
-    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, 'Re-Open', req.body.comment))
+    .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.reOpen, req.body.comment))
     .then(ticket => res.json(ticket))
     .catch(err => {
         var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');
@@ -569,7 +545,7 @@ router.post('/re-open/:id', function(req,res,next){
 
 router.post('/acknowledge/:id', function(req,res,next){
     validator.validateTicketAddComment(req)
-    .then(() => ticketsBl.changeStatus(req.user.username,req.params.id,'Open', req.body.comment))
+    .then(() => ticketsBl.changeStatus(req.user.username,req.params.id, statusEnum.open, req.body.comment))
     .then(ticket => res.json(ticket))
     .catch(err => {
         var errors = helper.createResponseError(err, 'There was some error trying to change the ticket status. Please try again after some time.');

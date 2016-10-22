@@ -3,7 +3,7 @@
  */
 var q           = require('q'),
     _           = require('underscore'),
-    roles       = require('../config/role-config.js');
+    rolesEnum       = require('../config/enum-config.js').roles;
 
 var helper = {};
 
@@ -56,7 +56,7 @@ helper.createResponseError = function(err, message){
 helper.isRegularUser = user => {
     var deferred = q.defer();
     process.nextTick(function(){
-        if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
+        if(user.role.indexOf(rolesEnum.admin) > -1 || user.role.indexOf(rolesEnum.support) > -1)
             deferred.resolve(true);
         else
             deferred.resolve(false);
@@ -72,7 +72,7 @@ helper.isRegularUser = user => {
 helper.isSupportUser = user => {
     var deferred = q.defer();
     process.nextTick(function(){
-        if(user.role.indexOf(roles.admin) > -1 || user.role.indexOf(roles.support) > -1)
+        if(user.role.indexOf(rolesEnum.admin) > -1 || user.role.indexOf(rolesEnum.support) > -1)
             deferred.resolve();
         else
             deferred.reject(403);
@@ -120,50 +120,50 @@ helper.getDataforPage = (page, size) => {
 
 
 
-helper.sortByKey = function(key, order, asc, list){
-    return function(list){
-        return order === asc ? list.sort(function(a,b){return b[key] <= a[key]}) : list.sort(function(a,b){return b[key] >= a[key]});
-    }
-};
+// helper.sortByKey = function(key, order, asc, list){
+//     return function(list){
+//         return order === asc ? list.sort(function(a,b){return b[key] <= a[key]}) : list.sort(function(a,b){return b[key] >= a[key]});
+//     }
+// };
 
-helper.itemsPerPage = function(page, size, list){
-    return function(list){
-        return list.slice((page - 1) * size, ((page - 1) * size) + size);
-    }
-}
+// helper.itemsPerPage = function(page, size, list){
+//     return function(list){
+//         return list.slice((page - 1) * size, ((page - 1) * size) + size);
+//     }
+// }
 
-helper.isOrDefault = function(check, fallback){
-    return check || fallback;
-}
+// helper.isOrDefault = function(check, fallback){
+//     return check || fallback;
+// }
 
-helper.intify = function (value){
-    return parseInt(value);
-}
+// helper.intify = function (value){
+//     return parseInt(value);
+// }
 
-helper.getFromBody = function(property){
-    return function(req){
-        return helper.getFromReq(req, 'body', property);
-    }
-}
+// helper.getFromBody = function(property){
+//     return function(req){
+//         return helper.getFromReq(req, 'body', property);
+//     }
+// }
 
-helper.getFromParams = function(property){
-    return function(req){
-        return helper.getFromReq(req, 'params', property);
-    }
-}
+// helper.getFromParams = function(property){
+//     return function(req){
+//         return helper.getFromReq(req, 'params', property);
+//     }
+// }
 
-helper.getFromQuery = function(property){
-    return function(req){
-        return helper.getFromReq(req, 'query', property);
-    }
-}
+// helper.getFromQuery = function(property){
+//     return function(req){
+//         return helper.getFromReq(req, 'query', property);
+//     }
+// }
 
-helper.getFromReq = function(req, part, property){
-    return req[part][property];
-}
+// helper.getFromReq = function(req, part, property){
+//     return req[part][property];
+// }
 
-helper.createError = function(err){
-    return !_.isArray(err) ? {errors: [{error : err}]} : {errors: err };
-}
+// helper.createError = function(err){
+//     return !_.isArray(err) ? {errors: [{error : err}]} : {errors: err };
+// }
 
 module.exports = helper;

@@ -4,59 +4,53 @@ var express 	= require('express'),
 	staticBl 	= require('../business-layer/static-bl.js'),
     ticketBl    = require('../business-layer/ticket-bl.js'),
     q           = require('q'),
+    statusEnum  = require('../config/enum-config.js').status,
 	validator 	= require('../business-layer/request-validator.js');
 
-router.get('/all-users',function(req,res){
+router.get('/all-users',(req,res) => {
     usersBl.getAllActiveUsers()
-    .then(function(users){
-        res.json({error: null, users: users});
-    })
-    .catch(function(err){
-        res.json({errpr: err, users: null})
+    .then(users => res.json({users: users}))
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to get the user list. Please try again after some time.');
+        res.json({ errors: errors});
     });
 });
 
-router.get('/allowed-status/:status',function(req,res){
-	validator.validateGetTicketData(req,res)
-	.then(function(){
-		return staticBl.getInitialStaticData();
+router.get('/allowed-status/:status',(req,res) => {
+	validator.validateGetTicketData(req)
+	.then(() => staticBl.getInitialStaticData())
+	.then(data => {
+        var allowedStatus = data.values
+                            .find(value => value.name === 'allowed state')
+                            .values
+                            .find(value => value.status === currentStatus);
+        res.json({status: allowedStatus});
 	})
-	.then(function(data){
-		var currentStatus = req.params.status;
-        var allowedStatusList = data.values.find(function (value) {
-            return value.name === 'allowed state';
-        });
-        var allowedStatus = allowedStatusList.values.find(function(value){
-            return value.status === currentStatus;
-        });
-        res.json({error: null, status: allowedStatus});
-	})
-	.catch(function(err){
-		res.json({errpr: err, status: null});
+	.catch(err => {
+		var errors = helper.createResponseError(err, 'There was some error trying to get list of allowed status. Please try again after some time.');
+        res.json({ errors: errors});
 	})
 });
 
-router.get('/action-buttons/:id',function(req,res,next){
-    validator.validateGetTicketById(req,res)
-    .then(function(){
+router.get('/action-buttons/:id',(req,res,next) => {
+    validator.validateGetTicketById(req)
+    .then(() => {
         return q.all([ 
             staticBl.getInitialStaticData(),
             ticketBl.getTicketByIdAll(req.params.id)
         ]);
     })
-    .then(function(resValues){
+    .then(resValues => {
         var statusDetails = resValues[0];
         var ticketDetails = resValues[1];
         var currentStatus = ticketDetails.status;
-        var allowedStatusList = statusDetails.values.find(function (value) {
-            return value.name === 'allowed state';
-        });
-        var allowedStatus = allowedStatusList.values.find(function(value){
-            return value.status === currentStatus;
-        });
+        var allowedStatus = statusDetails.values
+                            .find(value => value.name === 'allowed state')
+                            .values
+                            .find(value => value.status === currentStatus);
         var actionButtons = {};
         actionButtons.comment = true;
-        if(currentStatus === 'Closed'){
+        if(currentStatus === statusEnum.closed){
             actionButtons.reopen = true;
         }
         else{
@@ -70,21 +64,19 @@ router.get('/action-buttons/:id',function(req,res,next){
                 actionButtons.assignToSelf = true;
             actionButtons.changeStatus = true;
             actionButtons.assign = true;
-            if(currentStatus === 'New'){
+            if(currentStatus === statusEnum.new){
                 actionButtons.acknowledge = true;
             }
-            if(currentStatus === 'Resolved'){
+            if(currentStatus === statusEnum.resolved){
                 actionButtons.close = true;
             }
-            if(allowedStatus.allowed.indexOf('Awaiting User Response') > -1){
+            if(allowedStatus.allowed.indexOf(statusEnum.awaitingUserResponse) > -1){
                 actionButtons.awaitingUserResponse = true;
             }
         }
-        res.json({errors: null, actionButtons: actionButtons});
+        res.json({actionButtons: actionButtons});
     })
-    .catch(function(err){
-        res.json({errors: err, actionButtons: null});
-    })
+    .catch(err => res.json({errors: err}))
 });
 
 module.exports = router;

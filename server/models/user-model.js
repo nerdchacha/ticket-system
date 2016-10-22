@@ -256,7 +256,7 @@
  */
 var mongoose    = require('mongoose'),
     bcrypt      = require('bcryptjs'),
-    roles       = require('../config/role-config.js'),
+    rolesEnum       = require('../config/enum-config.js').roles,
     q           = require('q');
 
 //Schema
@@ -462,12 +462,12 @@ User.updateUser = (username, userDetails) => {
             {username : username},
             (err, user) => {
                 //User already admin
-                if(user.role.indexOf(roles.admin) > -1){
+                if(user.role.indexOf(rolesEnum.admin) > -1){
                     //request is to remove user from admin
                     if(!userDetails.isAdmin){
                         User.findOneAndUpdate({username : username},
                             //Set other fields and remove from admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive} ,$pull : {role : roles.admin}},
+                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive} ,$pull : {role : rolesEnum.admin}},
                             {new : true},
                             resolve(deferred));
                     }
@@ -485,7 +485,7 @@ User.updateUser = (username, userDetails) => {
                     if(userDetails.isAdmin){
                         User.findOneAndUpdate({username : username},
                             //Set other fields and add to admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive},$push : {role : roles.admin}},
+                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive},$push : {role : rolesEnum.admin}},
                             {new : true},
                             resolve(deferred));
                     }
