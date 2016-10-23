@@ -101,16 +101,20 @@ helper.getSize= req => {
     return req.query.size ? parseInt(req.query.size) : 10;
 }
 
-helper.sortData = (order, sort) => {
-    return function(list){
-        return order === 'asc' ? list.sort((a,b) => b[sort] <= a[sort]) : list.sort((a,b) => a[sort] <= b[sort]);
-    }
-}
+// helper.sortData = (order, sort) => {
+//     return function(list){
+//         return order === 'asc' ? list.sort((a,b) => b[sort] <= a[sort]) : list.sort((a,b) => a[sort] <= b[sort]);
+//     }
+// }
 
-helper.getDataforPage = (page, size) => {
-    return function(list){
-        return list.slice((page - 1) * size, ((page - 1) * size) + size);
-    }
+// helper.getDataforPage = (page, size) => {
+//     return function(list){
+//         return list.slice((page - 1) * size, ((page - 1) * size) + size);
+//     }
+// }
+
+helper.createSortString = (sort, order) => {
+    return order === 'asc' ? sort : '-' + sort;
 }
 
 

@@ -313,6 +313,26 @@ Ticket.getAllTickets = () => {
 };
 
 /*-------------------------------------------------------
+ GET DETAILS FOR ALL THE TICKETS ACCORDING TO PAGINATION
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+
+ -------------------------------------------------------*/
+Ticket.getAllPaginationTickets = (skip, limit, sort) => {
+    var deferred = q.defer();
+
+    Ticket.find({})
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .exec(resolve(deferred));
+
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  GET ALL TICKETS FOR A PARTICULAR USER
  PARAMS:
  [username - username of the user for which tickets needs to be searched]
@@ -327,6 +347,26 @@ Ticket.getAllTicketsForUser = username => {
 };
 
 /*-------------------------------------------------------
+ GET DETAILS FOR ALL THE TICKETS ACCORDING TO PAGINATION FOR A USER
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+
+ -------------------------------------------------------*/
+Ticket.getPaginationTicketsForUser = (username, skip, limit, sort) => {
+    var deferred = q.defer();
+
+    Ticket.find({createdBy: username})
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .exec(resolve(deferred));
+
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  GET ALL TICKETS ASSIGNED TO USER
  PARAMS:
  [username - username of the user for which all tickets needs to be fetched that are assigned to him]
@@ -336,6 +376,26 @@ Ticket.getAllAssignedToMeTickets = username => {
     Ticket.find(
         {assignee: username},
         resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
+ GET DETAILS FOR ALL THE TICKETS ASSIGNED TO A USER ACCORDING TO PAGINATION
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+
+ -------------------------------------------------------*/
+Ticket.getPaginationTicketsAssignedToMe = (username, skip, limit, sort) => {
+    var deferred = q.defer();
+
+    Ticket.find({assignee: username})
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .exec(resolve(deferred));
+
     return deferred.promise;
 };
 

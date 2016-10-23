@@ -1,4 +1,11 @@
 <nav class="mainnav" ng-class="navClass" ng-if="isAuthenticated()" ng-click="navClick($event)">
+  <div class="nav-back-button" ng-class="navClass" ng-click="toggleNav($event)" ng-if="isAuthenticated()">
+    <span class="top-left"></span>
+    <span class="top-right"></span>
+    <span class="middle"></span>
+    <span class="bottom-left"></span>
+    <span class="bottom-right"></span>
+  </div>
   <div class="site-logo pl60"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
       <section class="quick-link">
         <div class="heading">Quick Link</div>

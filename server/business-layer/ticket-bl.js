@@ -17,18 +17,12 @@ ticket.fetchAllTickets = (req,res) => {
         page    = helper.getPage(req),
         size    = helper.getSize(req);
     var deferred = q.defer();
-    var getTicketsForPage = helper.getDataforPage(page, size);
-    var sortTickets       = helper.sortData(order, sort);  
 
-    var getAllTickets = R.composeP(
-            sortTickets,
-            getTicketsForPage,
-            Ticket.getAllTickets,
-            helper.isSupportUser,
-            getUserFromReq
-        )(req);
+    var skip = (page - 1) * size;
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
 
-    getAllTickets
+    Ticket.getAllPaginationTickets(skip, limit,sortString)
         .then(tickets => {
             var response = {};
             response.tickets   = tickets;
@@ -49,18 +43,14 @@ ticket.fetchMyTickets = (req,res) => {
         page    = helper.getPage(req),
         size    = helper.getSize(req);
     var deferred = q.defer();
-    var getTicketsForPage = helper.getDataforPage(page, size);
-    var sortTickets       = helper.sortData(order, sort);  
 
-    var getAllTickets = R.composeP(
-            sortTickets,
-            getTicketsForPage,
-            Ticket.getAllTicketsForUser,
-            getUsernameFromReq
-        )(req);
+    var skip = (page - 1) * size;
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
 
-    getAllTickets
+    Ticket.getPaginationTicketsForUser(req.user.username, skip, limit,sortString)
         .then(tickets => {
+            console.log(tickets);
             var response        = {};
             response.tickets    = tickets;
             response.page       = page;
@@ -80,17 +70,12 @@ ticket.fetchToMeTickets = (req,res) => {
         page    = helper.getPage(req),
         size    = helper.getSize(req);
     var deferred = q.defer();
-    var getTicketsForPage = helper.getDataforPage(page, size);
-    var sortTickets       = helper.sortData(order, sort);  
 
-    var getAllTickets = R.composeP(
-            sortTickets,
-            getTicketsForPage,
-            Ticket.getAllAssignedToMeTickets,
-            getUsernameFromReq
-        )(req);
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
 
-    getAllTickets
+    Ticket.getPaginationTicketsAssignedToMe(req.user.username, skip, limit,sortString)
         .then(tickets => {
             var response        = {};
             response.tickets    = tickets;
@@ -162,7 +147,6 @@ ticket.deleteComment = function(id, commentId){
 ticket.assignTicket = function(username ,id, newAssignee, userComment){
     return R.composeP(
         R.curry(Ticket.assignTicket)(id, newAssignee),
-        //changeAssigneeCurried(id, newAssignee),
         createAssignTicketComment(username, newAssignee, userComment),
         Ticket.getTicketById
     )(id);
@@ -171,7 +155,6 @@ ticket.assignTicket = function(username ,id, newAssignee, userComment){
 ticket.changeStatus = function(username ,id, newStatus, userComment){
     return R.composeP(
         R.curry(Ticket.changeStatus)(id, newStatus),
-        //changeStatusCurried(id, newStatus),
         createChangeStatusComment(username, newStatus, userComment),
         Ticket.getTicketById
     )(id);
@@ -268,19 +251,6 @@ function createAssignTicketComment(username, newAssignee, userComment){
     }
 }
 
-
-// //TODO: change to use ramda curry
-// function changeAssigneeCurried(id, newAssignee){
-//     return function(comment){
-//         return Ticket.assignTicket(id, newAssignee, comment);
-//     }
-// }
-
-// function changeStatusCurried(id, newStatus){
-//     return function(comment){
-//         return Ticket.changeStatus(id, newStatus, comment);
-//     }
-// }
 
 function createUpdateTicketObject(req){
     return{

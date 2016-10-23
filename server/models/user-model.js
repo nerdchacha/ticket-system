@@ -418,6 +418,27 @@ User.getAllUserDetails = () => {
 };
 
 /*-------------------------------------------------------
+ GET DETAILS FOR ALL THE USERS ACCORDING TO PAGINATION
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+
+ -------------------------------------------------------*/
+User.getPaginationUserDetails = (skip, limit, sort) => {
+    var deferred = q.defer();
+
+    User.find({})
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .select('-password -google')
+        .exec(resolve(deferred));
+
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  FIND GOOGLE AUTHENTICATED USER
  PARAMS:
  [id - google id (supplied by google) of the user ro be searched for]

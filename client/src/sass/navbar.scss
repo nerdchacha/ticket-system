@@ -76,7 +76,7 @@ $maincolor: #d9534f;
   }
 }
 
-.nav-toggle-button{
+.nav-toggle-button, .nav-back-button{
   cursor: pointer;
   position: relative;
   width: 50px;
@@ -84,7 +84,7 @@ $maincolor: #d9534f;
   left: 10px;
   top: 0px;
   margin: 10px 10px 0 0;
-  z-index: 1100;
+  
   display: none;
   .middle{
     width: 60%;
@@ -137,60 +137,76 @@ $maincolor: #d9534f;
     transition: all $time ease-in-out $delay;
   }
   &.is-close{
-    animation: spin-toggle-reverse $time linear 1 forwards;
+    // animation: spin-toggle-reverse $time linear 1 forwards;
   }  
-  &.is-open{
-    animation: spin-toggle $time linear 1 forwards; 
-    .top-right, .bottom-right{
-      transform: scale(0);
-    }
-    .top-left{      
-      transform: translate(-104%,-0%) rotate(-45deg);
-      top: 34%;
-    }
-    .bottom-left{
-      transform: translate(-104%,0%) rotate(45deg);
-      bottom: 34%;
-    }
+  // &.is-open{
+  //   animation: spin-toggle $time linear 1 forwards; 
+  //   .top-right, .bottom-right{
+  //     transform: scale(0);
+  //   }
+  //   .top-left{      
+  //     transform: translate(-104%,-0%) rotate(-45deg);
+  //     top: 34%;
+  //   }
+  //   .bottom-left{
+  //     transform: translate(-104%,0%) rotate(45deg);
+  //     bottom: 34%;
+  //   }
+  // }
+}
+
+.nav-back-button{
+  position: absolute;
+  display: block;
+  .top-right, .bottom-right{
+    transform: scale(0);
+  }
+  .top-left{      
+    transform: translate(-104%,-0%) rotate(-45deg);
+    top: 34%;
+  }
+  .bottom-left{
+    transform: translate(-104%,0%) rotate(45deg);
+    bottom: 34%;
   }
 }
 
 
-@keyframes spin-toggle{
-  0%{
-    transform: rotate(0deg)
-  }
-  25%{
-    transform: rotate(90deg)
-  }
-  50%{
-    transform: rotate(180deg)
-  }
-  75%{
-    transform: rotate(270deg)
-  }
-  100%{
-    transform: rotate(360deg)
-  }
-}
+// @keyframes spin-toggle{
+//   0%{
+//     transform: rotate(0deg)
+//   }
+//   25%{
+//     transform: rotate(90deg)
+//   }
+//   50%{
+//     transform: rotate(180deg)
+//   }
+//   75%{
+//     transform: rotate(270deg)
+//   }
+//   100%{
+//     transform: rotate(360deg)
+//   }
+// }
   
-@keyframes spin-toggle-reverse{
-  100%{
-    transform: rotate(0deg)
-  }
-  75%{
-    transform: rotate(90deg)
-  }
-  50%{
-    transform: rotate(180deg)
-  }
-  25%{
-    transform: rotate(270deg)
-  }
-  0%{
-    transform: rotate(360deg)  
-  }
-}
+// @keyframes spin-toggle-reverse{
+//   100%{
+//     transform: rotate(0deg)
+//   }
+//   75%{
+//     transform: rotate(90deg)
+//   }
+//   50%{
+//     transform: rotate(180deg)
+//   }
+//   25%{
+//     transform: rotate(270deg)
+//   }
+//   0%{
+//     transform: rotate(360deg)  
+//   }
+// }
 
 @media screen and (max-width: 992px){
   .mainnav{

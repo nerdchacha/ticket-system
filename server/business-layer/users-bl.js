@@ -176,7 +176,6 @@ usersBl.getAllUserDetails = () => {
     return User.getAllUserDetails()
 };
 
-
 //TODO : Fix this
 usersBl.setUsenameAndActive = (id,username) => {
     var deferred = q.defer();
