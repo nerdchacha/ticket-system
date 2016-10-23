@@ -157,7 +157,6 @@ $maincolor: #d9534f;
 
 .nav-back-button{
   position: absolute;
-  display: block;
   .top-right, .bottom-right{
     transform: scale(0);
   }
@@ -221,7 +220,7 @@ $maincolor: #d9534f;
       transform: translateX(-100%);
     }
   }
-  .nav-toggle-button{
+  .nav-toggle-button,.nav-back-button{
     display: block;
   }
 }
