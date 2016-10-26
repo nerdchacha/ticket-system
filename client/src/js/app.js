@@ -62,6 +62,11 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                         controller: 'TicketsCtrl',
                         templateUrl: 'templates/tickets/view-all-tickets.html'
                     })
+                .state('dashboard',{
+                    url: '/ticket/dashboard',
+                    controller: 'DashboardCtrl',
+                    templateUrl: 'templates/tickets/dashboard.html'
+                })
                 .state('ticket-new',{
                     url: '/ticket/new',
                     controller: 'NewTicketCtrl',

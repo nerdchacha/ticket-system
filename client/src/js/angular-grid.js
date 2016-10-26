@@ -89,7 +89,7 @@ angular.module('yangular-grid',[])
                     this.getRowObjectName = function(){
                         return $scope.config.objectName;
                     };
-                    $scope.size = "10";
+                    $scope.size = $scope.config.pageSize || "10";
                     agSortFactory.getRowsOnLoad()
                         .then(function(res){
                             readResponse(res);

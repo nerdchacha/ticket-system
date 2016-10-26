@@ -1,6 +1,8 @@
 angular.module('ticketSystem')
-    .controller('LoginCtrl',['$scope','$state','$window','UserFactory','Authentication',
-        function($scope,$state,$window,UserFactory,Authentication){
+    .controller('LoginCtrl',['$scope','$state','$window','UserFactory','Authentication','HelperFactory',
+        function($scope,$state,$window,UserFactory,Authentication,HelperFactory){
+            if(Authentication.getUser())
+                $state.go('ticket.my-tickets');
             $scope.error = false;
             $scope.message = '';
             $scope.login = function(){
@@ -15,7 +17,10 @@ angular.module('ticketSystem')
                             //Set user details in Common Factory
                             Authentication.setUser(res.data.user);
                             $scope.$emit('successful-login');
-                            $state.go('ticket.my-tickets');
+                            if(HelperFactory.isCurrentUserAdmin())
+                                $state.go('dashboard');
+                            else
+                                $state.go('ticket.my-tickets');                                
                         }
                     }).
                     catch(function(error){

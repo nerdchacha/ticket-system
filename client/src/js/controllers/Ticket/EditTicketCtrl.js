@@ -41,7 +41,7 @@
                             })
                             .catch(function(err){
                                 console.log(err);
-                                YgNotify.alert('danger', "An error occurred while trying to detch the static data.");
+                                YgNotify.alert('danger', "An error occurred while trying to fetch the static data.",5000);
                             });
                     }
                 })

@@ -34,7 +34,7 @@ angular.module('ticketSystem')
                         HelperFactory
                             .createFlashMessage(
                                 res,
-                                'The assignee has been changed successfully')
+                                'The ticket has been created successfully')
                             .forEach(function(msg){
                                 YgNotify.alert(msg.class, msg.message, 5000);
                             });

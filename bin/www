@@ -16,9 +16,13 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
+ * Configure Mongoose.
+ */
+app.configureMongoose('mongodb://127.0.0.1/ticket-system');
+
+/**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
 
 /**

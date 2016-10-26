@@ -349,14 +349,14 @@ var express     = require('express'),
     validator   = require('../business-layer/request-validator.js'),
     helper      = require('../business-layer/helper.js');
 
-var setStaticData = function(values){
-    var priorities = values[0].values.find(function (value) {
+var setStaticData = values => {
+    var priorities = values[0].values.find(value => {
         return value.name === 'priority'
     });
-    var types = values[0].values.find(function (value) {
+    var types = values[0].values.find(value => {
         return value.name === 'type'
     });
-    var status = values[0].values.find(function (value) {
+    var status = values[0].values.find(value => {
         return value.name === 'status'
     });
     var users = values[1];
@@ -378,19 +378,19 @@ router.get('/static-data',(req,res,next) => {
         });
 });
 
-router.get('/edit-ticket/initial-load/:status',function(req,res,next){
+router.get('/edit-ticket/initial-load/:status',(req,res,next) => {
     validator.validateGetTicketData(req)
-        .then(function(){
+        .then(() => {
             return q.all([
                 staticBl.getInitialStaticData(),
                 usersBl.getAllActiveUsers()]);
         })
-        .then(function(values) {
+        .then(values => {
             var currentStatus = req.params.status;
-            var allowedStatusList = values[0].values.find(function (value) {
+            var allowedStatusList = values[0].values.find(value => {
                 return value.name === 'allowed state';
             });
-            var allowedStatus = allowedStatusList.values.find(function(value){
+            var allowedStatus = allowedStatusList.values.find(value => {
                 return value.status === currentStatus;
             });
             allowedStatus.allowed.push(currentStatus);
@@ -399,14 +399,13 @@ router.get('/edit-ticket/initial-load/:status',function(req,res,next){
 
             res.json(staticValues);
         })
-        .catch(function(err){
-            console.log(err);
+        .catch(err => {
             var errors = helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
             res.json({errors: errors});
         });
 });
 
-router.get('/all',function(req,res,next){
+router.get('/all',(req,res,next) => {
     ticketsBl.fetchAllTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
         .catch(err => {            
@@ -415,7 +414,7 @@ router.get('/all',function(req,res,next){
         });
 });
 
-router.get('/my',function(req,res,next){
+router.get('/my',(req,res,next) => {
     ticketsBl.fetchMyTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
         .catch(err => {            
@@ -424,7 +423,7 @@ router.get('/my',function(req,res,next){
         });
 });
 
-router.get('/to-me',function(req,res,next){
+router.get('/to-me',(req,res,next) => {
     ticketsBl.fetchToMeTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
         .catch(err => {            
@@ -434,7 +433,7 @@ router.get('/to-me',function(req,res,next){
 });
 
 
-router.post('/new',function(req,res,next){
+router.post('/new',(req,res,next) => {
     validator.validateNewTicket(req,res)
         .then(() => ticketsBl.createNewTicket(req,res))
         .then(ticket => res.json(ticket))
@@ -457,6 +456,7 @@ router.put('/:id',(req,res,next) => {
 
 
 router.get('/:id', (req,res,next) => {
+    console.log('hi');
     validator.validateGetTicketById(req)
     .then(() => ticketsBl.getTicketById(req.params.id, req.user))
     .then(ticket => res.json({ticket : ticket}))
@@ -477,7 +477,7 @@ router.post('/addComment/:id',(req,res,next) => {
     });
 });
 
-router.delete('/deleteComment/:id', function(req,res,next){
+router.delete('/deleteComment/:id', (req,res,next) => {
     validator.validateTicketDeleteComment(req)
         .then(() => ticketsBl.canUserDeleteComment(req.query.commentId, req))
         .then(() => ticketsBl.deleteComment(req.params.id,req.query.commentId))
@@ -489,7 +489,7 @@ router.delete('/deleteComment/:id', function(req,res,next){
 });
 
 
-router.post('/assign/:id', function(req,res,next){
+router.post('/assign/:id', (req,res,next) => {
     validator.validateTicketAssign(req)
     .then(() => ticketsBl.assignTicket(req.user.username, req.params.id, req.body.assignee, req.body.comment))
     .then(ticket => res.json(ticket))
@@ -500,7 +500,7 @@ router.post('/assign/:id', function(req,res,next){
 });
 
 
-router.post('/change-status/:id', function(req,res,next){
+router.post('/change-status/:id', (req,res,next) => {
     validator.validateTicketChangeStatus(req)
     .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, req.body.status, req.body.comment))
     .then(ticket => res.json(ticket))
@@ -511,7 +511,7 @@ router.post('/change-status/:id', function(req,res,next){
 });
 
 
-router.post('/awaiting-user-response/:id', function(req,res,next){
+router.post('/awaiting-user-response/:id', (req,res,next) => {
     validator.validateTicketAddComment(req)
     .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.awaitingUserResponse , req.body.comment))
     .then(ticket => res.json(ticket))
@@ -521,7 +521,7 @@ router.post('/awaiting-user-response/:id', function(req,res,next){
     });
 });
 
-router.post('/close/:id', function(req,res,next){
+router.post('/close/:id', (req,res,next) => {
     validator.validateTicketAddComment(req)
     .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.closed, req.body.comment))
     .then(ticket => res.json(ticket))
@@ -532,7 +532,7 @@ router.post('/close/:id', function(req,res,next){
 });
 
 
-router.post('/re-open/:id', function(req,res,next){
+router.post('/re-open/:id', (req,res,next) => {
     validator.validateTicketAddComment(req)
     .then(() => ticketsBl.changeStatus(req.user.username, req.params.id, statusEnum.reOpen, req.body.comment))
     .then(ticket => res.json(ticket))
@@ -543,7 +543,7 @@ router.post('/re-open/:id', function(req,res,next){
 });
 
 
-router.post('/acknowledge/:id', function(req,res,next){
+router.post('/acknowledge/:id', (req,res,next) => {
     validator.validateTicketAddComment(req)
     .then(() => ticketsBl.changeStatus(req.user.username,req.params.id, statusEnum.open, req.body.comment))
     .then(ticket => res.json(ticket))
@@ -554,17 +554,17 @@ router.post('/acknowledge/:id', function(req,res,next){
 });
 
 
-function getUserFromReq(req){
-    return req.user;
-}
+// function getUserFromReq(req){
+//     return req.user;
+// }
 
-function createGetTicketResponse(ticket){
-    if(ticket)
-        return { ticket : ticket };
-    else{
-        var errors = helper.createResponseError(null, 'No ticket exists with given ticket id.');
-        return {errors: errors};
-    }
-}
+// function createGetTicketResponse(ticket){
+//     if(ticket)
+//         return { ticket : ticket };
+//     else{
+//         var errors = helper.createResponseError(null, 'No ticket exists with given ticket id.');
+//         return {errors: errors};
+//     }
+// }
 
 module.exports = router;

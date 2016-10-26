@@ -41,8 +41,6 @@ angular.module('ticketSystem')
             $scope.config.pageQuerystringParam = 'page';
             $scope.config.sizeQuerystringParam = 'size';
 
-            $scope.active = '';
-
             $scope.config.onRowClick = function(row){
                 $state.go('ticket-view', {id: row.id});
             };

@@ -3,10 +3,12 @@
  */
 var express                 = require('express'),
     adminBl                 = require('../../business-layer/admin-bl.js'),
+    ticketsBl               = require('../../business-layer/ticket-bl.js'),
     usersBl                 = require('../../business-layer/users-bl.js'),
     helper                  = require('../../business-layer/helper.js'),
     validator               = require('../../business-layer/request-validator.js'),
     R                       = require('ramda'),
+    q                       = require('q'),
     router                  = express.Router();
 
 
@@ -84,6 +86,42 @@ router.post('/reset-password/:id',(req,res,next) => {
             var errors = helper.createResponseError(errors, 'There was some error resetting user password. Please try again later');
             res.json({ errors: errors });
         });
+});
+
+
+/*-------------------------------------------------------
+ GET tickets count
+ -------------------------------------------------------*/
+router.get('/dashboard',(req,res,next) => {
+    q.all([
+        ticketsBl.getNewTicketCount(),
+        ticketsBl.getOpenTicketCount(),
+        ticketsBl.getInProgressTicketCount(),
+        ticketsBl.getAwaitingUserResponseTicketCount()
+    ])
+    .then(ticketCounts => {
+        res.json({
+            tickets: {
+                new: {count: ticketCounts[0]},
+                open: {count: ticketCounts[1]},
+                inProgress:  {count: ticketCounts[2]},
+                awaitingUserResponse: {count: ticketCounts[3]},
+            }
+        });
+    })
+    .catch(err => {
+        var errors = helper.createResponseError(err, 'There was some error trying to load dashboard data. Please try again after some time.');
+        res.json({ errors: errors});
+    })
+});
+
+router.get('/open-within-day', (req,res,next) => {
+    ticketsBl.openWithin24Hours(req,res)
+    .then(ticketDetails => res.json(ticketDetails))
+    .catch(err => {            
+        var errors= helper.createResponseError(err, 'There was some error trying to get the tickets created within 24 hours. Please try again after some time.');
+        res.json({errors: errors});
+    });
 });
 
 

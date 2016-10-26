@@ -32,16 +32,16 @@ var indexRoutes         = require('./routes/index-router'),
     adminRoutes         = require('./routes/admin-routes/admin-users-router');
 
 
+var app = express();
+
 //--------------------------------------------------------
 //---------------------DB Config--------------------------
 //--------------------------------------------------------
 
-mongoose.connect('mongodb://127.0.0.1/ticket-system');
-var db = mongoose.connection;
-
-
-
-var app = express();
+app.configureMongoose = function(path){
+    mongoose.connect(path);
+    var db = mongoose.connection;
+}
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {

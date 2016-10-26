@@ -50,7 +50,6 @@ ticket.fetchMyTickets = (req,res) => {
 
     Ticket.getPaginationTicketsForUser(req.user.username, skip, limit,sortString)
         .then(tickets => {
-            console.log(tickets);
             var response        = {};
             response.tickets    = tickets;
             response.page       = page;
@@ -172,6 +171,48 @@ ticket.canUserDeleteComment = function(commentId, req){
         })
         .catch(error => deferred.reject(error));
     return deferred.promise;
+};
+
+ticket.openWithin24Hours = function(req,res){
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
+    var deferred = q.defer();
+
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
+
+    Ticket.getPaginationOpenWithin24HoursTickets(skip, limit, sortString)
+        .then(tickets => {
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = tickets.length;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
+    return deferred.promise;
+}
+
+ticket.getNewTicketCount = function(){
+    return Ticket.getNewTicketCount();
+};
+
+ticket.getOpenTicketCount = function(){
+    return Ticket.getOpenTicketCount();
+};
+
+ticket.getInProgressTicketCount = function(){
+    return Ticket.getInProgressTicketCount();
+};
+
+ticket.getAwaitingUserResponseTicketCount = function(){
+    return Ticket.getAwaitingUserResponseTicketCount();
 };
 
 

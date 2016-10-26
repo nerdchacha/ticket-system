@@ -17,5 +17,8 @@ angular.module('ticketSystem')
             factory.getInitialTicketData = function(status){
                 return $http.get('tickets/edit-ticket/initial-load/' + status);
             };
+            factory.getDashboardData = function(){
+              return $http.get('admin/dashboard');
+            }
             return factory;
         }]);
