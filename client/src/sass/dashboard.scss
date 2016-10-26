@@ -1,0 +1,41 @@
+.red{
+	background-color: #F44336;
+}
+
+.green{
+	background-color: #43A047;
+}
+
+.blue{
+	background-color: #039BE5;
+}
+
+.yellow{
+	background-color: #FFB300;
+}
+
+.dashboard-box{
+	color: #DFF;
+	width: 80%;
+	border-radius: 5px;
+	//padding-bottom: 40%;
+	text-align: center;
+	position: relative;
+	font-size: 1.2em;
+	font-weight: 600;
+	cursor: pointer;
+	.dashboard-content{
+		width: 100%;
+		height: 90%;
+		padding: 20px;
+		// top: 8%;
+		//position: absolute;
+	}
+	.header{
+		height: 50%;
+	}
+	.count{
+		font-size: 1.6em;
+		height: 50%;
+	}
+}

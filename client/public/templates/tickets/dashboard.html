@@ -1,0 +1,39 @@
+<div>
+	<h2 class="page-heading">Dashboard</h2>
+	<div class="row">
+		<div class="col-md-3 col-xs-6">
+			<div class="dashboard-box green">
+				<div class="dashboard-content">
+					<div class="header">New</div>
+					<div class="count">{{new.count}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3 col-xs-6">
+			<div class="dashboard-box red">
+				<div class="dashboard-content">
+					<div class="header">Open</div>
+					<div class="count">{{open.count}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3 col-xs-6">
+			<div class="dashboard-box yellow">
+				<div class="dashboard-content">
+					<div class="header">In Progress</div>
+					<div class="count">{{inProgress.count}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3 col-xs-6">
+			<div class="dashboard-box blue">
+				<div class="dashboard-content">
+					<div class="header">Awaiting Response</div>
+					<div class="count">{{awaitingUserResponse.count}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<h5 class="page-heading">Tickets opened in the last 24 hours</h5>
+	<yag config="config"></yag>
+</div>
