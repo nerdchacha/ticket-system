@@ -88,6 +88,12 @@ startServer();
 
 var baseUrl = 'localhost:5000/';
 
+//----------------------------------------------------------------
+//------------------------ADMIN ROUTER----------------------------
+//----------------------------------------------------------------
+
+
+
 describe('User Login', () => {
   describe('should not let unregistered user to login', () => {
     it('should return with isAuthenticated flag set to false', (done) => {
@@ -206,7 +212,7 @@ describe('User Profile', () => {
         .end((err, res) => {
             res.body.should.contain.errors;
             res.body.errors.should.be.an.array;
-
+            res.body.errors[0].should.include.key('error');
             done();
         });
       });

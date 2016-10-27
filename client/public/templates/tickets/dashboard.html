@@ -1,6 +1,17 @@
 <div>
 	<h2 class="page-heading">Dashboard</h2>
 	<div class="row">
+		<div class="col-md-4 col-xs-12">
+			<canvas id="statusChart" width="100" height="100"></canvas>
+		</div>
+		<div class="col-md-4 col-xs-12">
+			<canvas id="typeChart" width="100" height="100"></canvas>
+		</div>
+		<div class="col-md-4 col-xs-12">
+			<canvas id="priorityChart" width="100" height="100"></canvas>
+		</div>
+	</div>
+	<!-- <div class="row">
 		<div class="col-md-3 col-xs-6">
 			<div class="dashboard-box blue">
 				<div class="dashboard-content">
@@ -33,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<h5 class="page-heading">Tickets opened in the last 24 hours</h5>
 	<yag config="config"></yag>
 </div>

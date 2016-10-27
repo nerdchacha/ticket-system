@@ -21,6 +21,7 @@ var input = {
 				'bower_components/textAngular/dist/textAngular.min.js',
 				'bower_components/angular-flash-alert/dist/angular-flash.min.js',
 				'bower_components/angular-ui-router/release/angular-ui-router.js',
+				'bower_components/chart.js/dist/Chart.min.js',
 				'client/src/js/angular-grid.js',
 				'client/src/js/yg-modal.js',
 				'client/src/js/yg-notification.js'

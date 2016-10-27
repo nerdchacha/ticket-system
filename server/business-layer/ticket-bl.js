@@ -1,13 +1,15 @@
 /**
  * Created by dell on 7/18/2016.
  */
-var q           = require('q'),
-    _           = require('underscore'),
-    R           = require('ramda'),
-    Ticket      = require('../models/ticket-model.js'),
-    rolesEnum   = require('../config/enum-config.js').roles,
-    statusEnum  = require('../config/enum-config.js').status,
-    helper      = require('../business-layer/helper.js');
+var q               = require('q'),
+    _               = require('underscore'),
+    R               = require('ramda'),
+    Ticket          = require('../models/ticket-model.js'),
+    rolesEnum       = require('../config/enum-config.js').roles,
+    statusEnum      = require('../config/enum-config.js').status,
+    priorityEnum    = require('../config/enum-config.js').priority,
+    typeEnum        = require('../config/enum-config.js').type,
+    helper          = require('../business-layer/helper.js');
 
 var ticket = {};
 
@@ -219,23 +221,51 @@ ticket.openWithin24Hours = function(req,res){
     return deferred.promise;
 }
 
+/*------------------TICKET STATUS COUNT------------------------------*/
+
 ticket.getNewTicketCount = function(){
-    return Ticket.getNewTicketCount();
+    return Ticket.getStatusTicketCount(statusEnum.new);
 };
 
 ticket.getOpenTicketCount = function(){
-    return Ticket.getOpenTicketCount();
+    return Ticket.getStatusTicketCount(statusEnum.open);
 };
 
 ticket.getInProgressTicketCount = function(){
-    return Ticket.getInProgressTicketCount();
+    return Ticket.getStatusTicketCount(statusEnum.inProgress);
 };
 
 ticket.getAwaitingUserResponseTicketCount = function(){
-    return Ticket.getAwaitingUserResponseTicketCount();
+    return Ticket.getStatusTicketCount(statusEnum.awaitingUserResponse);
 };
 
+/*------------------TICKET TYPE COUNT------------------------------*/
 
+ticket.getBugTicketCount = function(){
+    return Ticket.getTypeTicketCount(typeEnum.bug);
+};
+
+ticket.getNeedInfoTicketCount = function(){
+    return Ticket.getTypeTicketCount(typeEnum.needInfo);
+};
+
+ticket.getImprovementTicketCount = function(){
+    return Ticket.getTypeTicketCount(typeEnum.improvement);
+};
+
+/*------------------TICKET PRIORITY COUNT------------------------------*/
+
+ticket.getHighTicketCount = function(){
+    return Ticket.getPriorityTicketCount(priorityEnum.high);
+};
+
+ticket.getMediumTicketCount = function(){
+    return Ticket.getPriorityTicketCount(priorityEnum.medium);
+};
+
+ticket.getLowTicketCount = function(){
+    return Ticket.getPriorityTicketCount(priorityEnum.low);
+};
 
 
 

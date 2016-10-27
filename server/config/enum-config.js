@@ -20,4 +20,16 @@ config.status = {
 	reOpen 					: 'Re-Open'
 }
 
+config.priority = {
+	low 					: 'Low',
+	medium 					: 'Medium',
+	high 					: 'High'
+}
+
+config.type = {
+	bug 					: 'Bug',
+	improvement 			: 'Improvement',
+	needInfo			 	: 'Need Info'
+}
+
 module.exports = config;

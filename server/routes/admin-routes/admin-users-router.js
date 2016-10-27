@@ -97,15 +97,27 @@ router.get('/dashboard',(req,res,next) => {
         ticketsBl.getNewTicketCount(),
         ticketsBl.getOpenTicketCount(),
         ticketsBl.getInProgressTicketCount(),
-        ticketsBl.getAwaitingUserResponseTicketCount()
+        ticketsBl.getAwaitingUserResponseTicketCount(),
+        ticketsBl.getBugTicketCount(),
+        ticketsBl.getNeedInfoTicketCount(),
+        ticketsBl.getImprovementTicketCount(),
+        ticketsBl.getHighTicketCount(),
+        ticketsBl.getMediumTicketCount(),
+        ticketsBl.getLowTicketCount()
     ])
     .then(ticketCounts => {
         res.json({
             tickets: {
-                new: {count: ticketCounts[0]},
-                open: {count: ticketCounts[1]},
-                inProgress:  {count: ticketCounts[2]},
-                awaitingUserResponse: {count: ticketCounts[3]},
+                new                     : {count: ticketCounts[0]},
+                open                    : {count: ticketCounts[1]},
+                inProgress              : {count: ticketCounts[2]},
+                awaitingUserResponse    : {count: ticketCounts[3]},
+                bug                     : {count: ticketCounts[4]},
+                needInfo                : {count: ticketCounts[5]},
+                improvement             : {count: ticketCounts[6]},
+                high                    : {count: ticketCounts[7]},
+                medium                  : {count: ticketCounts[8]},
+                low                     : {count: ticketCounts[9]}
             }
         });
     })

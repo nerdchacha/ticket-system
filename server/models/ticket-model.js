@@ -572,56 +572,44 @@ Ticket.getTicketById = id => {
 
 
 /*-------------------------------------------------------
- GET NEW TICKET COUNT
+ GET TICKET COUNT ACCORDING TO STATUS
  PARAMS:
  -------------------------------------------------------*/
-Ticket.getNewTicketCount = () => {
+Ticket.getStatusTicketCount = status => {
     var deferred = q.defer();
     Ticket.find(        
-        {status: statusEnum.new},
+        {status: status},
         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
     .count(resolve(deferred));
     return deferred.promise;
 };
 
 /*-------------------------------------------------------
- GET OPEN TICKET COUNT
+ GET TICKET COUNT ACCORDING TO PRIORITY
  PARAMS:
  -------------------------------------------------------*/
-Ticket.getOpenTicketCount = () => {
+Ticket.getPriorityTicketCount = priority => {
     var deferred = q.defer();
-    Ticket.find(
-        {status: statusEnum.open},
+    Ticket.find(        
+        {priority: priority},
         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
     .count(resolve(deferred));
     return deferred.promise;
 };
 
 /*-------------------------------------------------------
- GET IN PROGRESS TICKET COUNT
+ GET TICKET COUNT ACCORDING TO TYPE
  PARAMS:
  -------------------------------------------------------*/
-Ticket.getInProgressTicketCount = () => {
+Ticket.getTypeTicketCount = type => {
     var deferred = q.defer();
-    Ticket.find(
-        {status: statusEnum.inProgress},
+    Ticket.find(        
+        {type: type},
         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
     .count(resolve(deferred));
     return deferred.promise;
 };
 
-/*-------------------------------------------------------
- GET AWAITING USERS RESPONSE TICKET COUNT
- PARAMS:
- -------------------------------------------------------*/
-Ticket.getAwaitingUserResponseTicketCount = () => {
-    var deferred = q.defer();
-    Ticket.find(
-        {status: statusEnum.awaitingUserResponse},
-        {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
-    .count(resolve(deferred));
-    return deferred.promise;
-};
 /*-------------------------------------------------------
  UPDATE TICKET
  PARAMS:
