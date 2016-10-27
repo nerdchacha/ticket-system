@@ -542,9 +542,6 @@ Ticket.getPaginationOpenWithin24HoursTickets = (skip, limit, sort) => {
 /*-------------------------------------------------------
  GET DETAILS FOR ALL TICKETS COUNT OPEN WITHIN 24 HOURS ACCORDING TO PAGINATION
  PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
  -------------------------------------------------------*/
 Ticket.getOpenWithin24HoursTicketsCount = () => {
     var deferred = q.defer();
@@ -567,6 +564,64 @@ Ticket.getTicketById = id => {
     Ticket.findOne(
         {id : id},
         resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
+ GET TICKET COUNT ACCORDING TO STATUS
+ PARAMS:  
+ [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+ -------------------------------------------------------*/
+Ticket.getStatusTicketPagination = (status, skip, limit, sort) => {
+    var deferred = q.defer();
+    Ticket
+    .find(      
+        {status: status},
+        {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .exec(resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
+ GET TICKET COUNT ACCORDING TO PRIORITY
+ PARAMS:
+ [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+ -------------------------------------------------------*/
+Ticket.getPriorityTicketPagination = (priority, skip, limit, sort) => {
+    var deferred = q.defer();
+    Ticket.find(        
+        {priority: priority},
+        {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .exec(resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
+ GET TICKET COUNT ACCORDING TO TYPE
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+ -------------------------------------------------------*/
+Ticket.getTypeTicketPagination = (type, skip, limit, sort) => {
+    var deferred = q.defer();
+    Ticket.find(        
+        {type: type},
+        {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .exec(resolve(deferred));
     return deferred.promise;
 };
 

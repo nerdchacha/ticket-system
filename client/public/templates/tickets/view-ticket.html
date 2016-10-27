@@ -1,7 +1,9 @@
 <div class="">   
     <div>
-        <h2 class="page-heading clearfix"> 
+        <h2 class="page-heading clearfix">
             <div class="col-md-7 col-xs-12 text-md-left">
+                <a ui-sref="ticket.my-tickets" class="btn btn-danger"><i class="fa fa-arrow-left" title="back to ticket center"></i></a>
+                &nbsp;
                 <span>Ticket ID - {{::ticket.id}}</span>
                 <span class="lbl lbl-{{statusClass}}">{{::ticket.status}}</span>
                 <span class="lbl lbl-{{priorityClass}}">{{::ticket.priority}} Priority</span>                

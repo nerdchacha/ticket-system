@@ -40,14 +40,15 @@ angular.module('ticketSystem')
             TicketFactory.getDashboardData()
             .then(function(res){
             	var tickets = res.data.tickets;
-                var statusChart = new Chart(document.getElementById("statusChart"),{
-                    type: 'pie',
+                var statusCtx = document.getElementById("statusChart")
+                var statusChart = new Chart(statusCtx,{
+                    type: 'doughnut',
                     data: {
                         labels: [
                             "New",
                             "Open",
                             "In-Progress",
-                            "Awaiting Response"
+                            "Awaiting User Response"
                         ],
                         datasets: [
                             {
@@ -76,8 +77,9 @@ angular.module('ticketSystem')
                     }
                 });
 
-                var typeChart = new Chart(document.getElementById("typeChart"),{
-                    type: 'pie',
+                var typeCtx = document.getElementById("typeChart")
+                var typeChart = new Chart(typeCtx,{
+                    type: 'doughnut',
                     data: {
                         labels: [
                             "Bug",
@@ -109,8 +111,9 @@ angular.module('ticketSystem')
                     }
                 });
 
-                var priorityChart = new Chart(document.getElementById("priorityChart"),{
-                    type: 'pie',
+                var priorityCtx = document.getElementById("priorityChart")
+                var priorityChart = new Chart(priorityCtx,{
+                    type: 'doughnut',
                     data: {
                         labels: [
                             "High",
@@ -142,10 +145,23 @@ angular.module('ticketSystem')
                     }
                 });
 
-                // statusCtx.addEventListener('click', function(e){
-                //     var activePoints = statusChart.getElementsAtEvent(e);
-                //     console.log(activePoints);
-                // })
+                angular.element(statusCtx).on('click', function(e){
+                    var activePoints = statusChart.getElementsAtEvent(e);
+                    if(activePoints && activePoints[0]._model.label)
+                    $state.go('dashboard-to-view', {type: 'status' , value : activePoints[0]._model.label})
+                });
+
+                angular.element(typeCtx).on('click', function(e){
+                    var activePoints = typeChart.getElementsAtEvent(e);
+                    if(activePoints && activePoints[0]._model.label)
+                    $state.go('dashboard-to-view', {type: 'type' , value : activePoints[0]._model.label})
+                });
+
+                angular.element(priorityCtx).on('click', function(e){
+                    var activePoints = priorityChart.getElementsAtEvent(e);
+                    if(activePoints && activePoints[0]._model.label)
+                    $state.go('dashboard-to-view', {type: 'priority' , value : activePoints[0]._model.label})
+                });
 
 
             	// $scope.new = {};

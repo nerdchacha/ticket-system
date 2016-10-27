@@ -25,6 +25,8 @@ var validator                   = {},
     bodyPasswordEqualsPassword2 = checkIsEqualBody('password2', 'password and re entered password do not match'),
     paramsHasUsername           = checkRequiredParams('username', 'username is required'),
     paramsHasStatus             = checkRequiredParams('status', 'status is required'),
+    paramsHasType               = checkRequiredParams('type', 'type is required'),
+    paramsHasPriority           = checkRequiredParams('priority', 'priority is required'),
     paramsHasId                 = checkRequiredParams('id', 'id is required');
 
 
@@ -171,6 +173,32 @@ validator.checkSetUsername = (req) => {
             resolve(deferred),
             bodyHasUserId,
             bodyHasUsername)(req);
+    });
+
+    return deferred.promise;
+};
+
+validator.filterByType = (req) => {
+    var deferred = q.defer();
+
+    process.nextTick(() => {
+
+        R.compose(
+            resolve(deferred),
+            paramsHasType)(req);
+    });
+
+    return deferred.promise;
+};
+
+validator.filterByPriority = (req) => {
+    var deferred = q.defer();
+
+    process.nextTick(() => {
+
+        R.compose(
+            resolve(deferred),
+            paramsHasPriority)(req);
     });
 
     return deferred.promise;

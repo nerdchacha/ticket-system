@@ -106,6 +106,99 @@ ticket.fetchToMeTickets = (req,res) => {
     return deferred.promise;
 };
 
+ticket.getTicketsByStatus = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
+    var deferred = q.defer();
+
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
+
+    q.all([
+        Ticket.getStatusTicketPagination(req.params.status, skip, limit,sortString),
+        Ticket.getStatusTicketCount(req.params.status)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = count;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
+    return deferred.promise;
+};
+
+ticket.getTicketsByType = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
+    var deferred = q.defer();
+
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
+
+    q.all([
+        Ticket.getTypeTicketPagination(req.params.type, skip, limit,sortString),
+        Ticket.getTypeTicketCount(req.params.type)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = count;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
+    return deferred.promise;
+};
+
+ticket.getTicketsByPriority = (req,res) => {
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
+    var deferred = q.defer();
+
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
+
+    q.all([
+        Ticket.getPriorityTicketPagination(req.params.priority, skip, limit,sortString),
+        Ticket.getPriorityTicketCount(req.params.priority)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = count;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
+    return deferred.promise;
+};
+
 ticket.createNewTicket = function(req,res){
     return Ticket.createTicket(new Ticket(createNewTicketObject(req)));
 };

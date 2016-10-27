@@ -127,6 +127,10 @@ router.get('/dashboard',(req,res,next) => {
     })
 });
 
+
+/*-------------------------------------------------------
+ GET tickets opened within 24 hours
+ -------------------------------------------------------*/
 router.get('/open-within-day', (req,res,next) => {
     ticketsBl.openWithin24Hours(req,res)
     .then(ticketDetails => res.json(ticketDetails))
@@ -137,8 +141,45 @@ router.get('/open-within-day', (req,res,next) => {
 });
 
 
+/*-------------------------------------------------------
+ GET tickets filtered by status
+ -------------------------------------------------------*/
+router.get('/status/:status', (req,res,next) => {
+    validator.validateGetTicketData(req)
+    .then(() => ticketsBl.getTicketsByStatus(req,res))
+    .then(ticketDetails => res.json(ticketDetails))
+    .catch(err => {          
+        var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
+        res.json({errors: errors});
+    });
+});
 
 
+/*-------------------------------------------------------
+ GET tickets filtered by type
+ -------------------------------------------------------*/
+router.get('/type/:type', (req,res,next) => {
+    validator.filterByType(req)
+    .then(() => ticketsBl.getTicketsByType(req,res))
+    .then(ticketDetails => res.json(ticketDetails))
+    .catch(err => {          
+        var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
+        res.json({errors: errors});
+    });
+});
+
+/*-------------------------------------------------------
+ GET tickets filtered by priority
+ -------------------------------------------------------*/
+router.get('/priority/:priority', (req,res,next) => {
+    validator.filterByPriority(req)
+    .then(() => ticketsBl.getTicketsByPriority(req,res))
+    .then(ticketDetails => res.json(ticketDetails))
+    .catch(err => {          
+        var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
+        res.json({errors: errors});
+    });
+});
 
 //--------------------------------------------------------------------------------
 //--------------------------------FUNCTIONS---------------------------------------
