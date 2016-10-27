@@ -19,13 +19,18 @@ admin.fetchAllUsers = req => {
         var skip = (page - 1) * size;
         var limit = size;
         var sortString = helper.createSortString(sort, order);
-    
-        User.getPaginationUserDetails(skip, limit, sortString)
-        .then(users => {
+        
+        q.all([
+            User.getPaginationUserDetails(skip, limit, sortString),
+            User.getAllUserCount()
+            ])
+        .then(values => {
+            var users = values[0];
+            var count = values[1];
             var response = {};
             response.users   = users;
             response.page    = page;
-            response.count   = users.length;
+            response.count   = count;
             response.size    = size;
     
             deferred.resolve(response);

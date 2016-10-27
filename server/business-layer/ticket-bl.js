@@ -22,12 +22,17 @@ ticket.fetchAllTickets = (req,res) => {
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    Ticket.getAllPaginationTickets(skip, limit,sortString)
-        .then(tickets => {
+    q.all([
+        Ticket.getAllPaginationTickets(skip, limit,sortString),
+        Ticket.getAllTicketsCount()
+        ])    
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
             var response = {};
             response.tickets   = tickets;
             response.page    = page;
-            response.count   = tickets.length;
+            response.count   = count;
             response.size    = size;
 
             deferred.resolve(response)
@@ -48,12 +53,17 @@ ticket.fetchMyTickets = (req,res) => {
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    Ticket.getPaginationTicketsForUser(req.user.username, skip, limit,sortString)
-        .then(tickets => {
+    q.all([
+        Ticket.getPaginationTicketsForUser(req.user.username, skip, limit,sortString),
+        Ticket.getAllTicketsForUserCount(req.user.username)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
             var response        = {};
             response.tickets    = tickets;
             response.page       = page;
-            response.count      = tickets.length;
+            response.count      = count;
             response.size       = size;
 
             deferred.resolve(response)
@@ -74,12 +84,17 @@ ticket.fetchToMeTickets = (req,res) => {
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    Ticket.getPaginationTicketsAssignedToMe(req.user.username, skip, limit,sortString)
-        .then(tickets => {
+    q.all([
+        Ticket.getPaginationTicketsAssignedToMe(req.user.username, skip, limit,sortString),
+        Ticket.getAllAssignedToMeTicketsCount(req.user.username)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
             var response        = {};
             response.tickets    = tickets;
             response.page       = page;
-            response.count      = tickets.length;
+            response.count      = count;
             response.size       = size;
 
             deferred.resolve(response)
@@ -184,12 +199,17 @@ ticket.openWithin24Hours = function(req,res){
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    Ticket.getPaginationOpenWithin24HoursTickets(skip, limit, sortString)
-        .then(tickets => {
+    q.all([
+        Ticket.getPaginationOpenWithin24HoursTickets(skip, limit, sortString),
+        Ticket.getOpenWithin24HoursTicketsCount()
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
             var response        = {};
             response.tickets    = tickets;
             response.page       = page;
-            response.count      = tickets.length;
+            response.count      = count;
             response.size       = size;
 
             deferred.resolve(response)

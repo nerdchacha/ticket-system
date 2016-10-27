@@ -310,6 +310,19 @@ Ticket.getAllTickets = () => {
 };
 
 /*-------------------------------------------------------
+ GET ALL TICKETS COUNT IN THE SYSTEM
+ PARAMS:
+ -------------------------------------------------------*/
+Ticket.getAllTicketsCount = () => {
+    var deferred = q.defer();
+    Ticket
+    .find({})
+    .count(resolve(deferred)
+    );
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  GET DETAILS FOR ALL THE TICKETS ACCORDING TO PAGINATION
  PARAMS:
   [skip - number of records to skip,
@@ -344,6 +357,19 @@ Ticket.getAllTicketsForUser = username => {
 };
 
 /*-------------------------------------------------------
+ GET ALL TICKETS COUNT FOR A PARTICULAR USER
+ PARAMS:
+ [username - username of the user for which tickets needs to be searched]
+ -------------------------------------------------------*/
+Ticket.getAllTicketsForUserCount = username => {
+    var deferred = q.defer();
+    Ticket
+    .find({createdBy: username})
+    .count(resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  GET DETAILS FOR ALL THE TICKETS ACCORDING TO PAGINATION FOR A USER
  PARAMS:
   [skip - number of records to skip,
@@ -373,6 +399,19 @@ Ticket.getAllAssignedToMeTickets = username => {
     Ticket.find(
         {assignee: username},
         resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
+ GET ALL TICKETS COUNT ASSIGNED TO USER
+ PARAMS:
+ [username - username of the user for which all tickets needs to be fetched that are assigned to him]
+ -------------------------------------------------------*/
+Ticket.getAllAssignedToMeTicketsCount = username => {
+    var deferred = q.defer();
+    Ticket
+    .find({assignee: username})
+    .count(resolve(deferred));
     return deferred.promise;
 };
 
@@ -499,6 +538,24 @@ Ticket.getPaginationOpenWithin24HoursTickets = (skip, limit, sort) => {
 
     return deferred.promise;
 };
+
+/*-------------------------------------------------------
+ GET DETAILS FOR ALL TICKETS COUNT OPEN WITHIN 24 HOURS ACCORDING TO PAGINATION
+ PARAMS:
+  [skip - number of records to skip,
+  limit - count of records to be retrieved
+  sort - sort criteria]
+ -------------------------------------------------------*/
+Ticket.getOpenWithin24HoursTicketsCount = () => {
+    var deferred = q.defer();
+
+    Ticket
+    .find({ createdDate: { $gt: new Date(Date.now() - 24*60*60 * 1000) }})
+    .count(resolve(deferred));
+
+    return deferred.promise;
+};
+
 
 /*-------------------------------------------------------
  GET TICKET BY ID

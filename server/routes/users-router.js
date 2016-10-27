@@ -14,7 +14,7 @@ router.get('/profile/:username',(req,res,next) => {
     .then(user => helper.createResponseUser(user))
     .then(user => res.json({ user : user }))
     .catch(error => {
-        var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
+        var errors = helper.createResponseError(error, 'There was some error getting user details. Please try again later');
         res.json({ errors: errors });
     });
 });
@@ -25,7 +25,7 @@ router.post('/profile/:username',(req,res,next) => {
     .then(user => helper.createResponseUser(user))
     .then(user => res.json({ user: user }))
     .catch(error => {
-        var errors = helper.createResponseError(errors, 'There was some error update user details. Please try again later');
+        var errors = helper.createResponseError(error, 'There was some error update user details. Please try again later');
         res.json({ errors: errors });
     });        
 });
@@ -35,7 +35,7 @@ router.post('/profile/change-password/:id',(req,res,next) => {
     .then(() => usersBl.changePassword(req))
     .then(() => res.json({}))
     .catch(error => {
-        var errors = helper.createResponseError(errors, 'There was some error in resetting the users password. Please try again later');
+        var errors = helper.createResponseError(error, 'There was some error in resetting the users password. Please try again later');
         res.json({ errors: errors });
     });        
 });

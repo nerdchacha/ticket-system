@@ -26,7 +26,7 @@ angular.module('yangular-grid',[])
     			restrict : 'E',
                 replace: true,
                 template :  '<div id="yag">'+
-                                '<div><div class="form-inline"><div class="form-group">Show <select class="form-control" ng-model="size" ng-change="changeSize()"><option value="10">10</option><option value="20">20</option><option value="30">30</option></select>  per page</div></div></div><br/>'+
+                                '<div ng-if="rows.length > 0"><div class="form-inline"><div class="form-group">Show <select class="form-control" ng-model="size" ng-change="changeSize()"><option value="10">10</option><option value="20">20</option><option value="30">30</option></select>  per page</div></div></div><br/>'+
                                 '<table class="table table-responsive table-bordered table-striped">'+
                                     '<thead>'+
                                         '<tr yag-sort-head>'+
@@ -34,11 +34,14 @@ angular.module('yangular-grid',[])
                                         '</tr>'+
                                     '</thead>'+
                                     '<tbody>'+
-                                        '<tr ng-repeat="row in rows" ng-click="rowClick(row)">'+
+                                        '<tr ng-if="rows.length > 0" ng-repeat="row in rows" ng-click="rowClick(row)">'+
                                             '<td ng-repeat="col in config.columns"><i ng-class="col.renderClass(row[col.key])"></i><span ng-if="!col.render" data-toggle="tooltip" data-placement="top" title="{{row[col.key]}}">{{row[col.key]}}</span><span ng-if="col.render" data-toggle="tooltip" data-placement="top" title="{{col.render(row[col.key])}}">{{col.render(row[col.key])}}</span></td>'+
                                         '</tr>'+
+                                        '<tr ng-if="rows.length === 0">'+
+                                            '<td colspan="{{config.columns.length}}">No data available to display</td>'+
+                                        '</tr>'+
                                     '</tbody>'+
-                                    '<tfoot>'+
+                                    '<tfoot ng-if="rows.length > 0">'+
                                         '<tr><td colspan="{{config.columns.length}}">' +
                                         '<div>'+
                                                 '<span ng-if="size * currentPage < count" class="text-info">Showing {{size * (currentPage - 1) + 1}} to {{size * currentPage}} of {{count}}</span>'+
@@ -47,7 +50,7 @@ angular.module('yangular-grid',[])
                                         '</td></tr>'+
                                     '</tfoot>'+
                                 '</table>'+
-                                '<nav>'+
+                                '<nav ng-if="rows.length > 0">'+
                                     '<ul class="pagination">'+
                                         '<li class="page-item" ng-class="{disabled : currentPage === 1}" ng-click="previous()">'+
                                             '<a class="page-link" aria-label="Previous">'+

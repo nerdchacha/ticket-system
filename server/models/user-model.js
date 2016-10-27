@@ -418,6 +418,19 @@ User.getAllUserDetails = () => {
 };
 
 /*-------------------------------------------------------
+ GET DETAILS COUNT FOR ALL THE USERS
+ PARAMS:
+ -------------------------------------------------------*/
+User.getAllUserCount = () => {
+    var deferred = q.defer();
+
+    User
+    .find({})
+    .count(resolve(deferred));
+    return deferred.promise;
+};
+
+/*-------------------------------------------------------
  GET DETAILS FOR ALL THE USERS ACCORDING TO PAGINATION
  PARAMS:
   [skip - number of records to skip,
