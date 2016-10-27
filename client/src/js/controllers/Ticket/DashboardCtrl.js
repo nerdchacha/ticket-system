@@ -147,19 +147,19 @@ angular.module('ticketSystem')
 
                 angular.element(statusCtx).on('click', function(e){
                     var activePoints = statusChart.getElementsAtEvent(e);
-                    if(activePoints && activePoints[0]._model.label)
+                    if(activePoints && activePoints.length > 0 && activePoints[0]._model.label)
                     $state.go('dashboard-to-view', {type: 'status' , value : activePoints[0]._model.label})
                 });
 
                 angular.element(typeCtx).on('click', function(e){
                     var activePoints = typeChart.getElementsAtEvent(e);
-                    if(activePoints && activePoints[0]._model.label)
+                    if(activePoints && activePoints.length > 0 && activePoints[0]._model.label)
                     $state.go('dashboard-to-view', {type: 'type' , value : activePoints[0]._model.label})
                 });
 
                 angular.element(priorityCtx).on('click', function(e){
                     var activePoints = priorityChart.getElementsAtEvent(e);
-                    if(activePoints && activePoints[0]._model.label)
+                    if(activePoints && activePoints.length > 0 && activePoints[0]._model.label)
                     $state.go('dashboard-to-view', {type: 'priority' , value : activePoints[0]._model.label})
                 });
 

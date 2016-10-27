@@ -25,7 +25,7 @@ ticket.fetchAllTickets = (req,res) => {
     var sortString = helper.createSortString(sort, order);
 
     q.all([
-        Ticket.getAllPaginationTickets(skip, limit,sortString),
+        Ticket.getAllTicketsPagination(skip, limit,sortString),
         Ticket.getAllTicketsCount()
         ])    
         .then(values => {
@@ -56,7 +56,7 @@ ticket.fetchMyTickets = (req,res) => {
     var sortString = helper.createSortString(sort, order);
 
     q.all([
-        Ticket.getPaginationTicketsForUser(req.user.username, skip, limit,sortString),
+        Ticket.getTicketsForUserPagination(req.user.username, skip, limit,sortString),
         Ticket.getAllTicketsForUserCount(req.user.username)
         ])
         .then(values => {
@@ -87,7 +87,7 @@ ticket.fetchToMeTickets = (req,res) => {
     var sortString = helper.createSortString(sort, order);
 
     q.all([
-        Ticket.getPaginationTicketsAssignedToMe(req.user.username, skip, limit,sortString),
+        Ticket.getTicketsAssignedToMePagination(req.user.username, skip, limit,sortString),
         Ticket.getAllAssignedToMeTicketsCount(req.user.username)
         ])
         .then(values => {
@@ -107,96 +107,15 @@ ticket.fetchToMeTickets = (req,res) => {
 };
 
 ticket.getTicketsByStatus = (req,res) => {
-    var sort    = helper.getSort(req),
-        order   = helper.getOrder(req),
-        page    = helper.getPage(req),
-        size    = helper.getSize(req);
-    var deferred = q.defer();
-
-    var skip = (page - 1) * size;   
-    var limit = size;
-    var sortString = helper.createSortString(sort, order);
-
-    q.all([
-        Ticket.getStatusTicketPagination(req.params.status, skip, limit,sortString),
-        Ticket.getStatusTicketCount(req.params.status)
-        ])
-        .then(values => {
-            var tickets = values[0];
-            var count = values[1];
-            var response        = {};
-            response.tickets    = tickets;
-            response.page       = page;
-            response.count      = count;
-            response.size       = size;
-
-            deferred.resolve(response)
-        })
-        .catch(error => deferred.reject(error));
-
-    return deferred.promise;
+    return filterDashboardTicket(req, {status: req.params.status});
 };
 
 ticket.getTicketsByType = (req,res) => {
-    var sort    = helper.getSort(req),
-        order   = helper.getOrder(req),
-        page    = helper.getPage(req),
-        size    = helper.getSize(req);
-    var deferred = q.defer();
-
-    var skip = (page - 1) * size;   
-    var limit = size;
-    var sortString = helper.createSortString(sort, order);
-
-    q.all([
-        Ticket.getTypeTicketPagination(req.params.type, skip, limit,sortString),
-        Ticket.getTypeTicketCount(req.params.type)
-        ])
-        .then(values => {
-            var tickets = values[0];
-            var count = values[1];
-            var response        = {};
-            response.tickets    = tickets;
-            response.page       = page;
-            response.count      = count;
-            response.size       = size;
-
-            deferred.resolve(response)
-        })
-        .catch(error => deferred.reject(error));
-
-    return deferred.promise;
+    return filterDashboardTicket(req, {type: req.params.type});
 };
 
 ticket.getTicketsByPriority = (req,res) => {
-    var sort    = helper.getSort(req),
-        order   = helper.getOrder(req),
-        page    = helper.getPage(req),
-        size    = helper.getSize(req);
-    var deferred = q.defer();
-
-    var skip = (page - 1) * size;   
-    var limit = size;
-    var sortString = helper.createSortString(sort, order);
-
-    q.all([
-        Ticket.getPriorityTicketPagination(req.params.priority, skip, limit,sortString),
-        Ticket.getPriorityTicketCount(req.params.priority)
-        ])
-        .then(values => {
-            var tickets = values[0];
-            var count = values[1];
-            var response        = {};
-            response.tickets    = tickets;
-            response.page       = page;
-            response.count      = count;
-            response.size       = size;
-
-            deferred.resolve(response)
-        })
-        .catch(error => deferred.reject(error));
-
-    return deferred.promise;
+    return filterDashboardTicket(req, {priority: req.params.priority});
 };
 
 ticket.createNewTicket = function(req,res){
@@ -295,7 +214,7 @@ ticket.openWithin24Hours = function(req,res){
     var sortString = helper.createSortString(sort, order);
 
     q.all([
-        Ticket.getPaginationOpenWithin24HoursTickets(skip, limit, sortString),
+        Ticket.getOpenWithin24HoursTicketsPagination(skip, limit, sortString),
         Ticket.getOpenWithin24HoursTicketsCount()
         ])
         .then(values => {
@@ -317,47 +236,47 @@ ticket.openWithin24Hours = function(req,res){
 /*------------------TICKET STATUS COUNT------------------------------*/
 
 ticket.getNewTicketCount = function(){
-    return Ticket.getStatusTicketCount(statusEnum.new);
+    return Ticket.getFilterTicketCount({status: statusEnum.new});
 };
 
 ticket.getOpenTicketCount = function(){
-    return Ticket.getStatusTicketCount(statusEnum.open);
+    return Ticket.getFilterTicketCount({status: statusEnum.open});
 };
 
 ticket.getInProgressTicketCount = function(){
-    return Ticket.getStatusTicketCount(statusEnum.inProgress);
+    return Ticket.getFilterTicketCount({status: statusEnum.inProgress});
 };
 
 ticket.getAwaitingUserResponseTicketCount = function(){
-    return Ticket.getStatusTicketCount(statusEnum.awaitingUserResponse);
+    return Ticket.getFilterTicketCount({status: statusEnum.awaitingUserResponse});
 };
 
 /*------------------TICKET TYPE COUNT------------------------------*/
 
 ticket.getBugTicketCount = function(){
-    return Ticket.getTypeTicketCount(typeEnum.bug);
+    return Ticket.getFilterTicketCount({type: typeEnum.bug});
 };
 
 ticket.getNeedInfoTicketCount = function(){
-    return Ticket.getTypeTicketCount(typeEnum.needInfo);
+    return Ticket.getFilterTicketCount({type: typeEnum.needInfo});
 };
 
 ticket.getImprovementTicketCount = function(){
-    return Ticket.getTypeTicketCount(typeEnum.improvement);
+    return Ticket.getFilterTicketCount({type: typeEnum.improvement});
 };
 
 /*------------------TICKET PRIORITY COUNT------------------------------*/
 
 ticket.getHighTicketCount = function(){
-    return Ticket.getPriorityTicketCount(priorityEnum.high);
+    return Ticket.getFilterTicketCount({priority: priorityEnum.high});
 };
 
 ticket.getMediumTicketCount = function(){
-    return Ticket.getPriorityTicketCount(priorityEnum.medium);
+    return Ticket.getFilterTicketCount({priority:priorityEnum.medium});
 };
 
 ticket.getLowTicketCount = function(){
-    return Ticket.getPriorityTicketCount(priorityEnum.low);
+    return Ticket.getFilterTicketCount({priority:priorityEnum.low});
 };
 
 
@@ -468,6 +387,37 @@ function createDiffComment(req, oldTicket, newTicket){
     }
 
     return comment;
+}
+
+function filterDashboardTicket(req, object){
+    var sort    = helper.getSort(req),
+        order   = helper.getOrder(req),
+        page    = helper.getPage(req),
+        size    = helper.getSize(req);
+    var deferred = q.defer();
+
+    var skip = (page - 1) * size;   
+    var limit = size;
+    var sortString = helper.createSortString(sort, order);
+
+    q.all([
+        Ticket.getFilterTicketPagination(object, skip, limit,sortString),
+        Ticket.getFilterTicketCount(object)
+        ])
+        .then(values => {
+            var tickets = values[0];
+            var count = values[1];
+            var response        = {};
+            response.tickets    = tickets;
+            response.page       = page;
+            response.count      = count;
+            response.size       = size;
+
+            deferred.resolve(response)
+        })
+        .catch(error => deferred.reject(error));
+
+    return deferred.promise;
 }
 
 module.exports = ticket;
