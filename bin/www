@@ -18,7 +18,7 @@ app.set('port', port);
 /**
  * Configure Mongoose.
  */
-app.configureMongoose('mongodb://127.0.0.1/ticket-system');
+app.configureMongoose('mongodb://127.0.0.1/test-ticket-system');
 
 /**
  * Create HTTP server.

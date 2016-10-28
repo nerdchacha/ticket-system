@@ -1,4 +1,4 @@
-angular.module('yangular-grid',[])
+angular.module('yangular-grid',['ui.bootstrap'])
     .factory('agSortFactory',['$http',
         function($http){
             var apiurl,sortQuerystringName,orderQuerystringName,pageQueryStringName,sizeQueryStringName;
@@ -20,13 +20,69 @@ angular.module('yangular-grid',[])
             };
             return ret;
         }])
-	.directive('yag',['agSortFactory','$timeout',
-        function(agSortFactory,$timeout){
+    .factory('pageFactory',
+        function(){
+            var ret = {};
+            ret.GetPager = function(totalItems, currentPage, pageSize) {
+                // default to first page
+                currentPage = currentPage || 1;
+         
+                // default page size is 10
+                pageSize = pageSize || 10;
+         
+                // calculate total pages
+                var totalPages = Math.ceil(totalItems / pageSize);
+         
+                var startPage, endPage;
+                if (totalPages <= 10) {
+                    // less than 10 total pages so show all
+                    startPage = 1;
+                    endPage = totalPages;
+                } else {
+                    // more than 10 total pages so calculate start and end pages
+                    if (currentPage <= 6) {
+                        startPage = 1;
+                        endPage = 10;
+                    } else if (currentPage + 4 >= totalPages) {
+                        startPage = totalPages - 9;
+                        endPage = totalPages;
+                    } else {
+                        startPage = currentPage - 5;
+                        endPage = currentPage + 4;
+                    }
+                }
+         
+                // calculate start and end item indexes
+                var startIndex = (currentPage - 1) * pageSize;
+                var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+         
+                // create an array of pages to ng-repeat in the pager control
+                var arr = new Array(endPage + 1 - startPage).fill(undefined);
+                var pages = arr.map(function(val){ return startPage++; });
+                //var pages = _.range(startPage, endPage + 1);
+         
+                // return object with all pager properties required by the view
+                return {
+                    totalItems: totalItems,
+                    currentPage: currentPage,
+                    pageSize: pageSize,
+                    totalPages: totalPages,
+                    startPage: startPage,
+                    endPage: endPage,
+                    startIndex: startIndex,
+                    endIndex: endIndex,
+                    pages: pages
+                };
+            }
+            return ret;
+        })
+	.directive('yag',['agSortFactory','pageFactory','$timeout',
+        function(agSortFactory,pageFactory,$timeout){
     		return{
     			restrict : 'E',
                 replace: true,
                 template :  '<div id="yag">'+
-                                '<div ng-if="rows.length > 0"><div class="form-inline"><div class="form-group">Show <select class="form-control" ng-model="size" ng-change="changeSize()"><option value="10">10</option><option value="20">20</option><option value="30">30</option></select>  per page</div></div></div><br/>'+
+                                '<div ng-if="rows.length > 0"><div class="form-inline"><div class="form-group">Show <select class="form-control" ng-model="size" ng-change="changeSize(this)"><option value="10">10</option><option value="20">20</option><option value="30">30</option></select>  per page</div></div></div><br/>'+
                                 '<table class="table table-responsive table-bordered table-striped">'+
                                     '<thead>'+
                                         '<tr yag-sort-head>'+
@@ -44,26 +100,28 @@ angular.module('yangular-grid',[])
                                     '<tfoot ng-if="rows.length > 0">'+
                                         '<tr><td colspan="{{config.columns.length}}">' +
                                         '<div>'+
-                                                '<span ng-if="size * currentPage < count" class="text-info">Showing {{size * (currentPage - 1) + 1}} to {{size * currentPage}} of {{count}}</span>'+
-                                                '<span ng-if="size * currentPage > count" class="text-info">Showing {{size * (currentPage - 1) + 1}} to {{count}} of {{count}}</span>'+
+                                                '<span ng-if="size * pager.currentPage - 1 < count" class="text-info">Showing {{size * (pager.currentPage - 1) + 1}} to {{size * pager.currentPage}} of {{count}}</span>'+
+                                                '<span ng-if="size * pager.currentPage - 1 > count" class="text-info">Showing {{size * (pager.currentPage - 1) + 1}} to {{count}} of {{count}}</span>'+
                                             '</div>'+
                                         '</td></tr>'+
                                     '</tfoot>'+
                                 '</table>'+
                                 '<nav ng-if="rows.length > 0">'+
-                                    '<ul class="pagination">'+
-                                        '<li class="page-item" ng-class="{disabled : currentPage === 1}" ng-click="previous()">'+
-                                            '<a class="page-link" aria-label="Previous">'+
-                                                '<span aria-hidden="true">&laquo;</span>'+
-                                                '<span class="sr-only">Previous</span>'+
-                                            '</a>'+
+                                    '<ul ng-if="pager.pages.length" class="pagination">'+
+                                        '<li ng-class="{disabled:pager.currentPage === 1}">'+
+                                            '<a ng-click="setPage(1)">First</a>'+
                                         '</li>'+
-                                        '<li class="page-item" ng-repeat="page in getPageList() track by $index" ng-class="{ active : currentPage == $index+1 }" ng-click="pageNumberClick($index+1)"><a class="page-link">{{$index+1}}</a></li>'+
-                                        '<li class="page-item" ng-class="{disabled : currentPage === totalPages}" ng-click="next()">'+
-                                            '<a class="page-link" aria-label="Next">'+
-                                                '<span aria-hidden="true">&raquo;</span>'+
-                                                '<span class="sr-only">Next</span>'+
-                                            '</a>'+
+                                        '<li ng-class="{disabled:pager.currentPage === 1}">'+
+                                            '<a ng-click="setPage(pager.currentPage - 1)">Previous</a>'+
+                                        '</li>'+
+                                        '<li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">'+
+                                            '<a ng-click="setPage(page)">{{page}}</a>'+
+                                        '</li>'+               
+                                        '<li ng-class="{disabled:pager.currentPage === pager.totalPages}">'+
+                                            '<a ng-click="setPage(pager.currentPage + 1)">Next</a>'+
+                                        '</li>'+
+                                        '<li ng-class="{disabled:pager.currentPage === pager.totalPages}">'+
+                                            '<a ng-click="setPage(pager.totalPages)">Last</a>'+
                                         '</li>'+
                                     '</ul>'+
                                 '</nav>'+
@@ -84,7 +142,7 @@ angular.module('yangular-grid',[])
                         $scope.rows = rows;
                     };
                     this.getCurrentPage = function(){
-                        return $scope.currentPage;
+                        return $scope.pager.currentPage;
                     };
                     this.getPageSize = function(){
                         return $scope.size;
@@ -96,6 +154,7 @@ angular.module('yangular-grid',[])
                     agSortFactory.getRowsOnLoad()
                         .then(function(res){
                             readResponse(res);
+                            initController();
                             if($scope.rows.length > 0){
                                 $scope.order = 'asc';
                                 $scope.sort = 'id';
@@ -103,54 +162,40 @@ angular.module('yangular-grid',[])
                         })
                         .catch(function(err){
                         });
-
-                    $scope.getPageList = function(){
-                        return new Array($scope.totalPages);
-                    };
-
-                    $scope.next = function(){
-                        if($scope.currentPage === $scope.totalPages)
-                            return;
-                        else {
-                            agSortFactory.getRows({order : $scope.order, sort : $scope.sort , page : $scope.currentPage + 1, size: $scope.size})
-                                .then(function(res){
-                                    readResponse(res);
-                                })
-                                .catch(function(err){
-                                });
-                        }
-                    };
-
-                    $scope.previous = function(){
-                        if($scope.currentPage === 1)
-                            return;
-                        else{
-                            agSortFactory.getRows({order : $scope.order, sort : $scope.sort , page : $scope.currentPage - 1, size: $scope.size})
-                                .then(function(res){
-                                    readResponse(res);
-                                })
-                                .catch(function(err){
-                                });
-                        }
-                    };
-
-                    $scope.pageNumberClick = function(pageNumber) {
-                        if (pageNumber === $scope.currentPage) {
+ 
+                    $scope.pager = {};
+                    $scope.setPage = setPage;
+                 
+                    function initController() {
+                        // initialize to page 1
+                        $scope.setPage(1);
+                    }
+                 
+                    function setPage(page) {
+                        if (page < 1 || page > $scope.pager.totalPages) {
                             return;
                         }
-                        else {
+                 
+                        // get pager object from service
+                        $scope.pager = pageFactory.GetPager($scope.count, page, $scope.size);
+                    }
+
+                    $scope.$watch('pager.currentPage',function(pageNumber, oldPageNumber){
+                        if(oldPageNumber != pageNumber){
                             agSortFactory.getRows({order: $scope.order, sort: $scope.sort, page: pageNumber, size: $scope.size})
-                                .then(function (res) {
-                                    readResponse(res);
-                                })
-                                .catch(function(err){
-                                });
+                            .then(function (res) {
+                                readResponse(res);
+                            })
+                            .catch(function(err){
+                            });
                         }
-                    };
+                    });
 
-                    $scope.changeSize = function(){
-                        $scope.currentPage = 1;
-                        agSortFactory.getRows({order: $scope.order, sort: $scope.sort, page: $scope.currentPage, size: $scope.size})
+                    $scope.changeSize = function(ele){
+                        $scope.size = ele.size;
+                        $scope.pager = pageFactory.GetPager($scope.count, 1, $scope.size);
+                        //$scope.pager.currentPage = 1;
+                        agSortFactory.getRows({order: $scope.order, sort: $scope.sort, page: $scope.pager.currentPage, size: $scope.size})
                             .then(function (res) {
                                 readResponse(res);
                             })
@@ -166,7 +211,7 @@ angular.module('yangular-grid',[])
                     var readResponse = function(res){
                         $scope.rows = res.data[$scope.config.objectName];
                         $scope.count = res.data.count;
-                        $scope.currentPage = res.data.page;
+                        //$scope.currentPage = res.data.page;
                         $scope.size = res.data.size.toString();
                         $scope.totalPages = Math.ceil($scope.count/$scope.size);
 
