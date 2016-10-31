@@ -52,8 +52,8 @@ passport.use(new GoogleStrategy({
         },
         function(token,refreshToken,profile,done){
             process.nextTick(function(){
-                User.findGoogleUser(profile.id,function(err,user){
-                    if(err) { return done(err,null); }
+                User.findGoogleUser(profile.id)
+                .then(user => {
                     if(user){
                         //if user is found, log them in
                         return done(null,user);
@@ -74,7 +74,33 @@ passport.use(new GoogleStrategy({
                             return done(null,newUser);
                         })
                     }
+                })
+                .catch(err => {
+                    return done(err,null);
                 });
+                // User.findGoogleUser(profile.id,function(err,user){
+                //     if(err) { return done(err,null); }
+                //     if(user){
+                //         //if user is found, log them in
+                //         return done(null,user);
+                //     }
+                //     else{
+                //         //else create new google user in db
+                //         var newUser = new User();
+                //         newUser.google.id = profile.id;
+                //         newUser.google.token = token;
+                //         newUser.google.name = profile.displayName;
+                //         newUser.email = profile.emails[0].value;
+                //         newUser.role = ['User'];
+                //         newUser.isActive = true;
+
+                //         newUser.save(function(err){
+                //             if(err)
+                //                 throw err;
+                //             return done(null,newUser);
+                //         })
+                //     }
+                // });
             })
         })
 );

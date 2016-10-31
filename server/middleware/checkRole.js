@@ -5,7 +5,25 @@ var userBl      = require('../business-layer/users-bl.js'),
     q           = require('q'),
     rolesEnum   = require('../config/enum-config.js').roles;
 
-module.exports.isAdmin = (req,res,next) => {
+var roles = {};
+
+roles.isSupport = (req,res,next) => {
+    //User is not authenticated
+    if (!req.user) {
+        res.status(403);
+        res.end();
+    };
+    //Let admin user pass or support user
+    if(req.user.role.indexOf(rolesEnum.admin) > -1 || req.user.role.indexOf(rolesEnum.support))
+        next();
+    //User trying to access the route is not an admin or support user
+    else{
+        res.status(403);
+        res.end();
+    }
+};
+
+roles.isAdmin = (req,res,next) => {
     //User is not authenticated
     if (!req.user) {
         res.status(403);
@@ -21,3 +39,5 @@ module.exports.isAdmin = (req,res,next) => {
         next();
     }
 };
+
+module.exports = roles;

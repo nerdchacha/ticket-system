@@ -4,7 +4,7 @@ angular.module('ticketSystem')
     		$scope.buttongroup = {};
 
             $scope.$watchCollection('ticket', function(ticket){
-                if(ticket && ticket.id){
+                if(ticket && !HelperFactory.isNullOrUndefined(ticket.id)){
                     if(!HelperFactory.isCurrentUserAdminOrSupport()){
                             $scope.buttongroup.showAssign                   = false;
                             $scope.buttongroup.showComment                  = false;
@@ -15,7 +15,7 @@ angular.module('ticketSystem')
                             $scope.buttongroup.showAwaitingUsersResponse    = false;
                             $scope.buttongroup.showAssignToSelf             = false;
                     }
-                    else{                        
+                    else{
                     ActionFactory.getAllowedButtons(ticket.id)
                         .then(function(res){
                             //Get possible action buttons from server and set the status

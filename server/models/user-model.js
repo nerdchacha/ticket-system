@@ -239,47 +239,68 @@ User.setUsenameAndActive = (id,username) => {
 User.updateUser = (username, userDetails) => {
     var deferred = q.defer();
 
-    User.findOne(
-            {username : username},
-            (err, user) => {
-                //User already admin
-                if(user.role.indexOf(rolesEnum.admin) > -1){
-                    //request is to remove user from admin
-                    if(!userDetails.isAdmin){
-                        User.findOneAndUpdate({username : username},
-                            //Set other fields and remove from admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive} ,$pull : {role : rolesEnum.admin}},
-                            {new : true},
-                            resolve(deferred));
-                    }
-                    else{
-                        //only set user details and not alter the role
-                        User.findOneAndUpdate({username : username},
-                            //Set other fields and remove from admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive}},
-                            {new : true},
-                            resolve(deferred))
-                    }
-                }
-                //User is not already admin
-                else{
-                    if(userDetails.isAdmin){
-                        User.findOneAndUpdate({username : username},
-                            //Set other fields and add to admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive},$push : {role : rolesEnum.admin}},
-                            {new : true},
-                            resolve(deferred));
-                    }
-                    else{
-                        //only set user details and not alter the role
-                        User.findOneAndUpdate({username : username},
-                            //Set other fields and remove from admin role
-                            {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive}},
-                            {new : true},
-                            resolve(deferred))
-                    }
-                }
-            });
+    User.findOneAndUpdate(
+        {username: username},
+        {$set: { role : []}},
+        {new: true},
+        function(err, user){
+            if(err) throw err;
+
+            var newRoles = [];
+            newRoles.push(rolesEnum.user);
+            if(userDetails.isAdmin)
+                newRoles.push(rolesEnum.admin);
+            if(userDetails.isSupport)
+                newRoles.push(rolesEnum.support);
+
+            User.findOneAndUpdate(
+                {username, username},
+                {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive}, $addToSet : {role: {$each: newRoles}}},
+                {new : true},
+                resolve(deferred));
+        })
+
+    // User.findOne(
+    //         {username : username},
+    //         (err, user) => {
+    //             //User already admin
+    //             if(user.role.indexOf(rolesEnum.admin) > -1){
+    //                 //request is to remove user from admin
+    //                 if(!userDetails.isAdmin){
+    //                     User.findOneAndUpdate({username : username},
+    //                         //Set other fields and remove from admin role
+    //                         {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive} ,$pull : {role : rolesEnum.admin}},
+    //                         {new : true},
+    //                         resolve(deferred));
+    //                 }
+    //                 else{
+    //                     //only set user details and not alter the role
+    //                     User.findOneAndUpdate({username : username},
+    //                         //Set other fields and remove from admin role
+    //                         {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive}},
+    //                         {new : true},
+    //                         resolve(deferred))
+    //                 }
+    //             }
+    //             //User is not already admin
+    //             else{
+    //                 if(userDetails.isAdmin){
+    //                     User.findOneAndUpdate({username : username},
+    //                         //Set other fields and add to admin role
+    //                         {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive},$push : {role : rolesEnum.admin}},
+    //                         {new : true},
+    //                         resolve(deferred));
+    //                 }
+    //                 else{
+    //                     //only set user details and not alter the role
+    //                     User.findOneAndUpdate({username : username},
+    //                         //Set other fields and remove from admin role
+    //                         {$set : {'local.firstname' : userDetails.firstname, 'local.lastname' : userDetails.lastname, 'email': userDetails.email , isActive: userDetails.isActive}},
+    //                         {new : true},
+    //                         resolve(deferred))
+    //                 }
+    //             }
+    //         });
     return deferred.promise;
 
 };

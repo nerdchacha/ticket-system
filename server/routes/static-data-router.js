@@ -23,7 +23,7 @@ router.get('/allowed-status/:status',(req,res) => {
         var allowedStatus = data.values
                             .find(value => value.name === 'allowed state')
                             .values
-                            .find(value => value.status === currentStatus);
+                            .find(value => value.status === req.params.status);
         res.json({status: allowedStatus});
 	})
 	.catch(err => {

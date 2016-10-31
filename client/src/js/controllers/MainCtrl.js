@@ -54,7 +54,10 @@ angular.module('ticketSystem')
                 else if(user){
                     Authentication.setUser(user);
                     checkRole();
-                   $state.go('ticket.my-tickets')
+                    if(!$scope.isRegularUser)
+                        $state.go('dashboard')
+                    else
+                        $state.go('ticket.my-tickets')
                }
             }
         }]);

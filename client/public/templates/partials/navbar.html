@@ -7,7 +7,7 @@
     <span class="bottom-right"></span>
   </div>
   <div class="site-logo pl60"><a ui-sref="ticket.my-tickets" title="HelpDesk">HelpDesk</a></div>
-      <section class="quick-link" ng-if="isAdmin">
+      <section class="quick-link" ng-if="!isRegularUser">
         <div class="heading">Quick Link</div>
         <ul>
           <li><a ui-sref="dashboard"><i class="fa fa-lg fa-dashboard"></i> Dashboard</a></li>

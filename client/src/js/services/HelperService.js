@@ -37,7 +37,7 @@ angular.module('ticketSystem')
                 return false;
             };
             fact.isCurrentUserAdminOrSupport = function(){
-                return fact.isCurrentUserAdmin() || fact.isCurrentUserAdmin();
+                return fact.isCurrentUserAdmin() || fact.isCurrentUserSupport();
             }
             fact.stripHtml = function(text){
                 //Strip HTML
@@ -48,6 +48,13 @@ angular.module('ticketSystem')
             };
             fact.setLoading = function(val){
                 static.loading = val;
+            }
+            fact.isNullOrUndefined = function(obj){
+                if(obj === null)
+                    return true;
+                if(obj === undefined)
+                    return true;
+                else false;
             }
             return fact;
         }]);

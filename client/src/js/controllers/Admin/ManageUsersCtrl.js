@@ -32,7 +32,7 @@ angular.module('ticketSystem')
             };
 
             $scope.config = {};
-            $scope.config.url = '/admin/users-details';
+            $scope.config.url = '/admin/users/users-details';
             $scope.config.columns = [];
             $scope.config.columns.push({key : 'username', name : 'Username', cssClass:"col-md-6"});
             $scope.config.columns.push({key : 'isActive', name : 'Is Active', cssClass: "col-md-3",render: renderIsActive, renderClass : renderIsActiveClass});
@@ -54,6 +54,7 @@ angular.module('ticketSystem')
         function($scope,$state,$stateParams,HelperFactory,UserFactory,YgNotify){
             $scope.isActive = {};
             $scope.isAdmin = {};
+            $scope.isSupport = {};
             //User details
             $scope.userDetails = {};
             var username = $stateParams.username;
@@ -65,16 +66,20 @@ angular.module('ticketSystem')
                     $scope.userDetails.id = res.data.user._id;
                     var role = res.data.user.role;
                     //User is admin
-                    if(role.indexOf('Admin') > -1)
-                        $scope.userDetails.isAdmin = true;
-                    else
-                        $scope.userDetails.isAdmin = false;
+                    $scope.userDetails.isAdmin = role.indexOf('Admin') > -1 ? true : false;
+                    $scope.userDetails.isSupport = role.indexOf('Support') > -1 ? true : false;
+                    // if(role.indexOf('Admin') > -1)
+                    //     $scope.userDetails.isAdmin = true;
+                    // else
+                    //     $scope.userDetails.isAdmin = false;
                     $scope.userDetails.isActive = res.data.user.isActive;
                     $scope.userDetails.email = res.data.user.email;
                     $scope.isActive.key = "isActive";
                     $scope.isActive.value = $scope.userDetails.isActive;
                     $scope.isAdmin.key = "isAdmin";
                     $scope.isAdmin.value = $scope.userDetails.isAdmin;
+                    $scope.isSupport.key = "isSupport";
+                    $scope.isSupport.value = $scope.userDetails.isSupport;
                 })
                 .catch(function(err){
                     YgNotify.alert('danger', 'There was some error trying to fetch user details. Please try again after some time.', 5000);
@@ -91,6 +96,7 @@ angular.module('ticketSystem')
 
                 $scope.userDetails.isAdmin = $scope.isAdmin.value;
                 $scope.userDetails.isActive = $scope.isActive.value;
+                $scope.userDetails.isSupport = $scope.isSupport.value;
                 UserFactory.updateUserDetails($scope.userDetails.username,$scope.userDetails)
                     .then(function(res){
                         HelperFactory

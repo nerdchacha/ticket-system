@@ -34,16 +34,16 @@ angular.module('ticketSystem')
 
             //Admin related http requests
             factory.getAllUserDetails = function(){
-                return $http.get('admin/users-details');
+                return $http.get('admin/users/users-details');
             };
             factory.getUserDetails = function(username){
-                return $http.get('admin/user-details/' + username);
+                return $http.get('admin/users/user-details/' + username);
             };
             factory.updateUserDetails = function(username,userDetails){
-                return $http.post('admin/update-user/' + username, userDetails);
+                return $http.post('admin/users/update-user/' + username, userDetails);
             };
             factory.resetPassword = function(id,passwords){
-                return $http.post('admin/reset-password/' + id, passwords);
+                return $http.post('admin/users/reset-password/' + id, passwords);
             };     
 
             return factory;

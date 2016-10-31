@@ -24,7 +24,7 @@ angular.module('ticketSystem')
             };
 
             $scope.config.objectName = 'tickets';
-            $scope.config.url = '/admin/'+ $stateParams.type + '/' + $stateParams.value;
+            $scope.config.url = '/support/tickets/'+ $stateParams.type + '/' + $stateParams.value;
 
             function renderDate(date){
                 return new Date(Date.parse(date)).toLocaleDateString();

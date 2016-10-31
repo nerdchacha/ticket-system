@@ -25,7 +25,7 @@ angular.module('ticketSystem')
             $scope.config.columns.push({key : 'createdDate', name : 'Created Date', cssClass: "col-md-2", render : renderDate});
             $scope.config.columns.push({key : 'createdBy', name : 'Created By', cssClass: "col-md-2"});
 
-            $scope.config.url = '/admin/open-within-day';
+            $scope.config.url = '/support/tickets/open-within-day';
             $scope.config.sortQuerystringParam = 'sort';
             $scope.config.orderQuerystringParam = 'order';
             $scope.config.pageQuerystringParam = 'page';

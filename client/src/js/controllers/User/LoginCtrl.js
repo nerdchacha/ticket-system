@@ -17,7 +17,7 @@ angular.module('ticketSystem')
                             //Set user details in Common Factory
                             Authentication.setUser(res.data.user);
                             $scope.$emit('successful-login');
-                            if(HelperFactory.isCurrentUserAdmin())
+                            if(HelperFactory.isCurrentUserAdminOrSupport())
                                 $state.go('dashboard');
                             else
                                 $state.go('ticket.my-tickets');                                
