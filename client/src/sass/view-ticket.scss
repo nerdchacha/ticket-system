@@ -42,7 +42,10 @@
       border-left-color : #449d44;
     }
     &.comment-danger{
-    	border-left-color :#d9534f
+    	border-left-color :#d9534f;
+    }
+    &.comment-info{
+      border-left-color :#3bafda;
     }
     .avatar img{
       border-radius: 50%;

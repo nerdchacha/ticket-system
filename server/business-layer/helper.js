@@ -1,8 +1,8 @@
 /**
  * Created by dell on 8/5/2016.
  */
-var q           = require('q'),
-    _           = require('underscore'),
+var q               = require('q'),
+    _               = require('underscore'),
     rolesEnum       = require('../config/enum-config.js').roles;
 
 var helper = {};
@@ -103,73 +103,8 @@ helper.getSize= req => {
     return req.query.size ? parseInt(req.query.size) : 10;
 }
 
-// helper.sortData = (order, sort) => {
-//     return function(list){
-//         return order === 'asc' ? list.sort((a,b) => b[sort] <= a[sort]) : list.sort((a,b) => a[sort] <= b[sort]);
-//     }
-// }
-
-// helper.getDataforPage = (page, size) => {
-//     return function(list){
-//         return list.slice((page - 1) * size, ((page - 1) * size) + size);
-//     }
-// }
-
 helper.createSortString = (sort, order) => {
     return order === 'asc' ? sort : '-' + sort;
 }
-
-
-
-
-
-
-
-
-// helper.sortByKey = function(key, order, asc, list){
-//     return function(list){
-//         return order === asc ? list.sort(function(a,b){return b[key] <= a[key]}) : list.sort(function(a,b){return b[key] >= a[key]});
-//     }
-// };
-
-// helper.itemsPerPage = function(page, size, list){
-//     return function(list){
-//         return list.slice((page - 1) * size, ((page - 1) * size) + size);
-//     }
-// }
-
-// helper.isOrDefault = function(check, fallback){
-//     return check || fallback;
-// }
-
-// helper.intify = function (value){
-//     return parseInt(value);
-// }
-
-// helper.getFromBody = function(property){
-//     return function(req){
-//         return helper.getFromReq(req, 'body', property);
-//     }
-// }
-
-// helper.getFromParams = function(property){
-//     return function(req){
-//         return helper.getFromReq(req, 'params', property);
-//     }
-// }
-
-// helper.getFromQuery = function(property){
-//     return function(req){
-//         return helper.getFromReq(req, 'query', property);
-//     }
-// }
-
-// helper.getFromReq = function(req, part, property){
-//     return req[part][property];
-// }
-
-// helper.createError = function(err){
-//     return !_.isArray(err) ? {errors: [{error : err}]} : {errors: err };
-// }
 
 module.exports = helper;

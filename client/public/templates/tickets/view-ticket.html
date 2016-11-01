@@ -63,7 +63,7 @@
                     <div class="row" ng-controller="DeleteCommentCtrl">
                         <div class="col-xs-12">
                             <ul class="list-group recent-comments view-comments">
-                                <li ng-repeat="comment in ticket.comments | reverse track by $index" class="list-group-item clearfix" ng-class="{'comment-success': comment.isDeletable, 'comment-danger' : !comment.isDeletable}">
+                                <li ng-repeat="comment in ticket.comments | reverse track by $index" class="list-group-item clearfix" ng-class="{'comment-success': comment.isDeletable, 'comment-danger' : !comment.isDeletable, 'comment-info': comment.isVisible}">
                                     <div class="row">
                                         <div class="avatar center col-xs-2">
                                           <img src="/images/avatar.png" alt="avatar">  

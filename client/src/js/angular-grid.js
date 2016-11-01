@@ -1,4 +1,4 @@
-angular.module('yangular-grid',['ui.bootstrap'])
+angular.module('yangular-grid',[])
     .factory('agSortFactory',['$http',
         function($http){
             var apiurl,sortQuerystringName,orderQuerystringName,pageQueryStringName,sizeQueryStringName;

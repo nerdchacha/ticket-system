@@ -32,7 +32,7 @@ angular.module('ticketSystem')
             };
 
             $scope.config = {};
-            $scope.config.url = '/admin/users/users-details';
+            $scope.config.url = '/support/users/users-details';
             $scope.config.columns = [];
             $scope.config.columns.push({key : 'username', name : 'Username', cssClass:"col-md-6"});
             $scope.config.columns.push({key : 'isActive', name : 'Is Active', cssClass: "col-md-3",render: renderIsActive, renderClass : renderIsActiveClass});

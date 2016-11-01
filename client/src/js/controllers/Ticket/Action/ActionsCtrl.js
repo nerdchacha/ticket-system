@@ -1,8 +1,25 @@
 angular.module('ticketSystem')
-    .controller('ActionsCtrl',['$scope','ActionFactory','HelperFactory','$rootScope',
-    	function($scope, ActionFactory,HelperFactory,$rootScope) {
+    .controller('ActionsCtrl',['$scope','ActionFactory','HelperFactory','UserFactory','YgNotify','$rootScope',
+    	function($scope, ActionFactory,HelperFactory,UserFactory,YgNotify,$rootScope) {
 			$scope.getTask = ActionFactory.getTask;
 			$scope.task = {};
+
+            //Multiselect settings
+            UserFactory.getAllUserDetails()
+            .then(function(res){
+                var users = res.data.users;
+                $scope.task.allUsers = users;
+                $scope.task.notifyUsers = [];
+                $scope.task.multiselectOptions = {
+                    smartButtonMaxItems: 4,
+                    displayProp: 'username',
+                    idProp: 'username'
+                }
+            })
+            .catch(function(err){
+                YgNotify.alert('danger', 'There was some error trying to get the list of all the users. Please try again after some time.', 5000);
+            });
+
 			$scope.task.showTaskPanel = false;
             $scope.task.showMainPanel = false;
             ActionFactory.setTask(null);
@@ -80,8 +97,8 @@ angular.module('ticketSystem')
                         $scope.actionForm.assignee.$touched = true;
                         return;
                     }
-
-    				ActionFactory.assign($scope.ticket.id, $scope.assignee, $scope.task.comment)
+                    console.log($scope.task.notifyUsers);
+    				ActionFactory.assign($scope.ticket.id, $scope.assignee, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 
                         HelperFactory
@@ -127,7 +144,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-    				ActionFactory.changeStatus($scope.ticket.id, $scope.newStatus, $scope.task.comment)
+    				ActionFactory.changeStatus($scope.ticket.id, $scope.newStatus, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 						//Update comments and assignee on view
     					$scope.ticket.comments = res.data.comments;
@@ -196,7 +213,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-    				ActionFactory.close($scope.ticket.id, $scope.task.comment)
+    				ActionFactory.close($scope.ticket.id, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
@@ -231,7 +248,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-    				ActionFactory.reopen($scope.ticket.id, $scope.task.comment)
+    				ActionFactory.reopen($scope.ticket.id, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;
@@ -266,7 +283,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-    				ActionFactory.awaitingUserResponse($scope.ticket.id, $scope.task.comment)
+    				ActionFactory.awaitingUserResponse($scope.ticket.id, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 
                         HelperFactory
@@ -304,7 +321,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-                    ActionFactory.acknowledgeTicket($scope.ticket.id, $scope.task.comment)
+                    ActionFactory.acknowledgeTicket($scope.ticket.id, $scope.task.comment, $scope.task.notifyUsers)
                     .then(function(res){
                         //Update comments and status on view
                         $scope.ticket.comments = res.data.comments;
@@ -341,7 +358,7 @@ angular.module('ticketSystem')
 
                     var currentUser = Authentication.getUser();
                     console.log(currentUser);
-                    ActionFactory.assign($scope.ticket.id, currentUser.username, $scope.task.comment)
+                    ActionFactory.assign($scope.ticket.id, currentUser.username, $scope.task.comment, $scope.task.notifyUsers)
                     .then(function(res){
                         
                         HelperFactory

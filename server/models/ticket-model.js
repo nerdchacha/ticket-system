@@ -48,7 +48,8 @@ var TicketSchema = mongoose.Schema({
             commentMessage:Object,
             commentBy:String,
             commentDate:Date,
-            isDeletable: Boolean
+            isDeletable: Boolean,
+            isVisible: Boolean
         }]
     }
 });
@@ -77,18 +78,6 @@ Ticket.createTicket = newTicket => {
     return deferred.promise;
 };
 
-/*-------------------------------------------------------
- GET ALL TICKETS IN THE SYSTEM
- PARAMS:
- -------------------------------------------------------*/
-// Ticket.getAllTickets = () => {
-//     var deferred = q.defer();
-//     Ticket.find(
-//         {},
-//         resolve(deferred)
-//     );
-//     return deferred.promise;
-// };
 
 /*-------------------------------------------------------
  GET TICKET BY ID
@@ -136,19 +125,6 @@ Ticket.getAllTicketsPagination = (skip, limit, sort) => {
     return deferred.promise;
 };
 
-/*-------------------------------------------------------
- GET ALL TICKETS FOR A PARTICULAR USER
- PARAMS:
- [username - username of the user for which tickets needs to be searched]
- -------------------------------------------------------*/
-// Ticket.getAllTicketsForUser = username => {
-//     var deferred = q.defer();
-//     Ticket.find(
-//         {createdBy: username},
-//          resolve(deferred)
-//      );
-//     return deferred.promise;
-// };
 
 /*-------------------------------------------------------
  GET ALL TICKETS COUNT FOR A PARTICULAR USER
@@ -183,18 +159,6 @@ Ticket.getTicketsForUserPagination = (username, skip, limit, sort) => {
     return deferred.promise;
 };
 
-/*-------------------------------------------------------
- GET ALL TICKETS ASSIGNED TO USER
- PARAMS:
- [username - username of the user for which all tickets needs to be fetched that are assigned to him]
- -------------------------------------------------------*/
-// Ticket.getAllAssignedToMeTickets = username => {
-//     var deferred = q.defer();
-//     Ticket.find(
-//         {assignee: username},
-//         resolve(deferred));
-//     return deferred.promise;
-// };
 
 /*-------------------------------------------------------
  GET ALL TICKETS COUNT ASSIGNED TO USER
@@ -229,90 +193,6 @@ Ticket.getTicketsAssignedToMePagination = (username, skip, limit, sort) => {
     return deferred.promise;
 };
 
-
-/*-------------------------------------------------------
- GET DETAILS FOR ALL NEW TICKETS ACCORDING TO PAGINATION
- PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
-
- -------------------------------------------------------*/
-// Ticket.getPaginationNewTickets = (username, skip, limit, sort) => {
-//     var deferred = q.defer();
-
-//     Ticket.find({assignee: username})
-//         .select({status: statusEnum.new})
-//         .sort(sort)
-//         .skip(skip)
-//         .limit(limit)
-//         .exec(resolve(deferred));
-
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET DETAILS FOR ALL OPEN TICKETS ACCORDING TO PAGINATION
- PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
-
- -------------------------------------------------------*/
-// Ticket.getPaginationOpenTickets = (username, skip, limit, sort) => {
-//     var deferred = q.defer();
-
-//     Ticket.find({assignee: username})
-//         .select({status: statusEnum.open})
-//         .sort(sort)
-//         .skip(skip)
-//         .limit(limit)
-//         .exec(resolve(deferred));
-
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET DETAILS FOR ALL IN PROGRESS TICKETS ACCORDING TO PAGINATION
- PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
-
- -------------------------------------------------------*/
-// Ticket.getPaginationInProgressTickets = (username, skip, limit, sort) => {
-//     var deferred = q.defer();
-
-//     Ticket.find({assignee: username})
-//         .select({status: statusEnum.inProgress})
-//         .sort(sort)
-//         .skip(skip)
-//         .limit(limit)
-//         .exec(resolve(deferred));
-
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET DETAILS FOR ALL AWAITING USERS RESPONSE TICKETS ACCORDING TO PAGINATION
- PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
-
- -------------------------------------------------------*/
-// Ticket.getPaginationAwaitingResponseTickets = (username, skip, limit, sort) => {
-//     var deferred = q.defer();
-
-//     Ticket.find({assignee: username})
-//         .select({status: statusEnum.awaitingUserResponse})
-//         .sort(sort)
-//         .skip(skip)
-//         .limit(limit)
-//         .exec(resolve(deferred));
-
-//     return deferred.promise;
-// };
 
 /*-------------------------------------------------------
  GET DETAILS FOR ALL TICKETS COUNT OPEN WITHIN 24 HOURS ACCORDING TO PAGINATION
@@ -381,105 +261,6 @@ Ticket.getFilterTicketPagination = (filter, skip, limit, sort) => {
     return deferred.promise;
 };
 
-
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO STATUS
- PARAMS:
- -------------------------------------------------------*/
-// Ticket.getStatusTicketCount = status => {
-//     var deferred = q.defer();
-//     Ticket.find(        
-//         {status: status},
-//         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
-//     .count(resolve(deferred));
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO STATUS
- PARAMS:  
- [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
- -------------------------------------------------------*/
-// Ticket.getStatusTicketPagination = (status, skip, limit, sort) => {
-//     var deferred = q.defer();
-//     Ticket
-//     .find(      
-//         {status: status},
-//         {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
-//     .sort(sort)
-//     .skip(skip)
-//     .limit(limit)
-//     .exec(resolve(deferred));
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO PRIORITY
- PARAMS:
- -------------------------------------------------------*/
-// Ticket.getPriorityTicketCount = priority => {
-//     var deferred = q.defer();
-//     Ticket.find(        
-//         {priority: priority},
-//         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
-//     .count(resolve(deferred));
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO STATUS
- PARAMS:  
- [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
- -------------------------------------------------------*/
-// Ticket.getPriorityTicketPagination = (priority, skip, limit, sort) => {
-//     var deferred = q.defer();
-//     Ticket
-//     .find(      
-//         {priority: priority},
-//         {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
-//     .sort(sort)
-//     .skip(skip)
-//     .limit(limit)
-//     .exec(resolve(deferred));
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO TYPE
- PARAMS:
- -------------------------------------------------------*/
-// Ticket.getTypeTicketCount = type => {
-//     var deferred = q.defer();
-//     Ticket.find(        
-//         {type: type},
-//         {id: 1, title: 1, description: 1, type: 1, assignee: 1, createdDate: 1, createdBy: 1})
-//     .count(resolve(deferred));
-//     return deferred.promise;
-// };
-
-/*-------------------------------------------------------
- GET TICKET COUNT ACCORDING TO TYPE
- PARAMS:
-  [skip - number of records to skip,
-  limit - count of records to be retrieved
-  sort - sort criteria]
- -------------------------------------------------------*/
-// Ticket.getTypeTicketPagination = (type, skip, limit, sort) => {
-//     var deferred = q.defer();
-//     Ticket.find(        
-//         {type: type},
-//         {id: 1, title: 1, description: 1, type: 1, status: 1, createdDate: 1, priority: 1})
-//     .sort(sort)
-//     .skip(skip)
-//     .limit(limit)
-//     .exec(resolve(deferred));
-//     return deferred.promise;
-// };
 
 /*-------------------------------------------------------
  UPDATE TICKET
@@ -557,7 +338,7 @@ Ticket.getTicketByCommentId = commentId => {
         {id: id},
         {
             $set: { assignee: assignee }, 
-            $push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
+            $push: {'comments' : {isDeletable: comment.isDeletable, isVisible: comment.isVisible, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
         },
         {new : true},
         resolve(deferred)

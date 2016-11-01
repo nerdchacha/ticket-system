@@ -172,18 +172,18 @@ ticket.deleteComment = function(id, commentId){
     return Ticket.deleteComment(id, commentId);
 };
 
-ticket.assignTicket = function(username ,id, newAssignee, userComment){
+ticket.assignTicket = function(username ,id, newAssignee, userComment, notify){
     return R.composeP(
         R.curry(Ticket.assignTicket)(id, newAssignee),
-        createAssignTicketComment(username, newAssignee, userComment),
+        createAssignTicketComment(username, newAssignee, userComment, notify),
         Ticket.getTicketById
     )(id);
 };
 
-ticket.changeStatus = function(username ,id, newStatus, userComment){
+ticket.changeStatus = function(username ,id, newStatus, userComment, notify){
     return R.composeP(
         R.curry(Ticket.changeStatus)(id, newStatus),
-        createChangeStatusComment(username, newStatus, userComment),
+        createChangeStatusComment(username, newStatus, userComment, notify),
         Ticket.getTicketById
     )(id);
 };
@@ -327,29 +327,36 @@ function isSupport(user){
     return user.role.indexOf(rolesEnum.admin) > -1 || user.role.indexOf(rolesEnum.support) > -1;
 }
 
-function createCommentBoiler(username){
+function createCommentBoiler(username, createdBy, notify){
     return {
         commentDate     : Date.now(),
         commentBy       : username,
         isDeletable     : false,
+        isVisible       : canUserSeeComment(createdBy, notify) ? true : false,
         commentMessage  : {
             title : "Changes"
         }
     }
 }
 
-function createChangeStatusComment(username, newStatus, userComment){
+function canUserSeeComment(createdBy, notifyList){
+    return notifyList.map(user => user.id).indexOf(createdBy) > -1 ? true : false;
+}
+
+function createChangeStatusComment(username, newStatus, userComment, notify){
     return function(ticket){
-        var comment = createCommentBoiler(username);
-        comment.commentMessage.message = ['Status changed from "' + ticket.status + '" to "' + newStatus + '"', 'Comment : "' + userComment + '"'];
+        var comment = createCommentBoiler(username, ticket.createdBy, notify);
+        var oldStatus = ticket.status === undefined ? 'None' : ticket.status;
+        comment.commentMessage.message = ['Status changed from "' + oldStatus + '" to "' + newStatus + '"', 'Comment : "' + userComment + '"'];
         return comment;
     }
 }
 
-function createAssignTicketComment(username, newAssignee, userComment){
+function createAssignTicketComment(username, newAssignee, userComment, notify){
     return function(ticket){
-        var comment = createCommentBoiler(username);
-        comment.commentMessage.message = ['Assignee changed from "' + ticket.assignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
+        var comment = createCommentBoiler(username, ticket.createdBy, notify);
+        var oldAssignee = ticket.assignee === undefined ? 'None' : ticket.assignee;
+        comment.commentMessage.message = ['Assignee changed from "' + oldAssignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
         return comment;
     }
 }

@@ -32,9 +32,9 @@ angular.module('ticketSystem')
             };       
 
 
-            //Admin related http requests
+            //Admin and Support related http requests
             factory.getAllUserDetails = function(){
-                return $http.get('admin/users/users-details');
+                return $http.get('support/users/users-details');
             };
             factory.getUserDetails = function(username){
                 return $http.get('admin/users/user-details/' + username);

@@ -30,7 +30,9 @@ var indexRoutes             = require('./routes/index-router'),
     usersRoutes             = require('./routes/users-router'),
     staticRouter            = require('./routes/static-data-router'),
     supportTicketsRoutes    = require('./routes/support-routes/support-tickets-router'),
+    supportUserssRoutes     = require('./routes/support-routes/support-users-router'),
     adminUsersRoutes        = require('./routes/admin-routes/admin-users-router');
+    adminTicketsRoutes      = require('./routes/admin-routes/admin-tickets-router');
 
 
 var app = express();
@@ -102,10 +104,12 @@ app.use('/', indexRoutes);
 app.use('/static', staticRouter);
 //Check if user is support before executing route
 app.use(checkRole.isSupport);
+app.use('/support/users', supportUserssRoutes);
 app.use('/support/tickets', supportTicketsRoutes);
 //Check if user is admin before executing route
 app.use(checkRole.isAdmin);
 app.use('/admin/users', adminUsersRoutes);
+app.use('/admin/tickets', adminTicketsRoutes)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -23,6 +23,7 @@ var input = {
 				'bower_components/angular-ui-router/release/angular-ui-router.js',
 				'bower_components/chart.js/dist/Chart.min.js',
 				'client/src/js/angular-grid.js',
+				'client/src/js/angular-multi-select.js',
 				'client/src/js/yg-modal.js',
 				'client/src/js/yg-notification.js'
 			],

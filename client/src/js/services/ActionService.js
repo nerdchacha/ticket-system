@@ -36,29 +36,32 @@ angular.module('ticketSystem')
 
                 return deferred.promise;     
             };
-            factory.assign = function(id,assignee,comment){
-                return $http.post('tickets/assign/' + id, {assignee: assignee, comment: comment});
+            //Admin related methods
+            factory.assign = function(id,assignee,comment,notify){
+                return $http.post('admin/tickets/assign/' + id, {assignee: assignee, comment: comment, notify: notify});
             };
-            factory.changeStatus = function(id, status, comment){
-                return $http.post('tickets/change-status/' + id, {status: status, comment: comment});
-            }
-            factory.awaitingUserResponse = function(id, comment){
-                return $http.post('tickets/awaiting-user-response/' + id, {comment: comment});
-            }
-            factory.reopen = function(id, comment){
-                return $http.post('tickets/re-open/' + id, {comment: comment});
-            }
-            factory.close = function(id, comment){
-                return $http.post('tickets/close/' + id, {comment: comment});
-            }
+            factory.changeStatus = function(id, status, comment,notify){
+                return $http.post('admin/tickets/change-status/' + id, {status: status, comment: comment, notify: notify});
+            };
+            factory.awaitingUserResponse = function(id, comment,notify){
+                return $http.post('admin/tickets/awaiting-user-response/' + id, {comment: comment, notify: notify});
+            };
+            factory.reopen = function(id, comment,notify){
+                return $http.post('admin/tickets/re-open/' + id, {comment: comment, notify: notify});
+            };
+            factory.close = function(id, comment,notify){
+                return $http.post('admin/tickets/close/' + id, {comment: comment, notify: notify});
+            };
+            factory.acknowledgeTicket = function(id,comment,notify){
+                return $http.post('admin/tickets/acknowledge/' + id, {comment: comment, notify: notify});
+            };
+
+            //General methods
             factory.addComment = function(id, comment){
                 return $http.post('tickets/addComment/' + id, {comment: comment});
             };
             factory.deleteComment = function(ticket,comment){
                 return $http.delete('tickets/deleteComment/' + ticket._id + '?commentId=' + comment._id);
-            };
-            factory.acknowledgeTicket = function(id,comment){
-                return $http.post('tickets/acknowledge/' + id, {comment: comment});
             };
             return factory;
         }]);
