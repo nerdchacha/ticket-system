@@ -179,7 +179,7 @@ angular.module('ticketSystem')
                         return;
                     }
 
-    				ActionFactory.addComment($scope.ticket.id, $scope.task.comment)
+    				ActionFactory.addComment($scope.ticket.id, $scope.task.comment, $scope.task.notifyUsers)
     				.then(function(res){
 						//Update comments and status on view
     					$scope.ticket.comments = res.data.comments;

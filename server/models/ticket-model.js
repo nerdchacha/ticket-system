@@ -287,7 +287,7 @@ Ticket.addComment = (id, comment) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
-        {$push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}},
+        {$push: {'comments' : {isDeletable: comment.isDeletable, isVisible: comment.isVisible, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}},
         {new: true},
         resolve(deferred)
     );

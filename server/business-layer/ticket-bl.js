@@ -161,11 +161,23 @@ ticket.getTicketById = function(id, user){
     return deferred.promise;
 };
 
-ticket.addComment = function(id, comment){
+ticket.addComment = function(id, comment, notify){
     var deferred = q.defer();
     comment.isDeletable = true;
+    comment.isVisible = false;
     comment.commentMessage = {title: 'Comment', message: [comment.comment]};
-    return Ticket.addComment(id, comment);
+    Ticket.getTicketById(id)
+    .then(ticket => {
+        if(notify.map(item => item.id).indexOf(ticket.createdBy) > -1 || ticket.createdBy === comment.commentBy){
+            comment.isVisible = true;
+        }
+        return ticket;
+    })
+    .then(ticket => Ticket.addComment(id, comment))
+    .then(ticket => deferred.resolve(ticket))
+    .catch(err => deferred.reject(err))
+
+    return deferred.promise;
 };
 
 ticket.deleteComment = function(id, commentId){

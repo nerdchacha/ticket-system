@@ -6,8 +6,8 @@ angular.module('ticketSystem')
             $scope.$watchCollection('ticket', function(ticket){
                 if(ticket && !HelperFactory.isNullOrUndefined(ticket.id)){
                     if(!HelperFactory.isCurrentUserAdminOrSupport()){
+                            $scope.buttongroup.showComment                  = true;
                             $scope.buttongroup.showAssign                   = false;
-                            $scope.buttongroup.showComment                  = false;
                             $scope.buttongroup.showchangeStatus             = false;
                             $scope.buttongroup.showReopen                   = false;
                             $scope.buttongroup.showClose                    = false;

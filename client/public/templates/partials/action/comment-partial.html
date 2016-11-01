@@ -6,9 +6,9 @@
     	<div ng-show="actionForm.comment.$invalid && actionForm.comment.$touched" class="help-block"><p class="text-danger">Comment is required</p></div>
     </div>
   </div>
-  <div class="form-group">
+  <div class="form-group" ng-if="!isRegularUser">
   	<label class="col-md-2 col-xs-12">Notify<span></span></label>
-  	<div class="col-md-10 col-xs-12" ng-if="!isRegularUser">
+  	<div class="col-md-10 col-xs-12">
   		<div ng-dropdown-multiselect="" options="task.allUsers" selected-model="task.notifyUsers" extra-settings="task.multiselectOptions"></div>
   	</div>
   </div>

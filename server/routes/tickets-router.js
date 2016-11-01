@@ -129,7 +129,8 @@ router.get('/:id', (req,res,next) => {
 
 router.post('/addComment/:id',(req,res,next) => {
     validator.validateTicketAddComment(req)
-    .then(() => ticketsBl.addComment(req.params.id, {comment: req.body.comment, commentBy: req.user.username}))
+    .then(() => ticketsBl.addComment(req.params.id, {comment: req.body.comment, commentBy: req.user.username}, req.body.notify))
+    .then(ticket => filterComments(ticket, req.user))
     .then(ticket => res.json(ticket))
     .catch( err => {
         var errors = helper.createResponseError(err, 'There was some error trying to add comment to the ticket. Please try again after some time.');
