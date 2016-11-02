@@ -1,0 +1,47 @@
+.multiselect-item{
+	width: 100%;
+	cursor: pointer;
+	padding-left: 10px;
+	margin: 0;
+	li{
+		width: 100%;
+		list-style-type: none;
+		padding-left: 5px;
+		margin: 0;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-ms-user-select: none;
+	}
+}
+.multiselect-grid-parent,.multiselect-buttons{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+.multiselect-grid-parent{
+	.col-md-4{
+		width: 42.5%;		
+	}
+	.col-md-2{
+		width: 15%;		
+	}
+}
+.multiselect-item-highlight{
+	background-color: pink;
+}
+
+@media(max-width:760px){
+	.multiselect-grid-parent{
+		display: block;
+	}
+	.multiselect-grid-parent{
+		.col-md-4{
+			width: 100%;
+		}
+		.col-md-2{
+			width: 100%;
+		}
+	}
+}

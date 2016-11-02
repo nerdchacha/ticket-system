@@ -9,6 +9,7 @@ var express             = require('express'),
     helper              = require('../business-layer/helper.js'),
     q                   = require('q'),
     R                   = require('ramda'),
+    log                 = require('../config/log4js-config.js'),
     router              = express.Router();
 
 
@@ -41,6 +42,7 @@ passport.use(new LocalStrategy(
             })
             .catch(function(err){
                 //In case of any errors, throw error
+                log.error('Error getting user in LocalStratergy -', err);
                 if(err) throw err;
             });
     }));
@@ -69,13 +71,16 @@ passport.use(new GoogleStrategy({
                         newUser.isActive = true;
 
                         newUser.save(function(err){
-                            if(err)
+                            if(err){
+                                log.error('Error saving user in GoogleStratergy', err);
                                 throw err;
+                            }
                             return done(null,newUser);
                         })
                     }
                 })
                 .catch(err => {
+                    log.error('Error finding user in GoogleStratergy -', err);
                     return done(err,null);
                 });
                 // User.findGoogleUser(profile.id,function(err,user){
@@ -121,6 +126,7 @@ passport.deserializeUser(function(id, done) {
         done(null, user);
     })
     .catch(function(error) {
+        log.error('Error deserializing user -', err);
         done(error, null);
     });
 });
@@ -134,6 +140,7 @@ router.post('/register',function(req,res,next){
     createUser
         .then(() => res.json())
         .catch((error) => {
+            log.error('Error in ACCOUNT ROUTER - POST at endpoint /register -', err);
             var errors = helper.createResponseError(error, 'There was some issue trying to create user. Please try again after some time')
             res.json({errors: errors});
         });
@@ -149,17 +156,28 @@ router.post('/login', function(req, res, next) {
                 req.session.cookie.maxAge = 1000 * 60 * 30; //Cookie expired after 30 minutes
             }
             //Error occurred while login
-            if(err) res.json({error : err, isAuthenticated : false, msg: 'There was some error while trying to log you in. Please try again after some time'});
+            if(err) {
+                log.debug('Error occured while loggin in -', err);
+                res.json({error : err, isAuthenticated : false, msg: 'There was some error while trying to log you in. Please try again after some time'});
+            }
             //Wrong info provided by user
-            if(!user) res.json({error : null, isAuthenticated : false, msg: info.message});
+            if(!user) {
+                log.info('Failed login due to wrong credentials -', req.body.username);
+                res.json({error : null, isAuthenticated : false, msg: info.message});
+            }
             //Successful login
             else {
                 //User is not active
-                if(!user.isActive)
-                res.json({error : err, isAuthenticated : false, msg: 'The user is inactive.'});
+                if(!user.isActive){
+                    log.info('Failed login due to inactive user -', req.body.username);
+                    res.json({error : err, isAuthenticated : false, msg: 'The user is inactive.'});
+                }
 
                 req.login(user, function(err) {
-                    if (err) { return next(err); }
+                    if (err) { 
+                        log.error('Error in ACCOUNT ROUTER - POST at /login endpoint -', err);
+                        return next(err); 
+                    }
                     //send user details back after successful login.
                     return res.json({error : null, isAuthenticated : true, msg: '', user:{
                             firstname: user.firstname,
@@ -186,7 +204,10 @@ router.get('/auth/google',passport.authenticate('google', { scope : ['profile', 
 //GET request google makes after successful authentication
 router.get('/auth/google/callback',function(req,res,next){
     passport.authenticate('google',function(err,user,info){
-        if(err) res.render('oauth-redirect',{user : null, error: err, isActive : false});
+        if(err){
+            log.error('Error authenticating google user', err);            
+            res.render('oauth-redirect',{user : null, error: err, isActive : false});
+        } 
         else if(!user) res.render('oauth-redirect',{user : null, error: 'User doesn\'t exist', isActive:false});
         //User is authenticated but since username name is not set, do not login user.
         else if(!user.username || user.username === '') res.render('oauth-redirect',{user: JSON.stringify(user), error: null, isActive: user.isActive});
@@ -195,7 +216,10 @@ router.get('/auth/google/callback',function(req,res,next){
         //In case user is authenticated and username is set and user is active user, login the user.
         else {
             req.login(user, function(err) {
-                if (err) { return next(err); }
+                if (err) { 
+                    log.error('Error login in google user -', err);
+                    return next(err); 
+                }
                 //send user details back after successful login.
                 var user_response = {
                     username: user.username,
@@ -224,27 +248,25 @@ router.post('/set-username',function(req,res,next){
             //Login user
             var deferred = q.defer();
             req.login(user, function(err) {
-                if (err) deferred.reject(err);
+                if (err) {
+                    log.error('Error login in user post username setup -', err);
+                    deferred.reject(err);
+                }
                 deferred.resolve(user);
             });
             return deferred.promise;
         })
         .then(function(user){
-            //login was successful
-            //create response user object
             return helper.createResponseUser(user)
         })
         .then(function(resUser){
-            //send response user object to client
             res.json({errors : null, user : resUser});
         })
         .catch(function(errors){
-            //Error occurred
-            return helper.createResponseError(errors, 'There was some error update username. Please try again later');
-        })
-        .then(function(errors){
+            log.error('Error in /set-username endpoint -', err);
+            var errors = helper.createResponseError(errors, 'There was some error update username. Please try again later');
             res.json({errors: errors});
-        });
+        })
 });
 
 module.exports = router;

@@ -25,6 +25,7 @@ var input = {
 				'client/src/js/angular-grid.js',
 				'client/src/js/angular-multi-select.js',
 				'client/src/js/yg-modal.js',
+				'client/src/js/yg-multiselect-grid.js',
 				'client/src/js/yg-notification.js'
 			],
 	js: 	[
@@ -36,6 +37,7 @@ var input = {
 				'client/src/js/services/Authentication.js',
 				'client/src/js/services/HelperService.js',
 				'client/src/js/services/ActionService.js',
+				'client/src/js/services/PaginationService.js',
 				'client/src/js/controllers/**/*.js'
 			]
 };

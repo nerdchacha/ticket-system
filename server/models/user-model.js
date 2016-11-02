@@ -3,6 +3,7 @@
  */
 var mongoose    = require('mongoose'),
     bcrypt      = require('bcryptjs'),
+    log      = require('../config/log4js-config.js'),
     rolesEnum       = require('../config/enum-config.js').roles,
     q           = require('q');
 
@@ -330,7 +331,10 @@ User.resetPassword = (id, password) => {
 
 function resolve(deferred){
     return (err, data) => {
-        if(err) deferred.reject(err);
+        if(err) {
+            log.error('Error in USER-MODEL -', err);
+            deferred.reject(err);
+        }
         else deferred.resolve(data);
     }
 };

@@ -3,6 +3,7 @@
  */
 var mongoose    = require('mongoose'),
     q           = require('q'),
+    log      = require('../config/log4js-config.js'),
     statusEnum  = require('../config/enum-config.js').status;
 
 var CounterSchema = mongoose.Schema({
@@ -58,8 +59,10 @@ var TicketSchema = mongoose.Schema({
 TicketSchema.pre('save', function(next){
     var doc = this;
     Counter.findByIdAndUpdate({_id: 'ticketId'}, {$inc: { seq: 1} }, (error, counter) => {
-        if(error)
-        return next(error);
+        if(error){
+            log.error('Error in TICKET-MODEL at Updating Ticket Id -', error);            
+            return next(error);
+        }
         doc.id = counter.seq;
         next();
     });
@@ -371,7 +374,10 @@ Ticket.getTicketByCommentId = commentId => {
 
 function resolve(deferred){
     return (err, data) => {
-        if(err) deferred.reject(err);
+        if(err) {
+            log.error('Error in TICKET-MODEL -', err);
+            deferred.reject(err);
+        }
         else deferred.resolve(data);
     }
 };

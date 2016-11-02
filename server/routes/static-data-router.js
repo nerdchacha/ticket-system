@@ -5,12 +5,14 @@ var express 	= require('express'),
     ticketBl    = require('../business-layer/ticket-bl.js'),
     q           = require('q'),
     statusEnum  = require('../config/enum-config.js').status,
+    log         = require('../config/log4js-config.js'),
 	validator 	= require('../business-layer/request-validator.js');
 
 router.get('/all-users',(req,res) => {
     usersBl.getAllActiveUsers()
     .then(users => res.json({users: users}))
     .catch(err => {
+        log.error('Error in STATIC DATA ROUTER - GET /all-users endpoint -', err);   
         var errors = helper.createResponseError(err, 'There was some error trying to get the user list. Please try again after some time.');
         res.json({ errors: errors});
     });
@@ -27,6 +29,7 @@ router.get('/allowed-status/:status',(req,res) => {
         res.json({status: allowedStatus});
 	})
 	.catch(err => {
+        log.error('Error in STATIC DATA ROUTER - GET /allowed-status/:status endpoint -', err);   
 		var errors = helper.createResponseError(err, 'There was some error trying to get list of allowed status. Please try again after some time.');
         res.json({ errors: errors});
 	})
@@ -76,7 +79,10 @@ router.get('/action-buttons/:id',(req,res,next) => {
         }
         res.json({actionButtons: actionButtons});
     })
-    .catch(err => res.json({errors: err}))
+    .catch(err => {
+        log.error('Error in STATIC DATA ROUTER - GET /action-buttons/:id endpoint -', err);   
+        res.json({errors: err})
+    })
 });
 
 module.exports = router;

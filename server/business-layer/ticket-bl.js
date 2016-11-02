@@ -9,6 +9,7 @@ var q               = require('q'),
     statusEnum      = require('../config/enum-config.js').status,
     priorityEnum    = require('../config/enum-config.js').priority,
     typeEnum        = require('../config/enum-config.js').type,
+    log             = require('../config/log4js-config.js'),
     helper          = require('../business-layer/helper.js');
 
 var ticket = {};
@@ -39,7 +40,10 @@ ticket.fetchAllTickets = (req,res) => {
 
             deferred.resolve(response)
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at fetchAllTickets -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 };
@@ -70,7 +74,10 @@ ticket.fetchMyTickets = (req,res) => {
 
             deferred.resolve(response)
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at fetchMyTickets -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 };
@@ -101,7 +108,10 @@ ticket.fetchToMeTickets = (req,res) => {
 
             deferred.resolve(response)
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at fetchToMeTickets -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 };
@@ -136,7 +146,11 @@ ticket.updateTicket = function(req,res){
         .then(ticket => deferred.resolve(ticket))
         .catch(err => deferred.reject(err));
     })
-    .catch(err => deferred.reject(err));
+    .catch(err => {
+        log.error('Error in TICKET-BL at updateTicket -', error);
+        log.debug('Http request body -', req.body);
+        deferred.reject(err)}
+        );
 
     return deferred.promise;
 };
@@ -156,7 +170,10 @@ ticket.getTicketById = function(id, user){
             else
                 deferred.reject('User doesn\'t have access to view the ticket');
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at getTicketById -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 };
@@ -175,7 +192,11 @@ ticket.addComment = function(id, comment, notify){
     })
     .then(ticket => Ticket.addComment(id, comment))
     .then(ticket => deferred.resolve(ticket))
-    .catch(err => deferred.reject(err))
+    .catch(err => {
+        log.error('Error in TICKET-BL at addComment -', error);
+        log.debug('Comment -', comment);
+        deferred.reject(err)
+    })
 
     return deferred.promise;
 };
@@ -210,7 +231,10 @@ ticket.canUserDeleteComment = function(commentId, req){
             else
                 deferred.resolve();
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at canUserDeleteComment -', error);
+            deferred.reject(error)
+        });
     return deferred.promise;
 };
 
@@ -240,7 +264,10 @@ ticket.openWithin24Hours = function(req,res){
 
             deferred.resolve(response)
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at openWithin24Hours -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 }
@@ -434,7 +461,10 @@ function filterDashboardTicket(req, object){
 
             deferred.resolve(response)
         })
-        .catch(error => deferred.reject(error));
+        .catch(error => {
+            log.error('Error in TICKET-BL at filterDashboardTicket -', error);
+            deferred.reject(error)
+        });
 
     return deferred.promise;
 }

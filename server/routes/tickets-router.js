@@ -39,6 +39,11 @@ router.get('/static-data',(req,res,next) => {
         .then(values => {
             var staticValues = setStaticData(values);
             res.json(staticValues);
+        })
+        .catch(err => {
+            log.error('Error in TICKETS ROUTER - GET /static-data endpoint -', err);
+            var errors = helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
+            res.json({errors: errors});
         });
 });
 
@@ -64,6 +69,7 @@ router.get('/edit-ticket/initial-load/:status',(req,res,next) => {
             res.json(staticValues);
         })
         .catch(err => {
+            log.error('Error in TICKETS ROUTER - GET /edit-ticket/initial-load/:status endpoint -', err);
             var errors = helper.createResponseError(err,'There was some issue trying to fetch static values. Please try again later');
             res.json({errors: errors});
         });
@@ -72,7 +78,8 @@ router.get('/edit-ticket/initial-load/:status',(req,res,next) => {
 router.get('/all',(req,res,next) => {
     ticketsBl.fetchAllTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(err => {            
+        .catch(err => {     
+            log.error('Error in GET /all endpoint -', err);       
             var errors= helper.createResponseError(err, 'There was some error trying to get all the tickets. Please try again after some time.');
             res.json({errors: errors});
         });
@@ -81,7 +88,8 @@ router.get('/all',(req,res,next) => {
 router.get('/my',(req,res,next) => {
     ticketsBl.fetchMyTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(err => {            
+        .catch(err => {     
+            log.error('Error in TICKETS ROUTER - GET /my endpoint -', err);       
             var errors= helper.createResponseError(err, 'There was some error trying to get your tickets. Please try again after some time.');
             res.json({errors: errors});
         });
@@ -90,7 +98,8 @@ router.get('/my',(req,res,next) => {
 router.get('/to-me',(req,res,next) => {
     ticketsBl.fetchToMeTickets(req,res)
         .then(ticketDetails => res.json(ticketDetails))
-        .catch(err => {            
+        .catch(err => {           
+            log.error('Error in TICKETS ROUTER - GET /to-me endpoint -', err);   
             var errors= helper.createResponseError(err, 'There was some error trying to get the tickets assigned to me. Please try again after some time.');
             res.json({errors: errors});
         });
@@ -101,6 +110,7 @@ router.post('/new',(req,res,next) => {
         .then(() => ticketsBl.createNewTicket(req,res))
         .then(ticket => res.json(ticket))
         .catch(err => {
+            log.error('Error in TICKETS ROUTER - GET /new endpoint -', err);  
             var errors = helper.createResponseError(err, 'There was some error trying to create a new ticket. Please try again after some time.');
             res.json({errors: errors});
         });
@@ -111,6 +121,7 @@ router.put('/:id',(req,res,next) => {
         .then(() => ticketsBl.updateTicket(req,res))
         .then(ticket => res.json(ticket))
         .catch(err => {
+            log.error('Error in TICKETS ROUTER - PUT /:id endpoint -', err);       
             var errors = helper.createResponseError(err, 'There was some error trying to get the ticket details. Please try again after some time.');
             res.json({errors: errors});
         });
@@ -122,6 +133,7 @@ router.get('/:id', (req,res,next) => {
     .then(ticket => filterComments(ticket, req.user))
     .then(ticket => res.json({ticket : ticket}))
     .catch(err => {
+        log.error('Error in TICKETS ROUTER - GET /:id endpoint -', err);       
         var errors = helper.createResponseError(err, 'No ticket exists with given ticket id.');
         res.json({errors: errors});
     });
@@ -133,6 +145,7 @@ router.post('/addComment/:id',(req,res,next) => {
     .then(ticket => filterComments(ticket, req.user))
     .then(ticket => res.json(ticket))
     .catch( err => {
+        log.error('Error in TICKETS ROUTER - POST /addComment/:id endpoint -', err);       
         var errors = helper.createResponseError(err, 'There was some error trying to add comment to the ticket. Please try again after some time.');
         res.json({ errors: errors});
     });
@@ -144,6 +157,7 @@ router.delete('/deleteComment/:id', (req,res,next) => {
         .then(() => ticketsBl.deleteComment(req.params.id,req.query.commentId))
         .then(ticket => res.json(ticket))        
         .catch(err => {
+            log.error('Error in TICKETS ROUTER - DELETE /deleteComment/:id endpoint -', err);       
             var errors = helper.createResponseError(err, 'There was some error trying to delete the comment. Please try again after some time.');
             res.json({ errors: errors});
         });

@@ -1,0 +1,50 @@
+<h2 class="page-heading">Queue Management</h2>
+<form class="add-queue" name="addQueueForm" novalidate="">
+	<button class="btn btn-primary" ng-click="showAddQueuePanel()"><i class="fa fa-plus">&nbsp;&nbsp;</i>Add Queue</button>
+	<div class="row" ng-show="showAddQueue">
+		<div class="col-sm-10" ng-class="addQueueForm.newQueue.$invalid && addQueueForm.newQueue.$touched ? 'has-error' : ''">
+			<input type="text" ng-model="newQueue" name="newQueue" class="form-control" placeholder="Enter new queue name" required />
+            <div ng-show="addQueueForm.newQueue.$invalid && addQueueForm.newQueue.$touched" class="help-block">
+                <p class="text-danger">Title is required</p>
+            </div>		
+		</div>
+		<div class="col-sm-2">
+			<button class="btn btn-success" ng-click="addQueue()">Add</button>
+			<button class="btn btn-danger" ng-click="hideAddQueuePanel()">Cancel</button>
+		</div>
+	</div>
+</form>
+<div class="row" ng-show="items.length > 0">
+	<div ng-repeat="item in items">
+		<div class="col-md-10 col-xs-8"><h5>{{item.name}}</h5></div>
+		<div class="col-md-2 col-xs-4">
+			<button class="btn btn-sm btn-danger" title="Edit queue name"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;
+			<button class="btn btn-sm btn-danger" title="View user list"><i class="fa fa-eye"></i></button>
+		</div>
+	</div>
+</div>
+<br/>
+<div class="row" ng-show="items.length === 0">
+	<div class="col-xs-12 text-danger">
+		No queues available to display.
+		<br/>
+		Please click on <span class="text-primary">"Add Queue"</span> button on top to add a new queue in the system.
+	</div>
+</div>
+<ul ng-if="pager.pages.length" class="pagination">
+	<li ng-class="{disabled:pager.currentPage === 1}">
+	    <a ng-click="setPage(1)">First</a>
+	</li>
+	<li ng-class="{disabled:pager.currentPage === 1}">
+	    <a ng-click="setPage(pager.currentPage - 1)">Previous</a>
+	</li>
+	<li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+	    <a ng-click="setPage(page)">{{page}}</a>
+	</li>               
+	<li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+	    <a ng-click="setPage(pager.currentPage + 1)">Next</a>
+	</li>
+	<li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+	    <a ng-click="setPage(pager.totalPages)">Last</a>
+	</li>
+</ul>

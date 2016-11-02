@@ -20,6 +20,7 @@
     "express-session": "*",
     "express-validator": "*",
     "font-awesome": "^4.6.3",
+    "log4js": "^0.6.38",
     "mongodb": "*",
     "mongoose": "*",
     "morgan": "~1.7.0",

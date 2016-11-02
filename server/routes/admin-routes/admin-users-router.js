@@ -8,23 +8,10 @@ var express                 = require('express'),
     helper                  = require('../../business-layer/helper.js'),
     validator               = require('../../business-layer/request-validator.js'),
     R                       = require('ramda'),
+    log                     = require('../../config/log4js-config.js'),
     q                       = require('q'),
     router                  = express.Router();
 
-
-// /*-------------------------------------------------------
-//  GET User list of all users in the system
-//  -------------------------------------------------------*/
-// router.get('/users-details',(req,res,next) => {
-//     adminBl.fetchAllUsers(req,res)
-//         .then(users => {
-//             res.json(users);
-//         })
-//         .catch(err => {
-//             var errors = helper.createResponseError(errors, 'There was some error getting all the users. Please try again later');
-//             res.json({ errors: errors });
-//         });
-// });
 
 
 /*-------------------------------------------------------
@@ -43,6 +30,7 @@ router.get('/user-details/:username',(req,res,next) => {
             res.json({user : user});
         })
         .catch(err => {
+            log.error('Error in ADMIN-USERS-ROUTER - GET /user-details/:username endpoint -', err);  
             var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
             res.json({ errors: errors });
         });
@@ -64,6 +52,7 @@ router.post('/update-user/:username',(req,res,next) => {
             res.json({user : user});
         })
         .catch(err => {
+            log.error('Error in ADMIN-USERS-ROUTER - POST /user-details/:username endpoint -', err);  
             var errors = helper.createResponseError(errors, 'There was some error updating user details. Please try again later');
             res.json({ errors: errors });
         });
@@ -83,6 +72,7 @@ router.post('/reset-password/:id',(req,res,next) => {
             res.json();
         })
         .catch(err => {
+            log.error('Error in ADMIN-USERS-ROUTER - POST /reset-password/:id -', err);  
             var errors = helper.createResponseError(errors, 'There was some error resetting user password. Please try again later');
             res.json({ errors: errors });
         });

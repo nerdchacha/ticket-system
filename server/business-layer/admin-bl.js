@@ -3,7 +3,8 @@
  */
 var q       = require('q'),
     R       = require('ramda'),
-    helper  = require('../business-layer/helper.js'),
+    helper  = require('./helper.js'),
+    log     = require('../config/log4js-config.js'),
     User    = require('../models/user-model.js');
 
 var admin = {};
@@ -35,7 +36,10 @@ admin.fetchAllUsers = req => {
     
             deferred.resolve(response);
         })
-        .catch(error => deferred.reject(error));  
+        .catch(error => {
+            log.error('Error in ADMIN-BL at fetchAllUsers -', error);
+            deferred.reject(error)
+        });  
     
         return deferred.promise;
 };

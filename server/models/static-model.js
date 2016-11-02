@@ -2,7 +2,8 @@
  * Created by dell on 7/27/2016.
  */
 var mongoose = require('mongoose'),
-    q           = require('q');
+    log      = require('../config/log4js-config.js'),
+    q        = require('q');
 
 var StaticSchema = mongoose.Schema({
     name:String,
@@ -36,7 +37,10 @@ Static.getStaticValues = function(){
 
 function resolve(deferred){
     return (err, data) => {
-        if(err) deferred.reject(err);
+        if(err) {
+            log.error('Error in STATIC-MODEL -', err);
+            deferred.reject(err);
+        }
         else deferred.resolve(data);
     }
 };

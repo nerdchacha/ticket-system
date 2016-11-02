@@ -11,14 +11,6 @@
         <div class="heading">Quick Link</div>
         <ul>
           <li><a ui-sref="dashboard"><i class="fa fa-lg fa-dashboard"></i> Dashboard</a></li>
-<!--           <li>
-            <a ui-sref="ticket.my-tickets">
-              <span class="col-md-10 no-padding">
-                <i class="fa fa-lg fa-dashboard"></i> New Tickets                
-              </span>
-              <span class="col-md-2 vcenter badge badge-danger">2</span>
-            </a>
-          </li> -->
         </ul>
     </section>
     <section class="utility">
@@ -28,6 +20,13 @@
           <li><a href="#/ticket/new"><i class="fa fa-lg fa-ticket"></i> Create Ticket</a></li>
         </ul>
     </section>
+    <section class="admin-menu" ng-if="isAdmin">
+      <div class="heading">Admin</div>
+      <ul>
+        <li><a ui-sref="admin-user-management"><i class="fa fa-users"></i> User Management</a></li>
+        <li><a ui-sref="queue-management"><i class="fa fa-link"></i> Queue Management</a></li>
+      </ul>
+    </section>
     <section class="profile-menu">
     <div class="heading">Profile</div>
       <ul>
@@ -35,12 +34,6 @@
           <a ng-click="getProfile()"><i class="fa fa-user"></i> {{getUser().username}}</a>
           </li>
           <li><a ng-click="logout()"><i class="fa fa-sign-out"></i> Log Off</a></li>
-      </ul>
-    </section>
-    <section class="admin-menu" ng-if="isAdmin">
-    <div class="heading">Admin</div>
-      <ul>
-        <li><a href="#/admin/user-management"><i class="fa fa-users"></i> User Management</a></li>
       </ul>
     </section>
   </nav>

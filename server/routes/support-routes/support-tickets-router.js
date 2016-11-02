@@ -4,6 +4,7 @@ var express                 = require('express'),
     usersBl                 = require('../../business-layer/users-bl.js'),
     helper                  = require('../../business-layer/helper.js'),
     validator               = require('../../business-layer/request-validator.js'),
+    log                     = require('../../config/log4js-config.js'),
     R                       = require('ramda'),
     q                       = require('q'),
     router                  = express.Router();
@@ -43,6 +44,7 @@ router.get('/dashboard',(req,res,next) => {
         });
     })
     .catch(err => {
+        log.error('Error in SUPPORT-TICKETS-ROUTER - GET /dasbhoard endpoint -', err);   
         var errors = helper.createResponseError(err, 'There was some error trying to load dashboard data. Please try again after some time.');
         res.json({ errors: errors});
     })
@@ -56,6 +58,7 @@ router.get('/open-within-day', (req,res,next) => {
     ticketsBl.openWithin24Hours(req,res)
     .then(ticketDetails => res.json(ticketDetails))
     .catch(err => {            
+        log.error('Error in SUPPORT-TICKETS-ROUTER - GET /open-within-day endpoint -', err);
         var errors= helper.createResponseError(err, 'There was some error trying to get the tickets created within 24 hours. Please try again after some time.');
         res.json({errors: errors});
     });
@@ -70,6 +73,7 @@ router.get('/status/:status', (req,res,next) => {
     .then(() => ticketsBl.getTicketsByStatus(req,res))
     .then(ticketDetails => res.json(ticketDetails))
     .catch(err => {          
+        log.error('Error in SUPPORT-TICKETS-ROUTER - GET /status/:status endpoint -', err);
         var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
         res.json({errors: errors});
     });
@@ -83,7 +87,8 @@ router.get('/type/:type', (req,res,next) => {
     validator.filterByType(req)
     .then(() => ticketsBl.getTicketsByType(req,res))
     .then(ticketDetails => res.json(ticketDetails))
-    .catch(err => {          
+    .catch(err => {   
+    log.error('Error in SUPPORT-TICKETS-ROUTER - GET /type/:type endpoint -', err);       
         var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
         res.json({errors: errors});
     });
@@ -97,6 +102,7 @@ router.get('/priority/:priority', (req,res,next) => {
     .then(() => ticketsBl.getTicketsByPriority(req,res))
     .then(ticketDetails => res.json(ticketDetails))
     .catch(err => {          
+        log.error('Error in SUPPORT-TICKETS-ROUTER - GET /priority/:priority endpoint -', err);
         var errors= helper.createResponseError(err, 'There was some error trying to get the tickets filtered by status. Please try again after some time.');
         res.json({errors: errors});
     });

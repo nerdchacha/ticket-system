@@ -1,7 +1,7 @@
 /**
  * Created by dell on 7/18/2016.
  */
-angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal','ngFlash','ui.router','yg-notification','angularjs-dropdown-multiselect'])
+angular.module('ticketSystem',['textAngular','yangular-grid','yg-modal','ui.router','yg-notification','angularjs-dropdown-multiselect','yg-multiselect-grid'])
     .service('authInterceptor', ['$q','$injector','Authentication','HelperFactory',
         function($q,$injector,Authentication,HelperFactory) {
             return {
@@ -136,7 +136,13 @@ angular.module('ticketSystem',['ngRoute','textAngular','yangular-grid','yg-modal
                     url : '/admin/reset-password/:id',
                     controller: 'ChangeUsersPasswordCtrl',
                     templateUrl: 'templates/admin/reset-password.html'
-                });
+                })
+                .state('queue-management',{
+                    url : '/admin/queue-management',
+                    controller: 'QueueManagementCtrl',
+                    templateUrl: 'templates/admin/queue-management.html'
+                })
+                ;
 
             $httpProvider.interceptors.push('authInterceptor');
         }]);
