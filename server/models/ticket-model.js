@@ -335,14 +335,11 @@ Ticket.getTicketByCommentId = commentId => {
  assignee - username of the new assignee
  comment - comment added by user]
  -------------------------------------------------------*/
- Ticket.assignTicket = (id, assignee, comment) => {
+ Ticket.assignTicket = (id, assignee) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
-        {
-            $set: { assignee: assignee }, 
-            $push: {'comments' : {isDeletable: comment.isDeletable, isVisible: comment.isVisible, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
-        },
+        {$set: { assignee: assignee }},
         {new : true},
         resolve(deferred)
     );
@@ -356,14 +353,11 @@ Ticket.getTicketByCommentId = commentId => {
  status - new status
  comment - comment added by user]
  -------------------------------------------------------*/
- Ticket.changeStatus = (id, status, comment) => {
+ Ticket.changeStatus = (id, status) => {
     var deferred = q.defer();
     Ticket.findOneAndUpdate(
         {id: id},
-        {
-            $set: { status: status }, 
-            $push: {'comments' : {isDeletable: comment.isDeletable, commentMessage: comment.commentMessage, commentBy: comment.commentBy, commentDate: Date.now()}}
-        },
+        {$set: { status: status }},
         {new : true},
         resolve(deferred)
     );

@@ -57,11 +57,11 @@ angular.module('ticketSystem')
             };
 
             //General methods
-            factory.addComment = function(id, comment, notify){
-                return $http.post('tickets/addComment/' + id, {comment: comment, notify: notify});
+            factory.addComment = function(_id, comment, notify){
+                return $http.post('tickets/addComment/' + _id, {comment: comment, notify: notify});
             };
             factory.deleteComment = function(ticket,comment){
-                return $http.delete('tickets/deleteComment/' + ticket._id + '?commentId=' + comment._id);
+                return $http.delete('tickets/deleteComment/' + ticket.id + '?commentId=' + comment._id);
             };
             return factory;
         }]);

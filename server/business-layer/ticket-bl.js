@@ -4,13 +4,15 @@
 var q               = require('q'),
     _               = require('underscore'),
     R               = require('ramda'),
-    Ticket          = require('../models/ticket-model.js'),
-    rolesEnum       = require('../config/enum-config.js').roles,
-    statusEnum      = require('../config/enum-config.js').status,
-    priorityEnum    = require('../config/enum-config.js').priority,
-    typeEnum        = require('../config/enum-config.js').type,
-    log             = require('../config/log4js-config.js'),
-    helper          = require('../business-layer/helper.js');
+    Ticket          = require('../models/ticket-model'),
+    Comment         = require('../models/comment-model')
+    rolesEnum       = require('../config/enum-config').roles,
+    statusEnum      = require('../config/enum-config').status,
+    priorityEnum    = require('../config/enum-config').priority,
+    typeEnum        = require('../config/enum-config').type,
+    log             = require('../config/log4js-config'),
+    commentBl       = require('./comment-bl'),
+    helper          = require('../business-layer/helper');
 
 var ticket = {};
 
@@ -19,13 +21,12 @@ ticket.fetchAllTickets = (req,res) => {
         order   = helper.getOrder(req),
         page    = helper.getPage(req),
         size    = helper.getSize(req);
-    var deferred = q.defer();
 
     var skip = (page - 1) * size;
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    q.all([
+    return q.all([
         Ticket.getAllTicketsPagination(skip, limit,sortString),
         Ticket.getAllTicketsCount()
         ])    
@@ -37,15 +38,8 @@ ticket.fetchAllTickets = (req,res) => {
             response.page    = page;
             response.count   = count;
             response.size    = size;
-
-            deferred.resolve(response)
+            return response;
         })
-        .catch(error => {
-            log.error('Error in TICKET-BL at fetchAllTickets -', error);
-            deferred.reject(error)
-        });
-
-    return deferred.promise;
 };
 
 ticket.fetchMyTickets = (req,res) => {
@@ -53,13 +47,12 @@ ticket.fetchMyTickets = (req,res) => {
         order   = helper.getOrder(req),
         page    = helper.getPage(req),
         size    = helper.getSize(req);
-    var deferred = q.defer();
 
     var skip = (page - 1) * size;
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    q.all([
+    return q.all([
         Ticket.getTicketsForUserPagination(req.user.username, skip, limit,sortString),
         Ticket.getAllTicketsForUserCount(req.user.username)
         ])
@@ -71,13 +64,8 @@ ticket.fetchMyTickets = (req,res) => {
             response.page       = page;
             response.count      = count;
             response.size       = size;
-
-            deferred.resolve(response)
+            return response
         })
-        .catch(error => {
-            log.error('Error in TICKET-BL at fetchMyTickets -', error);
-            deferred.reject(error)
-        });
 
     return deferred.promise;
 };
@@ -87,13 +75,12 @@ ticket.fetchToMeTickets = (req,res) => {
         order   = helper.getOrder(req),
         page    = helper.getPage(req),
         size    = helper.getSize(req);
-    var deferred = q.defer();
 
     var skip = (page - 1) * size;   
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    q.all([
+    return q.all([
         Ticket.getTicketsAssignedToMePagination(req.user.username, skip, limit,sortString),
         Ticket.getAllAssignedToMeTicketsCount(req.user.username)
         ])
@@ -105,32 +92,19 @@ ticket.fetchToMeTickets = (req,res) => {
             response.page       = page;
             response.count      = count;
             response.size       = size;
-
-            deferred.resolve(response)
+            return response
         })
-        .catch(error => {
-            log.error('Error in TICKET-BL at fetchToMeTickets -', error);
-            deferred.reject(error)
-        });
 
     return deferred.promise;
 };
 
-ticket.getTicketsByStatus = (req,res) => {
-    return filterDashboardTicket(req, {status: req.params.status});
-};
+ticket.getTicketsByStatus = (req,res) => filterDashboardTicket(req, {status: req.params.status});
 
-ticket.getTicketsByType = (req,res) => {
-    return filterDashboardTicket(req, {type: req.params.type});
-};
+ticket.getTicketsByType = (req,res) => filterDashboardTicket(req, {type: req.params.type});
 
-ticket.getTicketsByPriority = (req,res) => {
-    return filterDashboardTicket(req, {priority: req.params.priority});
-};
+ticket.getTicketsByPriority = (req,res) => filterDashboardTicket(req, {priority: req.params.priority});
 
-ticket.createNewTicket = function(req,res){
-    return Ticket.createTicket(new Ticket(createNewTicketObject(req)));
-};
+ticket.createNewTicket = (req,res) => Ticket.createTicket(new Ticket(createNewTicketObject(req)));
 
 ticket.updateTicket = function(req,res){
     var deferred = q.defer();
@@ -155,101 +129,110 @@ ticket.updateTicket = function(req,res){
     return deferred.promise;
 };
 
-ticket.getTicketByIdAll = function(id){
-    return Ticket.getTicketById(id);
-};
+ticket.getTicketByIdAll = id => Ticket.getTicketById(id);
 
 ticket.getTicketById = function(id, user){
-    var deferred = q.defer();
-
-    Ticket.getTicketById(id)
-        .then(ticket => {
-            var isSupportUser = isSupport(user);    
-            if(isSupportUser || ticket.createdBy === user.username)
-                deferred.resolve(ticket)
-            else
-                deferred.reject('User doesn\'t have access to view the ticket');
-        })
-        .catch(error => {
-            log.error('Error in TICKET-BL at getTicketById -', error);
-            deferred.reject(error)
-        });
-
-    return deferred.promise;
+    return Ticket.getTicketById(id)
+    .then(ticket => {
+        if(isSupport(user))
+            return ticket    
+        if(userCreatedTicket(ticket, user))
+            return ticket
+        throw new Error('User doesn\'t have access to view the ticket');
+    })
+    .then(commentBl.getTicketWithComments)
 };
 
-ticket.addComment = function(id, comment, notify){
-    var deferred = q.defer();
+ticket.addComment = (id, comment, notify) => {
     comment.isDeletable = true;
     comment.isVisible = false;
     comment.commentMessage = {title: 'Comment', message: [comment.comment]};
-    Ticket.getTicketById(id)
+
+    return Ticket.getTicketById(id)
+    .then(ticket => commentBl.addComment(ticket, comment))
     .then(ticket => {
-        if(notify.map(item => item.id).indexOf(ticket.createdBy) > -1 || ticket.createdBy === comment.commentBy){
+        if(notify.map(item => item.id).indexOf(ticket.createdBy) > -1)
             comment.isVisible = true;
-        }
+        if(userCreatedComment(comment, ticket))
+            comment.isVisible = true;
         return ticket;
     })
-    .then(ticket => Ticket.addComment(id, comment))
-    .then(ticket => deferred.resolve(ticket))
-    .catch(err => {
-        log.error('Error in TICKET-BL at addComment -', error);
-        log.debug('Comment -', comment);
-        deferred.reject(err)
+    .then(ticket => ticket)
+};
+
+ticket.deleteComment = (id, _commentId) => {
+    return Ticket.getTicketById(id)
+    .then(ticket => commentBl.deleteComment(ticket, _commentId))
+    .then(ticket => ticket)
+};
+
+// ticket.assignTicket = function(username ,id, newAssignee, userComment, notify){
+//     return R.composeP(
+//         R.curry(Ticket.assignTicket)(id, newAssignee),
+//         createAssignTicketComment(username, newAssignee, userComment, notify),
+//         Ticket.getTicketById
+//     )(id);
+// };
+
+ticket.assignTicket = (username ,id, newAssignee, userComment, notify) => {
+    return Ticket.getTicketById(id)
+    .then(ticket => {
+        var comment = createAssignTicketComment(username, newAssignee, userComment, notify)(ticket)
+        comment.ticketId = mongoose.Types.ObjectId(ticket._id);
+        return Comment.addComment(new Comment(comment))
     })
-
-    return deferred.promise;
+    .then(comment => Ticket.assignTicket(id, newAssignee))
+    .then(commentBl.getTicketWithComments)
 };
 
-ticket.deleteComment = function(id, commentId){
-    return Ticket.deleteComment(id, commentId);
+ticket.changeStatus = (username ,id, newStatus, userComment, notify) => {
+    return Ticket.getTicketById(id)
+    .then(ticket => {
+        var comment = createChangeStatusComment(username, newStatus, userComment, notify)(ticket)
+        comment.ticketId = mongoose.Types.ObjectId(ticket._id);
+        return Comment.addComment(new Comment(comment))
+    })
+    .then(comment => Ticket.changeStatus(id, newStatus))
+    .then(commentBl.getTicketWithComments)
 };
 
-ticket.assignTicket = function(username ,id, newAssignee, userComment, notify){
-    return R.composeP(
-        R.curry(Ticket.assignTicket)(id, newAssignee),
-        createAssignTicketComment(username, newAssignee, userComment, notify),
-        Ticket.getTicketById
-    )(id);
-};
 
-ticket.changeStatus = function(username ,id, newStatus, userComment, notify){
-    return R.composeP(
-        R.curry(Ticket.changeStatus)(id, newStatus),
-        createChangeStatusComment(username, newStatus, userComment, notify),
-        Ticket.getTicketById
-    )(id);
-};
+// ticket.changeStatus = function(username ,id, newStatus, userComment, notify){
+//     return R.composeP(
+//         R.curry(Ticket.changeStatus)(id, newStatus),
+//         createChangeStatusComment(username, newStatus, userComment, notify),
+//         Ticket.getTicketById
+//     )(id);
+// };
 
-ticket.canUserDeleteComment = function(commentId, req){
-    var deferred = q.defer();
-    Ticket.getTicketByCommentId(commentId)
-        .then(ticket => {
-            var comment = ticket.comments.find(comment => comment._id.toString() === commentId);
-            if(comment.commentBy !== req.user.username) 
-                deferred.reject('User cannot delete comments of other users');
-            else
-                deferred.resolve();
-        })
-        .catch(error => {
-            log.error('Error in TICKET-BL at canUserDeleteComment -', error);
-            deferred.reject(error)
-        });
-    return deferred.promise;
-};
+// ticket.canUserDeleteComment = function(commentId, req){
+//     var deferred = q.defer();
+//     Ticket.getTicketByCommentId(commentId)
+//         .then(ticket => {
+//             var comment = ticket.comments.find(comment => comment._id.toString() === commentId);
+//             if(comment.commentBy !== req.user.username) 
+//                 deferred.reject('User cannot delete comments of other users');
+//             else
+//                 deferred.resolve();
+//         })
+//         .catch(error => {
+//             log.error('Error in TICKET-BL at canUserDeleteComment -', error);
+//             deferred.reject(error)
+//         });
+//     return deferred.promise;
+// };
 
-ticket.openWithin24Hours = function(req,res){
+ticket.openWithin24Hours = (req,res) => {
     var sort    = helper.getSort(req),
         order   = helper.getOrder(req),
         page    = helper.getPage(req),
         size    = helper.getSize(req);
-    var deferred = q.defer();
 
     var skip = (page - 1) * size;   
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    q.all([
+    return q.all([
         Ticket.getOpenWithin24HoursTicketsPagination(skip, limit, sortString),
         Ticket.getOpenWithin24HoursTicketsCount()
         ])
@@ -261,62 +244,35 @@ ticket.openWithin24Hours = function(req,res){
             response.page       = page;
             response.count      = count;
             response.size       = size;
-
-            deferred.resolve(response)
+            return response
         })
-        .catch(error => {
-            log.error('Error in TICKET-BL at openWithin24Hours -', error);
-            deferred.reject(error)
-        });
-
-    return deferred.promise;
 }
 
 /*------------------TICKET STATUS COUNT------------------------------*/
 
-ticket.getNewTicketCount = function(){
-    return Ticket.getFilterTicketCount({status: statusEnum.new});
-};
+ticket.getNewTicketCount = () => Ticket.getFilterTicketCount({status: statusEnum.new});
 
-ticket.getOpenTicketCount = function(){
-    return Ticket.getFilterTicketCount({status: statusEnum.open});
-};
+ticket.getOpenTicketCount = () => Ticket.getFilterTicketCount({status: statusEnum.open});
 
-ticket.getInProgressTicketCount = function(){
-    return Ticket.getFilterTicketCount({status: statusEnum.inProgress});
-};
+ticket.getInProgressTicketCount = () => Ticket.getFilterTicketCount({status: statusEnum.inProgress});
 
-ticket.getAwaitingUserResponseTicketCount = function(){
-    return Ticket.getFilterTicketCount({status: statusEnum.awaitingUserResponse});
-};
+ticket.getAwaitingUserResponseTicketCount = () => Ticket.getFilterTicketCount({status: statusEnum.awaitingUserResponse});
 
 /*------------------TICKET TYPE COUNT------------------------------*/
 
-ticket.getBugTicketCount = function(){
-    return Ticket.getFilterTicketCount({type: typeEnum.bug});
-};
+ticket.getBugTicketCount = () => Ticket.getFilterTicketCount({type: typeEnum.bug});
 
-ticket.getNeedInfoTicketCount = function(){
-    return Ticket.getFilterTicketCount({type: typeEnum.needInfo});
-};
+ticket.getNeedInfoTicketCount = () => Ticket.getFilterTicketCount({type: typeEnum.needInfo});
 
-ticket.getImprovementTicketCount = function(){
-    return Ticket.getFilterTicketCount({type: typeEnum.improvement});
-};
+ticket.getImprovementTicketCount = () => Ticket.getFilterTicketCount({type: typeEnum.improvement});
 
 /*------------------TICKET PRIORITY COUNT------------------------------*/
 
-ticket.getHighTicketCount = function(){
-    return Ticket.getFilterTicketCount({priority: priorityEnum.high});
-};
+ticket.getHighTicketCount = () => Ticket.getFilterTicketCount({priority: priorityEnum.high});
 
-ticket.getMediumTicketCount = function(){
-    return Ticket.getFilterTicketCount({priority:priorityEnum.medium});
-};
+ticket.getMediumTicketCount = () => Ticket.getFilterTicketCount({priority:priorityEnum.medium});
 
-ticket.getLowTicketCount = function(){
-    return Ticket.getFilterTicketCount({priority:priorityEnum.low});
-};
+ticket.getLowTicketCount = () => Ticket.getFilterTicketCount({priority:priorityEnum.low});
 
 
 
@@ -331,17 +287,17 @@ ticket.getLowTicketCount = function(){
 
 
 
-function getUserFromReq(req){
-    var deferred = q.defer()
-    deferred.resolve(req.user);
-    return deferred.promise;
-}
+// function getUserFromReq(req){
+//     var deferred = q.defer()
+//     deferred.resolve(req.user);
+//     return deferred.promise;
+// }
 
-function getUsernameFromReq(req){
-    var deferred = q.defer()
-    deferred.resolve(req.user.username);
-    return deferred.promise;
-}
+// function getUsernameFromReq(req){
+//     var deferred = q.defer()
+//     deferred.resolve(req.user.username);
+//     return deferred.promise;
+// }
 
 function createNewTicketObject(req){
     return{
@@ -356,21 +312,29 @@ function createNewTicketObject(req){
     }
 }
 
-function canUserViewTicket(user){
-    return function(ticket){
-        return isSupport(user) || ticket.createdBy === user.username;
-    }
-}
+// function canUserViewTicket(user){
+//     return function(ticket){
+//         return isSupport(user) || ticket.createdBy === user.username;
+//     }
+// }
 
 function isSupport(user){
     return user.role.indexOf(rolesEnum.admin) > -1 || user.role.indexOf(rolesEnum.support) > -1;
 }
 
+function userCreatedTicket(ticket, user){
+    return ticket.createdBy === user.username ? true : false;
+}
+
+function userCreatedComment(comment, user){
+    return comment.commentBy === user.username ? true : false;
+}
 function createCommentBoiler(username, createdBy, notify){
     return {
         commentDate     : Date.now(),
         commentBy       : username,
         isDeletable     : false,
+        deleted         : false,
         isVisible       : canUserSeeComment(createdBy, notify) ? true : false,
         commentMessage  : {
             title : "Changes"
@@ -393,6 +357,7 @@ function createChangeStatusComment(username, newStatus, userComment, notify){
 
 function createAssignTicketComment(username, newAssignee, userComment, notify){
     return function(ticket){
+        console.log(ticket)
         var comment = createCommentBoiler(username, ticket.createdBy, notify);
         var oldAssignee = ticket.assignee === undefined ? 'None' : ticket.assignee;
         comment.commentMessage.message = ['Assignee changed from "' + oldAssignee + '" to "' + newAssignee + '"', 'Comment : "' + userComment + '"'];
@@ -440,13 +405,12 @@ function filterDashboardTicket(req, object){
         order   = helper.getOrder(req),
         page    = helper.getPage(req),
         size    = helper.getSize(req);
-    var deferred = q.defer();
 
     var skip = (page - 1) * size;   
     var limit = size;
     var sortString = helper.createSortString(sort, order);
 
-    q.all([
+    return q.all([
         Ticket.getFilterTicketPagination(object, skip, limit,sortString),
         Ticket.getFilterTicketCount(object)
         ])
@@ -458,15 +422,8 @@ function filterDashboardTicket(req, object){
             response.page       = page;
             response.count      = count;
             response.size       = size;
-
-            deferred.resolve(response)
+            return response
         })
-        .catch(error => {
-            log.error('Error in TICKET-BL at filterDashboardTicket -', error);
-            deferred.reject(error)
-        });
-
-    return deferred.promise;
 }
 
 module.exports = ticket;

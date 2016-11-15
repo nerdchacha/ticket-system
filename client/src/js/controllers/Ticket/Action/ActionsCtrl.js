@@ -357,7 +357,6 @@ angular.module('ticketSystem')
                     }
 
                     var currentUser = Authentication.getUser();
-                    console.log(currentUser);
                     ActionFactory.assign($scope.ticket.id, currentUser.username, $scope.task.comment, $scope.task.notifyUsers)
                     .then(function(res){
                         

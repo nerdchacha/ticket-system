@@ -8,7 +8,6 @@ var express     = require('express'),
     helper      = require('../../business-layer/helper.js');
 
 router.post('/assign/:id', (req,res,next) => {
-    console.log(req.body.notify);
     validator.validateTicketAssign(req)
     .then(() => ticketsBl.assignTicket(req.user.username, req.params.id, req.body.assignee, req.body.comment, req.body.notify))
     .then(ticket => res.json(ticket))

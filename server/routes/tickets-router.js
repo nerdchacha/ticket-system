@@ -153,7 +153,7 @@ router.post('/addComment/:id',(req,res,next) => {
 
 router.delete('/deleteComment/:id', (req,res,next) => {
     validator.validateTicketDeleteComment(req)
-        .then(() => ticketsBl.canUserDeleteComment(req.query.commentId, req))
+        //.then(() => ticketsBl.canUserDeleteComment(req.query.commentId, req))
         .then(() => ticketsBl.deleteComment(req.params.id,req.query.commentId))
         .then(ticket => res.json(ticket))        
         .catch(err => {
