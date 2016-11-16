@@ -42,8 +42,4 @@ commentBl.getTicketWithComments = ticket => {
 	return deferred.promise;
 }
 
-commentBl.assignTicket = (comment) => {
-
-}
-
 module.exports = commentBl;

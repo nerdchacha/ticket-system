@@ -8,25 +8,15 @@ var User        = require('../models/user-model.js'),
 
 var usersBl = {};
 
-usersBl.createLocalUser = (req) => {
-    return User.createUser(new User(createLocalUserObject(req, rolesEnum)));
-};
+usersBl.createLocalUser = req => User.createUser(new User(createLocalUserObject(req, rolesEnum)));
 
-usersBl.getAllActiveUsers = (req) => {
-    return User.getAllActiveUsers()
-};
+usersBl.getAllActiveUsers = req => User.getAllActiveUsers()
 
-usersBl.getUserByUsername = (username) => {
-    return User.getUserByUsername(username)
-};
+usersBl.getUserByUsername = username => User.getUserByUsername(username)
 
-usersBl.updateProfile = (req) => {
-    return User.updateProfile(createUpdateProfileObject(req));
-};
+usersBl.updateProfile = req => User.updateProfile(createUpdateProfileObject(req));
 
-usersBl.getAllUserDetails = () => {
-    return User.getAllUserDetails()
-};
+usersBl.getAllUserDetails = () => User.getAllUserDetails()
 
 //TODO : Fix this
 usersBl.setUsenameAndActive = (id,username) => {
@@ -49,16 +39,9 @@ usersBl.setUsenameAndActive = (id,username) => {
     return deferred.promise;
 };
 
-usersBl.comparePassword = (password, hash) => {
-    return User.comparePassword(
-        password,
-        hash
-    );
-};
+usersBl.comparePassword = (password, hash) => User.comparePassword(password,hash);
 
-usersBl.changePassword = (req) => {
-    return User.resetPassword(req.params.id,req.body.password);
-};
+usersBl.changePassword = req => User.resetPassword(req.params.id,req.body.password);
 
 function createUpdateProfileObject(req){
     return {

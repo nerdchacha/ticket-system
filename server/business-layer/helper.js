@@ -12,7 +12,7 @@ var helper = {};
  PARAMS:
  [user - User object that contains all the details for the user]
  -------------------------------------------------------*/
-helper.createResponseUser = function(user){
+helper.createResponseUser = user => {
     var response = {};
     if(!user)
         throw [{error: 'No user with given details found'}];
@@ -87,24 +87,14 @@ helper.isSupportUser = user => {
 //====================FUNCTIONAL==============================
 //============================================================
 
-helper.getSort = req => {
-    return req.query.sort ? req.query.sort : 'id';
-}
+helper.getSort = req => req.query.sort ? req.query.sort : 'id';
 
-helper.getOrder = req => {
-    return req.query.order ? req.query.order : 'asc';
-}
+helper.getOrder = req => req.query.order ? req.query.order : 'asc';
 
-helper.getPage = req => {
-    return req.query.page ? parseInt(req.query.page) : 1;
-}
+helper.getPage = req => req.query.page ? parseInt(req.query.page) : 1;
 
-helper.getSize= req => {
-    return req.query.size ? parseInt(req.query.size) : 10;
-}
+helper.getSize= req => req.query.size ? parseInt(req.query.size) : 10;
 
-helper.createSortString = (sort, order) => {
-    return order === 'asc' ? sort : '-' + sort;
-}
+helper.createSortString = (sort, order) => order === 'asc' ? sort : '-' + sort;
 
 module.exports = helper;

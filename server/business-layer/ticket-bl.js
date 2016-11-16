@@ -143,10 +143,13 @@ ticket.getTicketById = function(id, user){
     .then(commentBl.getTicketWithComments)
 };
 
-ticket.addComment = (id, comment, notify) => {
-    comment.isDeletable = true;
-    comment.isVisible = false;
-    comment.commentMessage = {title: 'Comment', message: [comment.comment]};
+ticket.addComment = (id, prtialComment, notify) => {
+    var comment = Object.assign({}, prtialComment, {
+        isDeletable: true, 
+        isVisible: false, 
+        commentMessage : {title: 'Comment', message: [prtialComment.comment]}, 
+        commentDate: Date.now()
+    })
 
     return Ticket.getTicketById(id)
     .then(ticket => commentBl.addComment(ticket, comment))
@@ -165,14 +168,6 @@ ticket.deleteComment = (id, _commentId) => {
     .then(ticket => commentBl.deleteComment(ticket, _commentId))
     .then(ticket => ticket)
 };
-
-// ticket.assignTicket = function(username ,id, newAssignee, userComment, notify){
-//     return R.composeP(
-//         R.curry(Ticket.assignTicket)(id, newAssignee),
-//         createAssignTicketComment(username, newAssignee, userComment, notify),
-//         Ticket.getTicketById
-//     )(id);
-// };
 
 ticket.assignTicket = (username ,id, newAssignee, userComment, notify) => {
     return Ticket.getTicketById(id)
@@ -195,15 +190,6 @@ ticket.changeStatus = (username ,id, newStatus, userComment, notify) => {
     .then(comment => Ticket.changeStatus(id, newStatus))
     .then(commentBl.getTicketWithComments)
 };
-
-
-// ticket.changeStatus = function(username ,id, newStatus, userComment, notify){
-//     return R.composeP(
-//         R.curry(Ticket.changeStatus)(id, newStatus),
-//         createChangeStatusComment(username, newStatus, userComment, notify),
-//         Ticket.getTicketById
-//     )(id);
-// };
 
 // ticket.canUserDeleteComment = function(commentId, req){
 //     var deferred = q.defer();

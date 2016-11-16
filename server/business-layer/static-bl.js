@@ -6,8 +6,6 @@ var staticModel 	= require('../models/static-model.js'),
 
 var staticBl = {};
 
-staticBl.getInitialStaticData = (req,res) => {
-    return staticModel.getStaticValues();
-};
+staticBl.getInitialStaticData = (req,res) => staticModel.getStaticValues();
 
 module.exports = staticBl;

@@ -15,13 +15,11 @@ admin.fetchAllUsers = req => {
             page    = helper.getPage(req),
             size    = helper.getSize(req);
     
-        var deferred = q.defer();
-    
         var skip = (page - 1) * size;
         var limit = size;
         var sortString = helper.createSortString(sort, order);
         
-        q.all([
+        return q.all([
             User.getPaginationUserDetails(skip, limit, sortString),
             User.getAllUserCount()
             ])
@@ -33,23 +31,12 @@ admin.fetchAllUsers = req => {
             response.page    = page;
             response.count   = count;
             response.size    = size;
-    
-            deferred.resolve(response);
+            return response;
         })
-        .catch(error => {
-            log.error('Error in ADMIN-BL at fetchAllUsers -', error);
-            deferred.reject(error)
-        });  
-    
-        return deferred.promise;
 };
 
-admin.updateUser = userDetails => {
-    return User.updateUser(userDetails.username, userDetails);
-};
+admin.updateUser = userDetails => User.updateUser(userDetails.username, userDetails);
 
-admin.resetPassword = req => {    
-    return User.resetPassword(req.params.id,req.body.password);
-};
+admin.resetPassword = req => User.resetPassword(req.params.id,req.body.password);
 
 module.exports = admin;

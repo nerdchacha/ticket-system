@@ -26,10 +26,10 @@ Comment.addComment = comment => {
 };
 
 Comment.getCommentForTicket = _id => {
-	var deferred = q.defer();
-    Comment.find(
-    	{ticketId : _id, deleted: false},
-    	resolve(deferred))
+    var deferred = q.defer();
+    Comment.find({ticketId : _id, deleted: false})
+    .sort('commentDate')
+    .exec(resolve(deferred));
     return deferred.promise;	
 }
 
