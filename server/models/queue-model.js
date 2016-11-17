@@ -37,7 +37,7 @@ Queue.createQueue = queue => {
  -------------------------------------------------------*/
 Queue.getQueue = () => {
 	var deferred = q.defer();
-    Queue..find(
+    Queue.find(
     	{},
     	{"users" : 0},
     	resolve(deferred)

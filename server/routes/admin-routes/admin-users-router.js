@@ -5,6 +5,7 @@ var express                 = require('express'),
     adminBl                 = require('../../business-layer/admin-bl.js'),
     ticketsBl               = require('../../business-layer/ticket-bl.js'),
     usersBl                 = require('../../business-layer/users-bl.js'),
+    queueBl                 = require('../../business-layer/queue-bl.js')
     helper                  = require('../../business-layer/helper.js'),
     validator               = require('../../business-layer/request-validator.js'),
     R                       = require('ramda'),
@@ -26,9 +27,7 @@ router.get('/user-details/:username',(req,res,next) => {
         )(req);
 
     getUserDetails
-        .then(user => {
-            res.json({user : user});
-        })
+        .then(user => res.json({user : user}))
         .catch(err => {
             log.error('Error in ADMIN-USERS-ROUTER - GET /user-details/:username endpoint -', err);  
             var errors = helper.createResponseError(errors, 'There was some error getting user details. Please try again later');
@@ -48,9 +47,7 @@ router.post('/update-user/:username',(req,res,next) => {
         )(req);
 
     updateUserDetails
-        .then(user => {
-            res.json({user : user});
-        })
+        .then(user => res.json({user : user}))
         .catch(err => {
             log.error('Error in ADMIN-USERS-ROUTER - POST /user-details/:username endpoint -', err);  
             var errors = helper.createResponseError(errors, 'There was some error updating user details. Please try again later');
@@ -68,9 +65,7 @@ router.post('/reset-password/:id',(req,res,next) => {
         )(req);
 
     resetPassword
-        .then(() => {
-            res.json();
-        })
+        .then(() => res.json())
         .catch(err => {
             log.error('Error in ADMIN-USERS-ROUTER - POST /reset-password/:id -', err);  
             var errors = helper.createResponseError(errors, 'There was some error resetting user password. Please try again later');
@@ -82,11 +77,31 @@ router.post('/reset-password/:id',(req,res,next) => {
 /*-------------------------------------------------------
  POST a new queue name
  -------------------------------------------------------*/
-router.post('/add-queue', (req, req, next) => {
-
+router.post('/add-queue', (req,res,next) => {
+    validator.validateAddQueue(req)
+    .then(() => queueBl.createQueue(req.body.name))
+    .then(queueBl.getQueue)
+    .then(queues => res.json({queues: queues, errors: null}))
+    .catch(err => {
+        log.error('Error in ADMIN-USERS-ROUTER - POST /add-queue -', err);  
+        var errors = helper.createResponseError(errors, 'There was some error adding a new queue. Please try again later');
+        res.json({ errors: errors });
+    })
 })
 
 
+/*-------------------------------------------------------
+ POST a new queue name
+ -------------------------------------------------------*/
+router.get('/get-queues', (req,res,next) => {
+    queueBl.getQueue()
+    .then(queues => res.json({queues: queues, errors: null}))
+    .catch(err => {
+        log.error('Error in ADMIN-USERS-ROUTER - POST /get-queues -', err);  
+        var errors = helper.createResponseError(errors, 'There was some error fetching queue list. Please try again later');
+        res.json({ errors: errors });
+    })
+})
 
 //--------------------------------------------------------------------------------
 //--------------------------------FUNCTIONS---------------------------------------

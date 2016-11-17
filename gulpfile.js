@@ -37,6 +37,7 @@ var input = {
 				'client/src/js/services/Authentication.js',
 				'client/src/js/services/HelperService.js',
 				'client/src/js/services/ActionService.js',
+				'client/src/js/services/QueueService.js',
 				'client/src/js/services/PaginationService.js',
 				'client/src/js/controllers/**/*.js'
 			]

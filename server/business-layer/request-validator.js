@@ -23,6 +23,7 @@ var validator                   = {},
     bodyHasisAdmin              = checkRequiredBody('isAdmin' ,'Is Admin field id is require'),
     bodyHasisActive             = checkRequiredBody('isActive' ,'Is Active id is require'),
     bodyPasswordEqualsPassword2 = checkIsEqualBody('password2', 'password and re entered password do not match'),
+    bodyHasName                 = checkRequiredBody('name', 'queue name is required'),    
     paramsHasUsername           = checkRequiredParams('username', 'username is required'),
     paramsHasStatus             = checkRequiredParams('status', 'status is required'),
     paramsHasType               = checkRequiredParams('type', 'type is required'),
@@ -268,6 +269,18 @@ validator.validateTicketChangeStatus = (req) => {
     return deferred.promise;
 }
 
+validator.validateAddQueue = (req) => {
+    var deferred = q.defer();
+
+    process.nextTick(() => {
+        R.compose(
+            resolve(deferred),
+            bodyHasName)(req);
+    });
+
+    return deferred.promise;
+}
+
 
 
 //--------------------------------------------------------------------------------
@@ -333,6 +346,7 @@ function checkIsEqualBody(param, message, check, req){
         }
     }    
 }
+
 
 
 module.exports = validator;
