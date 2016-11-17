@@ -46,6 +46,22 @@ Queue.getQueue = () => {
 }
 
 /*-------------------------------------------------------
+ UPDATE THE QUEUE NAMES
+ PARAMS:
+ [name : new name to be given to the queue] 
+ -------------------------------------------------------*/
+Queue.updateQueue = (_id,name) => {
+	var deferred = q.defer();
+    Queue.findOneAndUpdate(
+    	{_id: _id},
+    	{name : name},
+    	{new: true},
+    	resolve(deferred)
+	);
+    return deferred.promise;
+}
+
+/*-------------------------------------------------------
 ADD USER TO QUEUE
 PARAMS: 
 [users - array of users to be added]

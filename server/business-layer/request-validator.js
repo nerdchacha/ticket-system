@@ -282,6 +282,19 @@ validator.validateAddQueue = (req) => {
 }
 
 
+validator.validateUpdateQueue = (req) => {
+    var deferred = q.defer();
+
+    process.nextTick(() => {
+        R.compose(
+            resolve(deferred),
+            bodyHasName,
+            paramsHasId)(req);
+    });
+
+    return deferred.promise;   
+}
+
 
 //--------------------------------------------------------------------------------
 //-----------------------------------REUSABLE FUNCTIONS---------------------------

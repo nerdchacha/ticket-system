@@ -7,10 +7,10 @@ angular.module('ticketSystem')
             var factory = {};
 
             factory.getQueues = function(){
-                return $http.get('admin/users/get-queues');
+                return $http.get('admin/users/queue');
             };
             factory.addQueue = function(name){
-                return $http.post('admin/users/add-queue', {name: name});
+                return $http.post('admin/users/queue', {name: name});
             };
 
             return factory;

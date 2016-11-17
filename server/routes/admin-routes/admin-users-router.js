@@ -77,7 +77,7 @@ router.post('/reset-password/:id',(req,res,next) => {
 /*-------------------------------------------------------
  POST a new queue name
  -------------------------------------------------------*/
-router.post('/add-queue', (req,res,next) => {
+router.post('/queue', (req,res,next) => {
     validator.validateAddQueue(req)
     .then(() => queueBl.createQueue(req.body.name))
     .then(queueBl.getQueue)
@@ -91,9 +91,24 @@ router.post('/add-queue', (req,res,next) => {
 
 
 /*-------------------------------------------------------
- POST a new queue name
+ PUT rename a queue
  -------------------------------------------------------*/
-router.get('/get-queues', (req,res,next) => {
+router.put('/queue/:id', (req,res,next) => {
+    validator.validateUpdateQueue(req)
+    .then(() => queueBl.updateQueue(req.params.id, req.body.name))
+    .then(queueBl.getQueue)
+    .then(queues => res.json({queues: queues, errors: null}))
+    .catch(err => {
+        log.error('Error in ADMIN-USERS-ROUTER - PUT /update-queue -', err);  
+        var errors = helper.createResponseError(errors, 'There was some error adding a update queue. Please try again later');
+        res.json({ errors: errors });
+    })
+})
+
+/*-------------------------------------------------------
+ GET get all queues
+ -------------------------------------------------------*/
+router.get('/queue', (req,res,next) => {
     queueBl.getQueue()
     .then(queues => res.json({queues: queues, errors: null}))
     .catch(err => {
@@ -102,6 +117,9 @@ router.get('/get-queues', (req,res,next) => {
         res.json({ errors: errors });
     })
 })
+
+
+
 
 //--------------------------------------------------------------------------------
 //--------------------------------FUNCTIONS---------------------------------------
