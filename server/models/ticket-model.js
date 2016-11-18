@@ -114,7 +114,6 @@ Ticket.getAllTicketsCount = () => {
   [skip - number of records to skip,
   limit - count of records to be retrieved
   sort - sort criteria]
-
  -------------------------------------------------------*/
 Ticket.getAllTicketsPagination = (skip, limit, sort) => {
     var deferred = q.defer();
