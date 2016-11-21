@@ -1,19 +1,6 @@
 angular.module('ticketSystem')
     .controller('QueueManagementCtrl',['$scope','PaginationService','QueueFactory','YgNotify',
-        function($scope,PaginationService,QueueFactory,YgNotify){        	    
-	        	// $scope.queues = [
-	        	// 	{id: 1, name: '1 queue'},
-	        	// 	{id: 2, name: '2 queue'},
-	        	// 	{id: 3, name: '3 queue'},
-	        	// 	{id: 4, name: '4 queue'},
-	        	// 	{id: 5, name: '5 queue'},
-	        	// 	{id: 6, name: '6 queue'},
-	        	// 	{id: 7, name: '7 queue'},
-	        	// 	{id: 8, name: '8 queue'},
-	        	// 	{id: 9, name: '9 queue'},
-	        	// 	{id: 10, name: '10 queue'},
-	        	// 	{id: 11, name: '11 queue'},
-	        	// 	{id: 12, name: '12 queue'}];
+        function($scope,PaginationService,QueueFactory,YgNotify){ 
 
 				$scope.queues = []
 	        	QueueFactory.getQueues()
@@ -31,7 +18,6 @@ angular.module('ticketSystem')
 			 
 			 
 			    function initController() {
-			        // initialize to page 1
 			        $scope.setPage(1);
 			    }
 			 
@@ -55,6 +41,18 @@ angular.module('ticketSystem')
 			    	$scope.addQueueForm.newQueue.$touched = false;
 			    	$scope.newQueue = '';	
 			    }
+			    $scope.showUpdateQueuePanel = function(id){
+			    	console.log(id)
+			    	$scope.showUpdateQueue = true;
+			    	$scope.updateQueueId = id;
+			    	$scope.updateQueueName = $scope.queues.find(function(item){ return item._id === id}).name
+			    }
+			    $scope.hideUpdateQueuePanel = function(){
+			    	$scope.showUpdateQueue = false;
+			    	$scope.updateQueueForm.updateQueue.$touched = false;
+			    	$scope.updateQueueId = '';
+			    	$scope.updateQueueName = '';	
+			    }
 			    $scope.addQueue = function(){
 			    	if($scope.addQueueForm.$invalid){
 	                    $scope.addQueueForm.newQueue.$touched = true;
@@ -75,6 +73,29 @@ angular.module('ticketSystem')
 		        	})
 		        	.catch(function(err){
 	        			YgNotify.alert('danger', 'There was some error trying to add a new queue. Please try again after some time.', 5000);
+		        	})
+			    }
+			    $scope.updateQueue = function(){
+			    	if($scope.updateQueueForm.$invalid){
+	                    $scope.updateQueueForm.updateQueueName.$touched = true;
+	                    return;
+                	}
+
+                	QueueFactory.updateQueue($scope.updateQueueId ,$scope.updateQueueName)
+		        	.then(function(res){
+		        		$scope.queues = res.data.queues;
+		        		$scope.setPage($scope.pager.currentPage);
+
+		        		//Resetting form
+		        		$scope.updateQueueName = '';
+		        		$scope.updateQueueId = ''
+		        		updateQueueForm.updateQueueName.$touched = false;
+		        		$scope.showUpdateQueue = false;
+
+		        		YgNotify.alert('success', 'Queue name has been updated successfully', 5000);
+		        	})
+		        	.catch(function(err){
+	        			YgNotify.alert('danger', 'There was some error trying to update the queue name. Please try again after some time.', 5000);
 		        	})
 			    }
         }

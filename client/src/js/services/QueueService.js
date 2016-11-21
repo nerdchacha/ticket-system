@@ -12,6 +12,9 @@ angular.module('ticketSystem')
             factory.addQueue = function(name){
                 return $http.post('admin/users/queue', {name: name});
             };
+            factory.updateQueue = function(id, name){
+                return $http.put('admin/users/queue/' + id, {name: name});
+            };
 
             return factory;
         }]);

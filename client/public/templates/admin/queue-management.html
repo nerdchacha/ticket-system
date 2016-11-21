@@ -5,7 +5,7 @@
 		<div class="col-sm-9" ng-class="addQueueForm.newQueue.$invalid && addQueueForm.newQueue.$touched ? 'has-error' : ''">
 			<input type="text" ng-model="newQueue" name="newQueue" class="form-control" placeholder="Enter new queue name" required />
             <div ng-show="addQueueForm.newQueue.$invalid && addQueueForm.newQueue.$touched" class="help-block">
-                <p class="text-danger">Title is required</p>
+                <p class="text-danger">Queue name is required</p>
             </div>		
 		</div>
 		<div class="col-sm-3">
@@ -14,11 +14,25 @@
 		</div>
 	</div>
 </form>
+<form class="add-queue" name="updateQueueForm" novalidate="">
+	<div class="row" ng-show="showUpdateQueue">
+		<div class="col-sm-9" ng-class="updateQueueForm.updateQueueName.$invalid && updateQueueForm.updateQueueName.$touched ? 'has-error' : ''">
+			<input type="text" ng-model="updateQueueName" name="updateQueueName" class="form-control" placeholder="Enter queue name" required />
+            <div ng-show="updateQueueForm.updateQueueName.$invalid && updateQueueForm.updateQueueName.$touched" class="help-block">
+                <p class="text-danger">Queue name is required</p>
+            </div>		
+		</div>
+		<div class="col-sm-3">
+			<button class="btn btn-success" ng-click="updateQueue()">Update</button>
+			<button class="btn btn-danger" ng-click="hideUpdateQueuePanel()">Cancel</button>
+		</div>
+	</div>
+</form>
 <div class="row" ng-show="items.length > 0">
 	<div ng-repeat="item in items">
 		<div class="col-md-10 col-xs-8"><h5>{{item.name}}</h5></div>
 		<div class="col-md-2 col-xs-4">
-			<button class="btn btn-sm btn-danger" title="Edit queue name"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;
+			<button ng-click="showUpdateQueuePanel(item._id)" class="btn btn-sm btn-danger" title="Edit queue name"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;
 			<button class="btn btn-sm btn-danger" title="View user list"><i class="fa fa-eye"></i></button>
 		</div>
 	</div>
