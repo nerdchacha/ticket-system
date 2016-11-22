@@ -5,6 +5,7 @@ angular.module('ticketSystem')
 			$scope.task = {};
 
             //Multiselect settings
+            //
             UserFactory.getAllUserDetails()
             .then(function(res){
                 var users = res.data.users;
