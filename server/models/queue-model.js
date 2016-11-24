@@ -4,21 +4,10 @@ var mongoose    = require('mongoose'),
 
 var QueueSchema = mongoose.Schema({
 	name: String,
-	users: Array
+	users: [String]
 })
 
 var Queue = mongoose.model('queue', QueueSchema);
-
-
-function resolve(deferred){
-    return (err, data) => {
-        if(err) {
-            log.error('Error in QUEUE-MODEL -', err);
-            deferred.reject(err);
-        }
-        else deferred.resolve(data);
-    }
-};
 
 /*-------------------------------------------------------
  CREATE A NEW QUEUE
@@ -39,9 +28,21 @@ Queue.getQueue = () => {
 	var deferred = q.defer();
     Queue.find(
     	{},
-    	{"users" : 0},
     	resolve(deferred)
 	);
+    return deferred.promise;
+}
+
+/*-------------------------------------------------------
+ GET QUEUE DETAILS BY ID
+ PARAMS: 
+ -------------------------------------------------------*/
+Queue.getQueueById = _id => {
+    var deferred = q.defer();
+    Queue.findOne(
+        {_id : _id},
+        resolve(deferred)
+    );
     return deferred.promise;
 }
 
@@ -62,35 +63,46 @@ Queue.updateQueue = (_id,name) => {
 }
 
 /*-------------------------------------------------------
-ADD USER TO QUEUE
+UPDATE USER FOR QUEUE
 PARAMS: 
 [users - array of users to be added]
  -------------------------------------------------------*/
-Queue.addUsers = (_id, users) => {
+Queue.updateUsers = (_id, userIds) => {
 	var deferred = q.defer();
-	Queue.findOneAndUpdate(
-		{_id: _id},
-		{"$addToSet": { "users": {"$each": users}}},
+	Queue.findByIdAndUpdate(
+		_id,
+		{"users": userIds},
 		{new: true},
 		resolve(deferred)
 	)
     return deferred.promise;
 }
 
-/*-------------------------------------------------------
-REMOVE USER FROM THE QUEUE
-PARAMS: 
-[users - array of users to be removed]
- -------------------------------------------------------*/
-Queue.removeUsers = (_id, users) => {
-	var deferred = q.defer();
-	Queue.findOneAndUpdate(
-		{_id: _id},
-		{"$pull": { "users": {"$each": users}}},
-		{new: true},
-		resolve(deferred)
-	)
-    return deferred.promise;
-}
+// /*-------------------------------------------------------
+// REMOVE USER FROM THE QUEUE
+// PARAMS: 
+// [users - array of users to be removed]
+//  -------------------------------------------------------*/
+// Queue.removeUsers = (_id, userIds) => {
+// 	var deferred = q.defer();
+// 	Queue.findOneAndUpdate(
+// 		{_id: _id},
+// 		{"$pull": { "users": {"$each": userIds}}},
+// 		{new: true},
+// 		resolve(deferred)
+// 	)
+//     return deferred.promise;
+// }
+
+
+function resolve(deferred){
+    return (err, data) => {
+        if(err) {
+            log.error('Error in QUEUE-MODEL -', err);
+            deferred.reject(err);
+        }
+        else deferred.resolve(data);
+    }
+};
 
 module.exports = Queue;

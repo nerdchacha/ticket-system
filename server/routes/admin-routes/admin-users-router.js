@@ -106,14 +106,44 @@ router.put('/queue/:id', (req,res,next) => {
 })
 
 /*-------------------------------------------------------
- GET get all queues
+ GET all queues
  -------------------------------------------------------*/
 router.get('/queue', (req,res,next) => {
-    queueBl.getQueue()
+    queueBl.getQueueNames()
     .then(queues => res.json({queues: queues, errors: null}))
     .catch(err => {
         log.error('Error in ADMIN-USERS-ROUTER - POST /get-queues -', err);  
         var errors = helper.createResponseError(errors, 'There was some error fetching queue list. Please try again later');
+        res.json({ errors: errors });
+    })
+})
+
+/*-------------------------------------------------------
+ GET users for queue 
+ -------------------------------------------------------*/
+router.get('/queue/users/:id', (req, res, next) => {
+    validator.validateGetQueueUsers(req)
+    .then(() => queueBl.getQueueUsers(req.params.id))
+    .then(users => res.json({users : users, error: null}))
+    .catch(err => {
+        console.log(err)
+        log.error('Error in ADMIN-USERS-ROUTER - GET /queue/users -', err);  
+        var errors = helper.createResponseError(errors, 'There was some error fetching users for queue. Please try again later');
+        res.json({ errors: errors });
+    })
+})
+
+
+/*-------------------------------------------------------
+ PUT update users for queue 
+ -------------------------------------------------------*/
+router.put('/queue/users/:id', (req, res, next) => {
+    queueBl.updateQueueUsers(req.params.id, req.body.users)
+    .then(users => res.json({users : users, error: null}))
+    .catch(err => {
+        console.log(err)
+        log.error('Error in ADMIN-USERS-ROUTER - GET /queue/users -', err);  
+        var errors = helper.createResponseError(errors, 'There was some error fetching users for queue. Please try again later');
         res.json({ errors: errors });
     })
 })
