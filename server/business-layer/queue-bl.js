@@ -8,6 +8,8 @@ queue.createQueue = name => Queue.createQueue(new Queue({name: name}))
 
 queue.getQueueNames = () => Queue.getQueue().then(queues => queues.map(queue => queue.name))
 
+queue.getQueues = () => Queue.getQueue().then(queues => queues.map(queue => ({' name' : queue.name, '_id' : queue._id })))
+
 queue.updateQueue = (_id, name) => Queue.updateQueue(_id, name)
 
 queue.updateUser = (_id, addUsers, removeUsers) => q.all(

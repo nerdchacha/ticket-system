@@ -6,6 +6,7 @@ angular.module('ticketSystem')
 	        	QueueFactory.getQueues()
 	        	.then(function(res){
 	        		$scope.queues = res.data.queues;
+	        		console.log(res.data.queues);
 	        		initController();
 	        	})
 	        	.catch(function(err){

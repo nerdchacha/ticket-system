@@ -20,6 +20,7 @@ var validator                   = {},
     bodyHasAssignee             = checkRequiredBody('assignee', 'assignee is required'),
     bodyHasUsername             = checkRequiredBody('username', 'username is required'),
     bodyHasType                 = checkRequiredBody('type', 'type is required'),
+    bodyHasUsers                = checkRequiredBody('users', 'users are required'),
     bodyHasisAdmin              = checkRequiredBody('isAdmin' ,'Is Admin field id is require'),
     bodyHasisActive             = checkRequiredBody('isActive' ,'Is Active id is require'),
     bodyPasswordEqualsPassword2 = checkIsEqualBody('password2', 'password and re entered password do not match'),
@@ -308,6 +309,18 @@ validator.validateGetQueueUsers = (req) => {
     return deferred.promise;
 };
 
+validator.validateUpdateQueueUsers = (req) => {
+  var deferred = q.defer();
+
+    process.nextTick(() => {
+        R.compose(
+            resolve(deferred),
+            bodyHasUsers,
+            paramsHasId)(req);
+    });
+
+    return deferred.promise;  
+}
 
 //--------------------------------------------------------------------------------
 //-----------------------------------REUSABLE FUNCTIONS---------------------------

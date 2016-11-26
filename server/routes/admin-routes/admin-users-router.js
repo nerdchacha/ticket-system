@@ -109,7 +109,7 @@ router.put('/queue/:id', (req,res,next) => {
  GET all queues
  -------------------------------------------------------*/
 router.get('/queue', (req,res,next) => {
-    queueBl.getQueueNames()
+    queueBl.getQueues()
     .then(queues => res.json({queues: queues, errors: null}))
     .catch(err => {
         log.error('Error in ADMIN-USERS-ROUTER - POST /get-queues -', err);  
@@ -138,7 +138,8 @@ router.get('/queue/users/:id', (req, res, next) => {
  PUT update users for queue 
  -------------------------------------------------------*/
 router.put('/queue/users/:id', (req, res, next) => {
-    queueBl.updateQueueUsers(req.params.id, req.body.users)
+    validator.validateUpdateQueueUsers(req)
+    .then(() => queueBl.updateQueueUsers(req.params.id, req.body.users))
     .then(users => res.json({users : users, error: null}))
     .catch(err => {
         console.log(err)
